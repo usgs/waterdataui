@@ -157,7 +157,7 @@ def monitoring_location(site_no):
                 email_for_data_questions = \
                     app.config['EMAIL_TARGETS']['contact'].format(state_district_code=site_owner_state.lower())
             else:
-                email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
+                email_for_data_questions = app.config['EMAIL_TARGETS']['report']
 
             context = {
                 'status_code': status,

@@ -68,32 +68,34 @@ def send_email(message):
         app.logger.error('Error when sending email about lookups: ', e)
 
 
-def load_lookup_from_backup_file(lookup_name):
+def load_lookup_from_backup_file(lookup_name, is_first_load):
     """
     Loads the lookup information from a file
     :param lookup_name: The name of the file we would like to open
+    :param is_first_load: True if the application has just been restarted
     :return: None
     """
-    app.logger.error('Looking for existing lookup named {}. If found, I will use the old file and check '
-                     'again later for a new one.'.format(lookup_name))
     try:
         target_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup_name.lower()))
-        app.logger.debug('loading old file at {}.json'.format(target_file_path))
+        app.logger.debug(f'Loading existing lookup file: {target_file_path}.json')
         with open(target_file_path, 'r') as f:
             app.config[lookup_name] = json.loads(f.read())
-            app.logger.debug('Successfully loaded old lookup file for {}.json, '
-                             'but will send email to team as an update.'.format(lookup_name))
-            message = 'The WDFN application could not get the lookup file for {}.json ' \
-                      'but was able to load an older file. This may be caused by an intermittent connection problem ' \
-                      'and should not affect the function of the application. However, if you receive more of these' \
-                      ' emails, an investigation is in order.'.format(lookup_name)
-            send_email(message)
+            if not is_first_load:
+                app.logger.debug(f'Successfully loaded old lookup file for {lookup_name}.json, '
+                                 'but will send email to team as an update.')
+                message = f'The WDFN application could not get the lookup file for {lookup_name}.json ' \
+                          'but was able to load a backup file. This may be caused by an intermittent connection ' \
+                          'problem and should not affect the function of the application. However, if you receive ' \
+                          'more of these emails, an investigation is in order.'
+                send_email(message)
     except FileNotFoundError:
-        app.logger.error('Sorry, no previous file found. Sending email message for help.')
-        message = 'IMPORTANT - The WDFN application could not get the lookup file for {}.json,' \
-                  ' and could not load an old copy. This will cause the application to fail. ' \
-                  'Send help soon!'.format(lookup_name)
-        send_email(message)
+        app.logger.error('Sorry, no previous file found; prepare for the worst.')
+        if not is_first_load:
+            app.logger.error('Sorry, no previous file found. Sending email message for help.')
+            message = f'IMPORTANT - The WDFN application could not get the lookup file for {lookup_name}.json,' \
+                      ' and could not load an old copy. This will cause the application to fail. ' \
+                      'Send help soon!'
+            send_email(message)
 
 
 # Pull lookup files from S3 bucket and load into application context
@@ -102,27 +104,27 @@ def get_lookups():
     Makes requests to an AWS Simple Storage Solutions Bucket (S3) to get various 'lookup' files
     :return: None
     """
-    print('running get lookup')
     if not os.path.exists(os.path.join(app.config.get('DATA_DIR'), 'lookups')):
         os.makedirs(os.path.join(app.config.get('DATA_DIR'), 'lookups'))
 
     for lookup in app.config['LOOKUP_ENDPOINTS']:
-        print('run with lookup ', lookup)
         app.logger.debug('Getting lookup from {} '.format(app.config['LOOKUP_ENDPOINTS'].get(lookup)))
 
         try:
             request = requests.get(app.config['LOOKUP_ENDPOINTS'].get(lookup))
             app.config[lookup] = request.json()
+            test = app.config[lookup]
+            print('test ', test)
             output_file_path = os.path.join(app.config.get('DATA_DIR'), 'lookups/{}.json'.format(lookup.lower()))
             with open(output_file_path, 'w') as output_file:
                 json.dump(request.json(), output_file)
 
         except ValueError as e:
             app.logger.error('No Lookup JSON returned, failed with error {}'.format(e))
-            load_lookup_from_backup_file(lookup)
+            load_lookup_from_backup_file(lookup, is_first_load = False)
         except requests.exceptions.RequestException as e:
             app.logger.error('Request to get lookup file failed for {} with error: {}  '.format(lookup, e))
-            load_lookup_from_backup_file(lookup)
+            load_lookup_from_backup_file(lookup, is_first_load = False)
 
 
 # When the application is first started, there will be no backup files saved for the lookups and the lookups
@@ -133,7 +135,7 @@ def get_lookups():
 for lookup in app.config.get('LOOKUP_ENDPOINTS'):
     file_path = os.path.join(app.config.get('DATA_DIR'), f'lookups/{lookup.lower()}.json')
     if os.path.isfile(file_path):
-        app.logger.debug(f'Using existing lookup: {file_path}')
+        load_lookup_from_backup_file(lookup, is_first_load = True)
     else:
         get_lookups()
 

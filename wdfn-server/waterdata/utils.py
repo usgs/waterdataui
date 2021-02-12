@@ -44,7 +44,7 @@ def create_message(target_email, form_data, user_system_data, timestamp):
     :param str timestamp: A timestamp that has been converted to a string.
     """
     msg = EmailMessage()
-    msg['Subject'] = 'User Question/Comment for {}'.format(form_data['monitoring-location-url'])
+    msg['Subject'] = f"User Question/Comment for {form_data['monitoring-location-url']}"
     msg['From'] = 'WDFN Comments and Questions'
     msg['Reply-To'] = form_data['user-email-address']
     msg['To'] = target_email
