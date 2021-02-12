@@ -2,9 +2,13 @@ import {format} from 'd3-format';
 import memoize from 'fast-memoize';
 import isEqual from 'lodash/isEqual';
 import uniqWith from 'lodash/uniqWith';
+import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getIVData} from 'ml/selectors/hydrograph-data-selector';
+import config from 'ui/config';
+
+import {getIVData, getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 const MASKED_QUALIFIERS = {
     ice: {label: 'Ice Affected', class: 'ice-affected-mask'},
@@ -23,7 +27,7 @@ const MASKED_QUALIFIERS = {
     '***': {label: 'Unavailable', class: 'unavailable-mask'}
 };
 
-const LINE_QUALIFIERS = {
+const APPROVAL_QUALIFIERS = {
     a: {label: 'Approved', class: 'approved'},
     e: {label: 'Estimated', class: 'estimated'}
 };
@@ -86,17 +90,17 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
         return Object.values(ivData.values).reduce((byMethodID, methodValues) => {
             byMethodID[methodValues.method.methodID] = methodValues.points.map(point => {
                 // We will only receive one masked qualifier
-                let label = 'Default';
-                let pointClass = '';
+                let label;
+                let pointClass;
                 const pointQualifiers = point.qualifiers.map(qualifier => qualifier.toLowerCase());
                 const maskedQualifier = pointQualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
-                const lineQualifier = pointQualifiers.find(qualifier => qualifier in LINE_QUALIFIERS);
+                const approvalQualifier = pointQualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
                 if (maskedQualifier) {
                     label = MASKED_QUALIFIERS[maskedQualifier].label;
                     pointClass = MASKED_QUALIFIERS[maskedQualifier].class;
-                } else if (lineQualifier) {
-                    label = LINE_QUALIFIERS[lineQualifier].label;
-                    pointClass = LINE_QUALIFIERS[lineQualifier].class;
+                } else if (approvalQualifier) {
+                    label = APPROVAL_QUALIFIERS[approvalQualifier].label;
+                    pointClass = APPROVAL_QUALIFIERS[approvalQualifier].class;
                 } else { //default to provisional
                     label = 'Provisional';
                     pointClass = 'provisional';
@@ -105,6 +109,8 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
                     value: point.value,
                     dateTime: point.dateTime,
                     isMasked: !!maskedQualifier,
+                    maskedQualifier: maskedQualifier,
+                    approvalQualifier: approvalQualifier,
                     label: label,
                     class: pointClass
                 };
@@ -112,6 +118,26 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
 
             return byMethodID;
         }, {});
+    }
+));
+
+export const getIVTableData = memoize(dataKind => createSelector(
+    getIVDataPoints(dataKind),
+    getPrimaryParameter,
+    getSelectedIVMethodID,
+    (ivData, parameter, selectedMethodID) => {
+        if (!ivData || !(selectedMethodID in ivData)) {
+            return [];
+        }
+        return ivData[selectedMethodID].map(point => {
+            return {
+                parameterName: parameter.name,
+                result: point.value,
+                dateTime: DateTime.fromMillis(point.dateTime).toISO({zone: config.locationTimeZone}),
+                approvals: point.approvalQualifier ? APPROVAL_QUALIFIERS[point.approvalQualifier].label : 'Provisional',
+                masks: point.isMasked ? MASKED_QUALIFIERS[point.maskedQualifier].label : ''
+            };
+        });
     }
 ));
 

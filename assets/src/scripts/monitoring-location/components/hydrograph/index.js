@@ -6,40 +6,29 @@ import {DateTime} from 'luxon';
 
 import config from 'ui/config.js';
 
-
 import {drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
-//import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
-//import {renderTimeSeriesUrlParams} from 'ml/url-params';
+import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-//import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
-import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
+import {setSelectedParameterCode, setCompareDataVisibility} from 'ml/store/hydrograph-state';
 
-//import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
-//import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
-//import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
-//import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
 //import {drawDateRangeControls} from './date-controls';
-//import {drawDataTables} from './data-table';
+import {drawDataTables} from './data-table';
 //import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
-//import {drawGraphControls} from './graph-controls';
+import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {drawSelectionTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
-//import {getLineSegmentsByParmCd} from './selectors/drawing-data';
-//import {SPARK_LINE_DIM}  from './selectors/layout';
-//import {getAvailableParameterCodes} from './selectors/parameter-data';
-//import {getTimeSeriesScalesByParmCd} from './selectors/scales';
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -84,6 +73,7 @@ export const attachToNode = function(store,
         loadCompare: compare,
         loadMedian: false
     }));
+    store.dispatch(setCompareDataVisibility(compare));
 
     // if showing the controls, fetch the parameters
     let fetchParameters;
@@ -121,15 +111,15 @@ export const attachToNode = function(store,
             /*
             nodeElem
                 .call(drawDateRangeControls, store, siteno);
-            legendControlsContainer
-                .call(drawGraphControls, store);
-
+            */
+            legendControlsContainer.call(drawGraphControls, store, siteno);
+/*
             nodeElem.select('#iv-graph-list-container')
                 .call(renderDownloadLinks, store, siteno);
-
+*/
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);
-*/
+
             // Set the parameter code explictly. We may eventually set this within the parameter selection table
             store.dispatch(setSelectedParameterCode(parameterCode));
 
@@ -137,10 +127,7 @@ export const attachToNode = function(store,
                 nodeElem.select('.select-time-series-container')
                     .call(drawSelectionTable, store, siteno);
             });
-
-            /*
             renderTimeSeriesUrlParams(store);
-            */
         }
     });
 

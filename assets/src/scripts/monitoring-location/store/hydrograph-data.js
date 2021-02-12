@@ -89,7 +89,7 @@ const addGroundwaterLevels = function(gwLevels) {
  * @param {String} parameterCode
  * @param {String} period - ISO 8601 duration
  * @param {String} startTime - ISO 8601 time string
- * @param {String} endTie - ISO 8601 time string
+ * @param {String} endTime - ISO 8601 time string
  * @return {Function} that returns a Promise
  */
 const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startTime, endTime}) {
@@ -152,14 +152,14 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
  * Asynchronous Redux action to fetch the IV data for siteno, parameterCode and startTime/endTime
  * @param {String} siteno
  * @param {String} parameterCode
- * @param {String} startTime - ISO 8601 time string
- * @param {String} endTime - ISO 8601 time string
+ * @param {String} startTime - Epoch time
+ * @param {String} endTime - EpochTime
  * @return {Function} that returns a Promise
  */
 export const retrievePriorYearIVData = function(siteno, {parameterCode, startTime, endTime}) {
     return function(dispatch, getState) {
-        const priorYearStartTime = DateTime.fromISO(startTime).minus({days: 365}).toMillis();
-        const priorYearEndTime = DateTime.fromISO(endTime).minus({days: 365}).toMillis();
+        const priorYearStartTime = DateTime.fromMillis(startTime).minus({days: 365}).toMillis();
+        const priorYearEndTime = DateTime.fromMillis(endTime).minus({days: 365}).toMillis();
         const currentPriorYearTimeRange = getState().hydrographData.compareTimeRange || null;
         if (currentPriorYearTimeRange && priorYearStartTime === currentPriorYearTimeRange.start &&
             priorYearEndTime === currentPriorYearTimeRange.end) {
@@ -191,18 +191,18 @@ export const retrieveMedianStatistics = function(siteno, parameterCode) {
             return fetchSiteStatistics({siteno: siteno, statType: 'median', params: [parameterToFetch]})
                 .then(stats => {
                     let resultStats = {};
-                    if (isCalculatedParameterCode) {
+                    if (parameterToFetch in stats) {
                         Object.keys(stats[parameterToFetch]).forEach(methodID => {
                             resultStats[methodID] = stats[parameterToFetch][methodID].map(stat => {
+                                const p50Va = isCalculatedParameterCode ? convertCelsiusToFahrenheit(stat.p50_va) : parseFloat(stat.p50_va);
                                 return {
                                     ...stat,
-                                    parameter_cd: parameterCode,
-                                    p50_va: convertCelsiusToFahrenheit(stat.p50_va)
+                                    month_nu: parseInt(stat.month_nu),
+                                    day_nu: parseInt(stat.day_nu),
+                                    p50_va: p50Va
                                 };
                             });
                         });
-                    } else {
-                        resultStats = stats[parameterToFetch];
                     }
                     dispatch(addMedianStatisticsData(resultStats));
                 });
@@ -303,8 +303,8 @@ export const retrieveHydrographData = function(siteno, {parameterCode, period, s
             fetchPromises.push(dispatch(
                 retrievePriorYearIVData(siteno, {
                     parameterCode: parameterCode,
-                    startTime: DateTime.fromMillis(timeRange.start).toISO(),
-                    endTime: DateTime.fromMillis(timeRange.end).toISO()
+                    startTime: timeRange.start,
+                    endTime: timeRange.end
                 })));
         }
         if (hasIVData && loadMedian) {

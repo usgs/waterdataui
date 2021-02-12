@@ -3,9 +3,8 @@ import {createSelector} from 'reselect';
 import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
+import {getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
 import {isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
-
-//import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
 import {getGroundwaterLevelsMarker} from '../discrete-data';
 
@@ -30,7 +29,7 @@ const TS_LABEL = {
 const getLegendDisplay = createSelector(
     isCompareIVDataVisible,
     isMedianDataVisible,
-    () => null, //getCurrentVariableMedianMetadata,
+    getPrimaryMedianStatisticsData,
     getIVUniqueDataKinds('primary'),
     getIVUniqueDataKinds('compare'),
     isWaterwatchVisible,
@@ -55,7 +54,7 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
         if (ivKind.isMasked) {
             maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
         } else {
-            return lineMarkers.push(defineLineMarker(null, `line-segment ${ivKind.class} ts-${dataKind}`, ivKind.label));
+            return lineMarkers.push(defineLineMarker(null, `line-segment ts-${ivKind.class} ts-${dataKind}`, ivKind.label));
         }
     });
     return [textMarker, ...lineMarkers, ...maskMarkers];
@@ -66,6 +65,9 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
  * @return {Array of Array} - each subarray rpresents the markes for a time series median data
  */
 const getMedianMarkers = function(medianMetaData) {
+    if (!Object.keys(medianMetaData).length) {
+        return [];
+    }
     return Object.values(medianMetaData).map((stats, index) => {
         // Get the unique non-null years, in chronological order
         let years = [];
@@ -77,7 +79,7 @@ const getMedianMarkers = function(medianMetaData) {
         }
         const dateText = years.join(' - ');
 
-        const descriptionText = stats.methodDescription ? `${stats.methodDescription} ` : '';
+        const descriptionText = stats.description ? `${stats.description} ` : '';
         const classes = `median-data-series median-step median-step-${index % 6}`;
         const label = `${descriptionText}${dateText}`;
 

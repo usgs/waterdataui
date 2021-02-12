@@ -10,13 +10,13 @@ import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
+import {getPrimaryParameter, getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
 import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
-import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 import {getMainLayout} from './selectors/layout';
@@ -50,10 +50,10 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
-            return xscale(d.date);
+            return xscale(d.dateTime);
         })
         .y(function(d) {
-            return yscale(d.value);
+            return yscale(d.point);
         });
     const medianGrp = elem.append('g');
     medianGrp.append('path')
@@ -75,7 +75,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  */
 const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
-    if (!visible) {
+    if (!visible || !seriesPoints) {
         return;
     }
     const container = elem
@@ -85,8 +85,8 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
         container.attr('clip-path', 'url(#graph-clip');
     }
 
-    seriesPoints.forEach((points, index) => {
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
+    Object.values(seriesPoints).forEach((series, index) => {
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: series.values});
     });
 };
 
@@ -269,22 +269,21 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
             enableClip: () => true
-        })));
-    /*
+        })))
         .call(link(store, plotAllMedianPoints, createStructuredSelector({
             visible: isVisible('median'),
             xscale: getMainXScale('current'),
             yscale: getMainYScale,
-            seriesPoints: getCurrentVariableMedianStatPoints,
+            seriesPoints: getPrimaryMedianStatisticsData,
             enableClip: () => true
         })))
         .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
-            xscale: getBrushXScale('current'),
+            xscale: getBrushXScale,
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevels
         })));
-*/
+
     if (showTooltip) {
         dataGroup.call(drawTooltipFocus, store);
     }

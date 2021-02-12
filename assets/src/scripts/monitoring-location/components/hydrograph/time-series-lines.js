@@ -27,7 +27,7 @@ const drawLineSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
     lineElem
         .classed('line-segment', true)
         .classed(segment.class, true)
-        .classed(dataKind, true)
+        .classed(`ts-${dataKind}`, true)
         .classed('not-current-method', !isCurrentMethod);
 };
 
@@ -84,7 +84,7 @@ export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKi
  * can be styled by using the class name.
  * @param {Boolean} visible
  * @param {String} currentMethodID
- * @param {Array of Obect} - Each object is suitable for passing to drawDataLine
+ * @param {Array of Object} - Each object is suitable for passing to drawDataLine
  * @param {String} timeRangeKind - 'current' or 'compare'
  * @param {Object} xScale - D3 scale for the x axis
  * @param {Object} yScale - D3 scale for the y axis

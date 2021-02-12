@@ -88,9 +88,12 @@ export const getPrimaryMedianStatisticsData = createSelector(
 
         let result = {};
         Object.values(stats).forEach(statsForTsId => {
-            result[statsForTsId[0].ts_id] = {
+            const tsID = statsForTsId[0].ts_id;
+            result[tsID] = {
                 values: [],
-                description: statsForTsId[0].loc_web_ds
+                description: statsForTsId[0].loc_web_ds,
+                beginYear: statsForTsId[0].begin_yr,
+                endYear: statsForTsId[0].end_yr
             };
             let currentDateTime = DateTime.fromMillis(timeRange.start, {zone: config.locationTimeZone});
 
@@ -98,15 +101,17 @@ export const getPrimaryMedianStatisticsData = createSelector(
                 const thisStatsData = find(statsForTsId, (stat) => {
                     return stat.month_nu === currentDateTime.month && stat.day_nu === currentDateTime.day;
                 });
-                result.values.push({
-                    point: thisStatsData.p50_va,
-                    dateTime: currentDateTime
-                });
-                currentDateTime.plus({days: 1}).startOf();
+                if (thisStatsData) {
+                    result[tsID].values.push({
+                        point: thisStatsData.p50_va,
+                        dateTime: currentDateTime.toMillis()
+                    });
+                }
+                currentDateTime = currentDateTime.plus({days: 1}).startOf('day');
             }
-            result.values.push({
-                point: result.values[result.values.length - 1].point,
-                dateTime: DateTime.fromMillis(timeRange.end, {zone: config.locationTimeZone})
+            result[tsID].values.push({
+                point: result[tsID].values[result[tsID].values.length - 1].point,
+                dateTime: timeRange.end
             });
         });
         return result;
