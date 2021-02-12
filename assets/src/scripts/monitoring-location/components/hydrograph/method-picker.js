@@ -31,6 +31,9 @@ export const drawMethodPicker = function(elem, store, initialTimeSeriesId) {
         .call(link(store, function(elem, {methods}) {
             let selectedMethodID = getSelectedIVMethodID(store.getState());
             elem.selectAll('option').remove();
+            if (!methods) {
+                return;
+            }
             if (methods.length &&
                 (!selectedMethodID || !methods.find(method => method.methodID === selectedMethodID))) {
                 // Set the selected method ID to the first one in the list

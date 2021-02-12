@@ -3,14 +3,11 @@
  */
 import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
-import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
-import {link} from 'ui/lib/d3-redux';
 
-import {sortedParameters} from 'ui/utils';
 
-import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
+import {drawInfoAlert} from 'd3render/alerts';
 import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
 //import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
@@ -19,6 +16,7 @@ import {drawLoadingIndicator} from 'd3render/loading-indicator';
 //import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
+import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
 import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
 
 //import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
@@ -34,7 +32,7 @@ import {drawGraphBrush} from './graph-brush';
 //import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
-//import {plotSeriesSelectTable} from './parameters';
+import {drawSelectionTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
@@ -83,10 +81,15 @@ export const attachToNode = function(store,
         period: startDT && endDT ? null : period || 'P7D',
         startTime: DateTime.fromISO(startDT, {zone: config.locationTimeZone}),
         endTime: DateTime.fromISO(endDT, {zone: config.locationTimeZone}),
-        loadCompare: false,
+        loadCompare: compare,
         loadMedian: false
     }));
 
+    // if showing the controls, fetch the parameters
+    let fetchParameters;
+    if (!showOnlyGraph) {
+        fetchParameters = store.dispatch(retrieveHydrographParameters(siteno));
+    }
 
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
@@ -129,16 +132,13 @@ export const attachToNode = function(store,
 */
             // Set the parameter code explictly. We may eventually set this within the parameter selection table
             store.dispatch(setSelectedParameterCode(parameterCode));
-            /*
-            //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-            nodeElem.select('.select-time-series-container')
-                .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                    siteno: () => siteno,
-                    availableParameterCodes: getAvailableParameterCodes,
-                    lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                    timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                }), store));
 
+            fetchParameters.then(() => {
+                nodeElem.select('.select-time-series-container')
+                    .call(drawSelectionTable, store, siteno);
+            });
+
+            /*
             renderTimeSeriesUrlParams(store);
             */
         }

@@ -121,7 +121,7 @@ export const getYScale = memoize(graphKind => createSelector(
     getPrimaryValueRange,
     getPrimaryParameter,
     (layout, yDomain, parameter) => {
-        return createYScale(parameter.parameterCode, yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
+        return createYScale(parameter ? parameter.parameterCode : '', yDomain, layout.height - (layout.margin.top + layout.margin.bottom));
     }
 ));
 

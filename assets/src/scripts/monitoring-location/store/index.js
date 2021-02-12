@@ -7,6 +7,7 @@ import {
     floodDataReducer as floodData,
     floodStateReducer as floodState} from './flood-inundation';
 import {hydrographDataReducer as hydrographData} from './hydrograph-data';
+import {hydrographParametersReducer as hydrographParameters} from './hydrograph-parameters';
 import {hydrographStateReducer as hydrographState,
     INITIAL_STATE as HYDROGRAPH_INITIAL_STATE
 } from './hydrograph-state';
@@ -16,6 +17,7 @@ import {uiReducer as ui} from './ui-state';
 
 const appReducer = combineReducers({
     hydrographData,
+    hydrographParameters,
     hydrographState,
     dailyValueTimeSeriesData,
     floodData,
@@ -32,6 +34,7 @@ const MIDDLEWARES = [thunk];
 export const configureStore = function(initialState) {
     initialState = {
         hydrographData: {},
+        hydrographParameters: {},
         hydrographState: HYDROGRAPH_INITIAL_STATE,
         dailyValueTimeSeriesData: {},
         floodData: {

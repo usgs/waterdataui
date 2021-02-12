@@ -99,7 +99,7 @@ export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegm
     };
 
     container.selectAll(`#${elemId}`).remove();
-    if (!visible) {
+    if (!visible || !tsSegmentsMap) {
         return;
     }
     const tsLineGroup = container

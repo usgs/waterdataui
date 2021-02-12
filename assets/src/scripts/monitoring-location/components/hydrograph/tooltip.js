@@ -46,7 +46,7 @@ const createTooltipTextGroup = function(elem, {
     currentPoints,
     comparePoints,
     gwLevelPoint,
-    unitCode,
+    parameter,
     layout
 }, textGroup) {
     const adjustMarginOfTooltips = function(elem) {
@@ -59,6 +59,7 @@ const createTooltipTextGroup = function(elem, {
             .attr('class', 'tooltip-text-group')
             .call(adjustMarginOfTooltips);
     }
+    const unitCode = parameter ? parameter.unit : '';
     const currentTooltipData = Object.values(currentPoints).map((tsPoint) => {
         return getIVDataTooltipTextInfo(tsPoint, 'primary', unitCode);
     });
@@ -102,7 +103,7 @@ export const drawTooltipText = function(elem, store) {
         currentPoints: getIVDataCursorPoints('primary', 'current'),
         comparePoints: getIVDataCursorPoints('compare', 'prioryear'),
         gwLevelPoint: getGroundwaterLevelCursorPoint,
-        unitCode: state => getPrimaryParameter(state).unit,
+        parameter: getPrimaryParameter,
         layout: getMainLayout
     })));
 };

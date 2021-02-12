@@ -233,28 +233,28 @@ export const convertCelsiusToFahrenheit = function(celsius) {
  * @param {Array of variable Object}
  * @return {Array of variable Object}
  */
-export const sortedParameters = function(variables) {
+export const sortedParameters = function(parameters) {
     const PARAM_PERTINENCE = {
         '00065': 0,
         '00060': 1,
         '72019': 2
     };
-    const dataVars = variables ? Object.values(variables) : [];
+    const allParameters = parameters ? Object.values(parameters) : [];
     const pertinentParmCds = Object.keys(PARAM_PERTINENCE);
-    const highPertinenceVars = dataVars.filter(x => pertinentParmCds.includes(x.variableCode.value))
+    const highPertinenceVars = allParameters.filter(x => pertinentParmCds.includes(x.parameterCode))
         .sort((a, b) => {
-            const aPertinence = PARAM_PERTINENCE[a.variableCode.value];
-            const bPertinence = PARAM_PERTINENCE[b.variableCode.value];
+            const aPertinence = PARAM_PERTINENCE[a.parameterCode];
+            const bPertinence = PARAM_PERTINENCE[b.parameterCode];
             if (aPertinence < bPertinence) {
                 return -1;
             } else {
                 return 1;
             }
         });
-    const lowPertinenceVars = dataVars.filter(x => !pertinentParmCds.includes(x.variableCode.value))
+    const lowPertinenceVars = allParameters.filter(x => !pertinentParmCds.includes(x.parameterCode))
         .sort((a, b) => {
-            const aDesc = a.variableDescription.toLowerCase();
-            const bDesc = b.variableDescription.toLowerCase();
+            const aDesc = a.description.toLowerCase();
+            const bDesc = b.description.toLowerCase();
             if (aDesc < bDesc) {
                 return -1;
             } else {

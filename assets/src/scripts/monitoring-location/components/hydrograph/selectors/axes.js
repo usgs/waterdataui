@@ -74,7 +74,7 @@ export const getAxes = memoize(graphKind => createSelector(
                 -layout.width + layout.margin.right
             ),
             layout: layout,
-            yTitle: parameter.unit
+            yTitle: parameter ? parameter.unit : ''
         };
     }
 ));

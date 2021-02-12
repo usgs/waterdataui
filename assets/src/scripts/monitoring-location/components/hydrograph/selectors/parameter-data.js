@@ -4,8 +4,6 @@ import {createSelector} from 'reselect';
 import config from 'ui/config';
 import {sortedParameters} from 'ui/utils';
 
-import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/time-series-selector';
-
 /**
  * Returns a Redux selector function which returns an sorted array of metadata
  * for each available parameter code. Each object has the following properties:
@@ -16,18 +14,15 @@ import {getCurrentVariableID, getTimeSeries, getVariables} from 'ml/selectors/ti
  *      @prop {Number} timeSeriesCount - count of unique time series for this parameter
  */
 export const getAvailableParameterCodes = createSelector(
-    getVariables,
-    getTimeSeries,
-    getCurrentVariableID,
-    (allVariables, timeSeries, currentVariableID) => {
-        if (!allVariables) {
+    (state) => state.hydrographParameters,
+    allParameters => {
+        if (!Object.keys(allParameters).length) {
             return [];
         }
-        const seriesList = Object.values(timeSeries);
 
-        return sortedParameters(allVariables)
-            .map((variable) => {
-                const parameterCode = variable.variableCode.value;
+        return sortedParameters(allParameters)
+            .map((parameter) => {
+                const parameterCode = parameter.parameterCode;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
                 const isIVParameterCode = config.ivPeriodOfRecord && measuredParameterCode in config.ivPeriodOfRecord;
                 const isGWParameterCode = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord;
@@ -67,21 +62,14 @@ export const getAvailableParameterCodes = createSelector(
                 }
 
                 return {
-                    variableID: variable.oid,
-                    parameterCode: parameterCode,
-                    description: variable.variableDescription,
-                    selected: currentVariableID === variable.oid,
-                    timeSeriesCount: seriesList.filter(ts => {
-                        return ts.tsKey === 'current:P7D' && ts.variable === variable.oid;
-                    }).length,
-                    periodOfRecord: periodOfRecord,
+                    ...parameter,
+                    periodOfRecord,
                     waterAlert: {
                         hasWaterAlert,
                         subscriptionParameterCode: hasWaterAlert ? measuredParameterCode : '',
                         displayText: waterAlertDisplayText,
                         tooltipText: waterAlertTooltipText
                     }
-
                 };
             });
     }

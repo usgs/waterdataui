@@ -4,8 +4,7 @@ import merge from 'lodash/merge';
 import config from 'ui/config';
 
 import {fetchGroundwaterLevels} from 'ui/web-services/groundwater-levels';
-import {fetchIVTimeSeries} from 'ui/web-services/instantaneous-values';
-import {fetchSiteStatistics} from 'ui/web-services/statistics-data';
+import {fetchTimeSeries} from 'ui/web-services/instantaneous-values';
 
 import {getConvertedTemperatureParameter} from 'ml/iv-data-utils';
 
@@ -14,7 +13,7 @@ import {getConvertedTemperatureParameter} from 'ml/iv-data-utils';
  * @param {Object} variables - keys are parameter codes.
  * @return {Object} - Redux action
  */
-export const updateHydrographParameters = function(parameters) {
+const updateHydrographParameters = function(parameters) {
     return {
         type: 'UPDATE_HYDROGRAPH_PARAMETERS',
         parameters
@@ -27,9 +26,9 @@ export const updateHydrographParameters = function(parameters) {
  */
 export const retrieveHydrographParameters = function(siteno) {
     return function(dispatch) {
-        const fetchIVParameters = fetchIVTimeSeries({sites: [siteno]}).then(series => {
+        const fetchIVParameters = fetchTimeSeries({sites: [siteno]}).then(series => {
             return series.value.timeSeries.reduce((varsByPCode, ts) => {
-                const parameterCode = ts.variable.variableCode.value;
+                const parameterCode = ts.variable.variableCode[0].value;
                 varsByPCode[parameterCode] = {
                     parameterCode: parameterCode,
                     name: ts.variable.variableName,
@@ -44,15 +43,16 @@ export const retrieveHydrographParameters = function(siteno) {
                     })
                 };
                 // If it is a celsius parameterCode, add a variable for calculated Fahrenheit.
-                if (parameterCode in config.TEMPERATURE_PARAMETERS.celsius) {
+                if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
                     const fahrenheitParameter = getConvertedTemperatureParameter(varsByPCode[parameterCode]);
                     varsByPCode[fahrenheitParameter.parameterCode] = fahrenheitParameter;
                 }
+                return varsByPCode;
             }, {});
         });
         const fetchGWLevelParameters = fetchGroundwaterLevels({site: siteno}).then(series => {
             return series.value.timeSeries.reduce((varsByPCode, ts) => {
-                const parameterCode = ts.variable.variableCode.value;
+                const parameterCode = ts.variable.variableCode[0].value;
                 varsByPCode[parameterCode] = {
                     parameterCode: parameterCode,
                     name: ts.variable.variableName,
@@ -60,16 +60,17 @@ export const retrieveHydrographParameters = function(siteno) {
                     unit: ts.variable.unit.unitCode,
                     hasGWLevelsData: true
                 };
+                return varsByPCode;
             }, {});
         });
-        return Promise.all([fetchIVParameters, fetchGWLevelParameters]).then((ivVars, gwVars) => {
+        return Promise.all([fetchIVParameters, fetchGWLevelParameters]).then(([ivVars, gwVars]) => {
             const mergedVars = merge({}, gwVars, ivVars);
             dispatch(updateHydrographParameters(mergedVars));
         });
     };
 };
 
-export const hydrographVariablesReducer = function(hydrographParameters={}, action) {
+export const hydrographParametersReducer = function(hydrographParameters={}, action) {
     switch(action.type) {
         case 'UPDATE_HYDROGRAPH_PARAMETERS': {
             return {

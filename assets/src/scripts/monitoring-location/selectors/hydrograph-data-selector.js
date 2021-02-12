@@ -65,7 +65,7 @@ export const getPrimaryMethods = createSelector(
     getIVData('primary'),
     ivData => {
         if (!ivData) {
-            return null;
+            return [];
         }
         return Object.values(ivData.values).map(value => value.method);
     }

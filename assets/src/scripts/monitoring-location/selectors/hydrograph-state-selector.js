@@ -7,7 +7,7 @@ export const isMedianDataVisible = state => state.hydrographState.showMedianData
 
 export const getSelectedDateRange = state => state.hydrographState.selectedDateRange || null;
 export const getSelectedCustomTimeRange = state => state.hydrographState.selectedCustomTimeRange || null;
-export const getSelectedParameterCode = state => state.hydrographState.selectedParameterCOde || null;
+export const getSelectedParameterCode = state => state.hydrographState.selectedParameterCode || null;
 export const getSelectedIVMethodID = state => state.hydrographState.selectedIVMethodID || null;
 export const getGraphCursorOffset = state => state.hydrographState.graphCursorOffset || null;
 export const getGraphBrushOffset = state => state.hydrographState.graphBrushOffset || null;
