@@ -19,11 +19,13 @@ import {drawLoadingIndicator} from 'd3render/loading-indicator';
 //import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
+import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
+
 //import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
 //import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
 //import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
 //import {Actions as timeZoneActions} from 'ml/store/time-zone';
-//import {Actions as floodDataActions} from 'ml/store/flood-inundation';
+import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
 //import {drawDateRangeControls} from './date-controls';
 //import {drawDataTables} from './data-table';
@@ -56,8 +58,6 @@ export const attachToNode = function(store,
                                          siteno,
                                          agencyCode,
                                          sitename,
-                                         latitude,
-                                         longitude,
                                          parameterCode,
                                          compare,
                                          period,
@@ -78,9 +78,6 @@ export const attachToNode = function(store,
         .select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
-    // Fetch waterwatch flood levels
-    //store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
-     // Need to set default parameter code in server and insert in markup */
     const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
         period: startDT && endDT ? null : period || 'P7D',
@@ -89,54 +86,62 @@ export const attachToNode = function(store,
         loadCompare: false,
         loadMedian: false
     }));
+
+
+    // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
+    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
+
     fetchDataPromise.then(() => {
         console.log('Finished fetching Hydrograph data');
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
 
-            // Initial data has been fetched. We can render the hydrograph elements
-            // Initialize method picker before rendering time series
-            let graphContainer = nodeElem.select('.graph-container')
-                .call(drawMethodPicker, store, timeSeriesId)
-                .call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
+        // Initial data has been fetched. We can render the hydrograph elements
+        // Initialize method picker before rendering the graph in order to set the selected method id
+        if (!showOnlyGraph) {
+            nodeElem.call(drawMethodPicker, store, timeSeriesId);
+        }
+        let graphContainer = nodeElem.select('.graph-container');
+        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
-            if (!showOnlyGraph) {
-                graphContainer
-                    .call(drawTooltipCursorSlider, store)
-                    .call(drawGraphBrush, store);
-            }
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
-            // Add UI interactive elements, data table  and the provisional data alert.
+        if (!showOnlyGraph) {
+            graphContainer
+                .call(drawTooltipCursorSlider, store)
+                .call(drawGraphBrush, store);
+        }
+        const legendControlsContainer = graphContainer.append('div')
+            .classed('ts-legend-controls-container', true)
+            .call(drawTimeSeriesLegend, store);
+
+        if (!showOnlyGraph) {
             /*
-            if (!showOnlyGraph) {
-                nodeElem
-                    .call(drawMethodPicker, store)
-                    .call(drawDateRangeControls, store, siteno);
+            nodeElem
+                .call(drawDateRangeControls, store, siteno);
+            legendControlsContainer
+                .call(drawGraphControls, store);
 
-                nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
+            nodeElem.select('#iv-graph-list-container')
+                .call(renderDownloadLinks, store, siteno);
 
-                nodeElem.select('#iv-graph-list-container')
-                    .call(renderDownloadLinks, store, siteno);
+            nodeElem.select('#iv-data-table-container')
+                .call(drawDataTables, store);
+*/
+            // Set the parameter code explictly. We may eventually set this within the parameter selection table
+            store.dispatch(setSelectedParameterCode(parameterCode));
+            /*
+            //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
+            nodeElem.select('.select-time-series-container')
+                .call(link(store, plotSeriesSelectTable, createStructuredSelector({
+                    siteno: () => siteno,
+                    availableParameterCodes: getAvailableParameterCodes,
+                    lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
+                    timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
+                }), store));
 
-                nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTables, store);
-                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-                nodeElem.select('.select-time-series-container')
-                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                        siteno: () => siteno,
-                        availableParameterCodes: getAvailableParameterCodes,
-                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                    }), store));
-
-                renderTimeSeriesUrlParams(store);
-            }
+            renderTimeSeriesUrlParams(store);
             */
-
+        }
     });
 
 };

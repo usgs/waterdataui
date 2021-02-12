@@ -1,6 +1,5 @@
 {% macro TimeSeriesComponent(site_data, default_parameter_code) -%}
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
-         data-latitude="{{ site_data.dec_lat_va }}" data-longitude="{{ site_data.dec_long_va }}"
          data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
          data-parameter-code="{{ default_parameter_code }}">
         <div class="loading-indicator-container"></div>
