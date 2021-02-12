@@ -72,11 +72,6 @@ LOGGING_ENABLED = True
 LOGGING_DIRECTORY = None
 LOGGING_LEVEL = logging.WARNING
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-NWIS_CODE_LOOKUP_FILENAME = 'nwis_lookup.json'
-COUNTRY_STATE_COUNTY_LOOKUP_FILENAME = 'nwis_country_state_lookup.json'
-HUC_LOOKUP_FILENAME = 'huc_lookup.json'
-
 GA_TRACKING_CODE = ''
 ENABLE_USGS_GA = False
 
@@ -102,6 +97,7 @@ EMAIL_TARGETS = {
     'comment': 'WDFN@usgs.gov'
 }
 
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 LOOKUP_ENDPOINTS = {
     'HUC_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/huc_lookup.json',
     'COUNTRY_STATE_COUNTY_LOOKUP': 'https://labs-test-website.s3-us-west-2.amazonaws.com/test-lookups/country_state_county_lookup.json',

@@ -6,8 +6,11 @@ import logging
 import os
 import sys
 import requests
+import smtplib
 
 from flask import Flask
+from apscheduler.schedulers.background import BackgroundScheduler
+from email.message import EmailMessage
 
 
 __version__ = '0.43.0dev'
@@ -44,10 +47,7 @@ try:
 except FileNotFoundError:
     pass
 
-from apscheduler.schedulers.background import BackgroundScheduler
 
-import smtplib
-from email.message import EmailMessage
 def send_email(message):
     msg = EmailMessage()
     msg['Subject'] = 'WDFN - Lookup Error'
@@ -110,8 +110,18 @@ def get_lookups():
             load_lookup_from_backup_file(lookup)
 
 
-# Set up a schedule to pull lookup files from the S3 bucket and replace the ones in the data directory
-get_lookups()
+# When the application is first started, there will be no backup files saved for the lookups and the lookups
+# will not be in memory. So, let's get them.
+# If the lookup files already exist, then we can skip this step.
+# NOTE: The lookup files are saved locally but not committed to Git. This stops the application from pulling the
+# lookups from S3 each time the # local server is restarted.
+for lookup in app.config.get('LOOKUP_ENDPOINTS'):
+    file_path = os.path.join(app.config.get('DATA_DIR'), f'lookups/{lookup.lower()}.json')
+    if os.path.isfile(file_path):
+        app.logger.debug(f'Using existing lookup: {file_path}')
+    else:
+        get_lookups()
+
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(lambda: get_lookups(), 'interval', hours=24)
