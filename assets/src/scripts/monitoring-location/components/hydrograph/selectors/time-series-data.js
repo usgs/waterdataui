@@ -62,7 +62,7 @@ export const getTitle = createSelector(
         if (methodID && methods.length) {
             const thisMethod = methods.find(method => method.methodID === methodID);
             if (thisMethod.methodDescription) {
-                title = `${title}, $${thisMethod.methodDescription}`;
+                title = `${title}, ${thisMethod.methodDescription}`;
             }
         }
         return title;

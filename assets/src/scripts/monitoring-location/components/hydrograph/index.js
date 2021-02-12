@@ -1,4 +1,4 @@
-/**
+/*
  * Hydrograph charting module.
  */
 import {select} from 'd3-selection';
@@ -11,10 +11,11 @@ import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
-import {setSelectedParameterCode, setCompareDataVisibility} from 'ml/store/hydrograph-state';
+import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomTimeRange, setSelectedDateRange,
+    setSelectedIVMethodID
+} from 'ml/store/hydrograph-state';
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
@@ -73,24 +74,37 @@ export const attachToNode = function(store,
         loadCompare: compare,
         loadMedian: false
     }));
-    store.dispatch(setCompareDataVisibility(compare));
 
     // if showing the controls, fetch the parameters
     let fetchParameters;
     if (!showOnlyGraph) {
         fetchParameters = store.dispatch(retrieveHydrographParameters(siteno));
+
+        // Initialize all hydrograph state variables if showing the control
+        store.dispatch(setSelectedParameterCode(parameterCode));
+        store.dispatch(setCompareDataVisibility(compare));
+        if (period) {
+            store.dispatch(setSelectedDateRange(period));
+        } else if (startDT && endDT) {
+            store.dispatch(setSelectedDateRange('custom'));
+            store.dispatch(setSelectedCustomTimeRange(
+                DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toMillis(),
+                DateTime.fromISO(endDT, {zone: config.locationTimeZone}).toMillis()));
+        } else {
+            store.dispatch(setSelectedDateRange('P7D'));
+        }
+        store.dispatch(setSelectedIVMethodID(timeSeriesId));
     }
 
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
+
     fetchDataPromise.then(() => {
-        console.log('Finished fetching Hydrograph data');
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
 
-        // Initial data has been fetched. We can render the hydrograph elements
         // Initialize method picker before rendering the graph in order to set the selected method id
         if (!showOnlyGraph) {
             nodeElem.call(drawMethodPicker, store, timeSeriesId);
@@ -119,9 +133,6 @@ export const attachToNode = function(store,
 */
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);
-
-            // Set the parameter code explictly. We may eventually set this within the parameter selection table
-            store.dispatch(setSelectedParameterCode(parameterCode));
 
             fetchParameters.then(() => {
                 nodeElem.select('.select-time-series-container')
