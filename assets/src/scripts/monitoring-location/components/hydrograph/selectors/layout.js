@@ -7,10 +7,7 @@ import {createSelector} from 'reselect';
 import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 
-import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
-
 import {getYTickDetails} from './domain';
-
 
 export const ASPECT_RATIO = 1 / 2;
 export const ASPECT_RATIO_PERCENT = `${100 * ASPECT_RATIO}%`;
@@ -50,17 +47,15 @@ export const SPARK_LINE_DIM = {
  * @return {Selector function}
  */
 export const getLayout = memoize(kind => createSelector(
-    (state) => state.ui.width,
-    (state) => state.ui.windowWidth,
+    state => state.ui.width,
+    state => state.ui.windowWidth,
     getYTickDetails,
-    getCurrentParmCd,
     (width, windowWidth, yTickDetails) => {
         const isDesktop = mediaQuery(config.USWDS_SITE_MAX_WIDTH);
         const height = kind === 'BRUSH' ? isDesktop ? BRUSH_HEIGHT : BRUSH_MOBILE_HEIGHT : width * ASPECT_RATIO;
         const margin = isDesktop ? MARGIN : MARGIN_SMALL_DEVICE;
         const tickLengths = yTickDetails.tickValues.map(v => yTickDetails.tickFormat(v).length);
         const approxLabelLength = Math.max(...tickLengths) * 10;
-        const hasRightYAxis = false; // placeholder for changes upcoming in ticket WDFN-370
 
         return {
             width: width,
@@ -70,7 +65,7 @@ export const getLayout = memoize(kind => createSelector(
                 bottom: margin.bottom,
                 top: kind === 'BRUSH' ? 13 : margin.top,
                 left: margin.left + approxLabelLength,
-                right: margin.right + (hasRightYAxis ? approxLabelLength : 0)
+                right: margin.right// + (hasRightYAxis ? approxLabelLength : 0)
             }
         };
     }

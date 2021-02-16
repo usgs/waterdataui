@@ -7,12 +7,14 @@ import {createStructuredSelector} from 'reselect';
 
 import{link}  from 'ui/lib/d3-redux';
 
-import {getCurrentMethodID, getAllMethodsForCurrentVariable} from 'ml/selectors/time-series-selector';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
+import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 
-import { } from './selectors/time-series-data';
-
-export const drawMethodPicker = function(elem, store) {
+export const drawMethodPicker = function(elem, store, initialTimeSeriesId) {
+    if (initialTimeSeriesId) {
+        store.dispatch(setSelectedIVMethodID(initialTimeSeriesId));
+    }
     const pickerContainer = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-method-select-container');
 
@@ -24,15 +26,23 @@ export const drawMethodPicker = function(elem, store) {
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
         .on('change', function() {
-            store.dispatch(Actions.setCurrentIVMethodID(parseInt(select(this).property('value'))));
+            store.dispatch(setSelectedIVMethodID(select(this).property('value')));
         })
-        .call(link(store, function(elem, {methods, currentMethodId}) {
-            const currentMethodIdString = parseInt(currentMethodId);
+        .call(link(store, function(elem, {methods}) {
+            let selectedMethodID = getSelectedIVMethodID(store.getState());
             elem.selectAll('option').remove();
+            if (!methods) {
+                return;
+            }
+            if (methods.length &&
+                (!selectedMethodID || !methods.find(method => method.methodID === selectedMethodID))) {
+                // Set the selected method ID to the first one in the list
+                selectedMethodID = methods[0].methodID;
+            }
             methods.forEach((method) => {
                 elem.append('option')
                     .text(method.methodDescription ? `${method.methodDescription}` : 'None')
-                    .attr('selected', currentMethodIdString === method.methodID ? true : null)
+                    .attr('selected', method.methodID === selectedMethodID ? true : null)
                     .node().value = method.methodID;
             });
             pickerContainer.property('hidden', methods.length <= 1);
@@ -40,8 +50,7 @@ export const drawMethodPicker = function(elem, store) {
                 elem.dispatch('change');
             }
         }, createStructuredSelector({
-            methods: getAllMethodsForCurrentVariable,
-            currentMethodId: getCurrentMethodID
+            methods: getPrimaryMethods
         })));
 };
 

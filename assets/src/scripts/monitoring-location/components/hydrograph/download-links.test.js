@@ -10,7 +10,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
 
     config.SERVICE_ROOT = 'https://fakeserviceroot.com';
     config.GROUNDWATER_LEVELS_ENDPOINT = 'https://fakegroundwater.org/gw/';
-    config.uvPeriodOfRecord = {
+    config.ivPeriodOfRecord = {
         '00060': {
             begin_date: '2000-01-01',
             end_date: '2020-01-01'

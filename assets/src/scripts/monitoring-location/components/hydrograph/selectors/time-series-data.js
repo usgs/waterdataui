@@ -2,16 +2,14 @@ import memoize from 'fast-memoize';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {
-    getRequestTimeRange, getCurrentVariable, getCurrentMethodID,
-    getMethods
-} from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import config from 'ui/config';
 
-const formatTime = function(timeInMillis, timeZone) {
-    return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
+import {getPrimaryMethods, getPrimaryParameter, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
+
+const formatTime = function(timeInMillis) {
+    return DateTime.fromMillis(timeInMillis, {zone: config.locationTimeZone}).toFormat('L/d/yyyy tt ZZZ');
 };
-
 /**
  * Factory function creates a function that:
  * Returns the current show state of a time series.
@@ -19,16 +17,29 @@ const formatTime = function(timeInMillis, timeZone) {
  * @param  {String}  tsKey Time series key
  * @return {Boolean}           Show state of the time series
  */
-export const isVisible = memoize(tsKey => (state) => {
-    return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
-});
+export const isVisible = memoize(dataKind => createSelector(
+    isCompareIVDataVisible,
+    isMedianDataVisible,
+    (compareVisible, medianVisible) => {
+        switch (dataKind) {
+            case 'primary':
+                return true;
+            case 'compare':
+                return compareVisible;
+            case 'median':
+                return medianVisible;
+            default:
+                return false;
+        }
+    })
+);
 
 /**
  * Returns a Redux selector function which returns the label to be used for the Y axis
  */
 export const getYLabel = createSelector(
-    getCurrentVariable,
-    variable => variable ? variable.variableDescription : ''
+    getPrimaryParameter,
+    parameter => parameter ? parameter.description : ''
 );
 
 /*
@@ -43,13 +54,16 @@ export const getSecondaryYLabel= function() {
  * Returns a Redux selector function which returns the title to be used for the hydrograph
  */
 export const getTitle = createSelector(
-    getCurrentVariable,
-    getCurrentMethodID,
-    getMethods,
-    (variable, methodId, methods) => {
-        let title = variable ? variable.variableName : '';
-        if (methodId && methods && methods[methodId].methodDescription) {
-                title = `${title}, ${methods[methodId].methodDescription}`;
+    getPrimaryParameter,
+    getSelectedIVMethodID,
+    getPrimaryMethods,
+    (parameter, methodID, methods) => {
+        let title = parameter ? parameter.name : '';
+        if (methodID && methods.length) {
+            const thisMethod = methods.find(method => method.methodID === methodID);
+            if (thisMethod.methodDescription) {
+                title = `${title}, ${thisMethod.methodDescription}`;
+            }
         }
         return title;
     }
@@ -60,30 +74,18 @@ export const getTitle = createSelector(
  * Returns a Redux selector function which returns the description of the hydrograph
  */
 export const getDescription = createSelector(
-    getCurrentVariable,
-    getRequestTimeRange('current', 'P7D'),
-    getIanaTimeZone,
-    (variable, requestTimeRange, timeZone) => {
-        const desc = variable ? variable.variableDescription : '';
-        if (requestTimeRange) {
-            return `${desc} from ${formatTime(requestTimeRange.start, timeZone)} to ${formatTime(requestTimeRange.end, timeZone)}`;
-        } else {
-            return desc;
+    getPrimaryParameter,
+    getTimeRange('current'),
+    (parameter, timeRange) => {
+        let result = parameter ? parameter.description : '';
+        if (timeRange) {
+            result = `${result} from ${formatTime(timeRange.start)} to ${formatTime(timeRange.end)}`;
         }
+        return result;
     }
 );
 
-/**
- * Returns a Redux selector function which returns the iana time zone or local if none is set
- */
-export const getTsTimeZone= createSelector(
-    getIanaTimeZone,
-    ianaTimeZone => {
-        return ianaTimeZone !== null ? ianaTimeZone : 'local';
-    }
-);
-
-export const getCurrentVariableUnitCode = createSelector(
-    getCurrentVariable,
-    variable => variable ? variable.unit.unitCode : null
+export const getPrimaryParameterUnitCode = createSelector(
+    getPrimaryParameter,
+    parameter => parameter ? parameter.unit : null
 );

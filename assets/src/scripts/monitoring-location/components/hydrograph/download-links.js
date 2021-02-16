@@ -62,7 +62,7 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         anyVisibleGroundwaterLevels,
         requestTimeRange
     }) => {
-        const hasIVData = config.uvPeriodOfRecord && parameterCode in config.uvPeriodOfRecord;
+        const hasIVData = config.ivPeriodOfRecord && parameterCode in config.ivPeriodOfRecord;
         const hasGWData = config.gwPeriodOfRecord && parameterCode in config.gwPeriodOfRecord;
 
         elem.select('#iv-data-download-list').remove();

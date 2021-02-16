@@ -3,11 +3,11 @@ import {createSelector} from 'reselect';
 
 import {getNearestTime} from 'ui/utils';
 
-import {getCurrentMethodID} from 'ml/selectors/time-series-selector';
+import {getSelectedIVMethodID, getGraphCursorOffset} from 'ml/selectors/hydrograph-state-selector';
 
-import {getVisibleGroundwaterLevelPoints} from './discrete-data';
-import {getCurrentVariablePointsByTsId} from './drawing-data';
-import {getMainXScale, getMainYScale, getTimeRange} from './scales';
+import {getGroundwaterLevelPoints} from './discrete-data';
+import {getIVDataPoints} from './iv-data';
+import {getMainXScale, getMainYScale, getGraphTimeRange} from './scales';
 import {isVisible} from './time-series-data';
 
 const isInTimeRange = function(dateTime, timeRange) {
@@ -16,7 +16,7 @@ const isInTimeRange = function(dateTime, timeRange) {
 
 export const getCursorOffset = createSelector(
     getMainXScale('current'),
-    state => state.ivTimeSeriesState.ivGraphCursorOffset,
+    getGraphCursorOffset,
     (xScale, cursorOffset) => {
         // If cursorOffset is false, don't show it
         if (cursorOffset === false) {
@@ -37,9 +37,9 @@ export const getCursorOffset = createSelector(
  * @param  {String} tsKey
  * @return {Date}
  */
-export const getCursorTime = memoize(tsKey => createSelector(
+export const getCursorTime = memoize(timeRangeKind => createSelector(
     getCursorOffset,
-    getMainXScale(tsKey),
+    getMainXScale(timeRangeKind),
     (cursorOffset, xScale) => {
         return cursorOffset ? new Date(xScale.domain()[0] + cursorOffset) : null;
     }
@@ -52,28 +52,29 @@ export const getCursorTime = memoize(tsKey => createSelector(
  * @param String} tsKey - Time series key
  * @return {Object}
  */
-export const getTsCursorPoints = memoize(tsKey => createSelector(
-    getCurrentVariablePointsByTsId(tsKey),
-    getCurrentMethodID,
-    getCursorTime(tsKey),
-    isVisible(tsKey),
-    getTimeRange('MAIN', tsKey),
-    (timeSeries, currentMethodId, cursorTime, isVisible, timeRange) => {
-        if (!cursorTime || !isVisible || !timeRange) {
+export const getIVDataCursorPoints = memoize((dataRange, timeRangeKind) => createSelector(
+    getIVDataPoints(dataRange),
+    getSelectedIVMethodID,
+    getCursorTime(timeRangeKind),
+    isVisible(dataRange),
+    getGraphTimeRange('MAIN', timeRangeKind),
+    (ivData, currentMethodID, cursorTime, isVisible, timeRange) => {
+        if (!ivData || !cursorTime || !isVisible || !timeRange) {
             return {};
         }
-        return Object.keys(timeSeries).reduce((data, tsId) => {
-            if (timeSeries[tsId].length && parseInt(tsId.split(':')[0]) === currentMethodId) {
-                const visiblePoints = timeSeries[tsId].filter(point => isInTimeRange(point.dateTime, timeRange));
+        return Object.keys(ivData).reduce((byMethodID, methodID) => {
+            const isCurrentMethod = currentMethodID ? currentMethodID === methodID : true;
+            if (ivData[methodID].length && isCurrentMethod) {
+                const visiblePoints = ivData[methodID].filter(point => isInTimeRange(point.dateTime, timeRange));
                 if (visiblePoints.length) {
                     const datum = getNearestTime(visiblePoints, cursorTime);
-                    data[tsId] = {
+                    byMethodID[methodID] = {
                         ...datum,
-                        tsKey: tsKey
+                        dataRange: dataRange
                     };
                 }
             }
-            return data;
+            return byMethodID;
         }, {});
     }));
 
@@ -87,10 +88,10 @@ export const getTsCursorPoints = memoize(tsKey => createSelector(
  * @return {Function} which returns an {Array of Object} tooltipPoints - Each
  *      object has x and y properties.
  */
-export const getTooltipPoints = memoize(tsKey => createSelector(
-    getMainXScale(tsKey),
+export const getIVDataTooltipPoints = memoize((dataRange, timeRange) => createSelector(
+    getMainXScale(timeRange),
     getMainYScale,
-    getTsCursorPoints(tsKey),
+    getIVDataCursorPoints(dataRange, timeRange),
     (xScale, yScale, cursorPoints) => {
         return Object.keys(cursorPoints).reduce((tooltipPoints, tsID) => {
             const cursorPoint = cursorPoints[tsID];
@@ -112,9 +113,9 @@ export const getTooltipPoints = memoize(tsKey => createSelector(
  *      on the graph
  */
 export const getGroundwaterLevelCursorPoint = createSelector(
-    getVisibleGroundwaterLevelPoints,
+    getGroundwaterLevelPoints,
     getCursorTime('current'),
-    getTimeRange('MAIN', 'current'),
+    getGraphTimeRange('MAIN', 'current'),
     (gwLevelPoints, cursorTime, timeRange) => {
         if (!cursorTime || !gwLevelPoints.length || !timeRange) {
             return null;

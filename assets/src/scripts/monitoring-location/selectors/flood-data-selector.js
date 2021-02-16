@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {getCurrentParmCd} from './time-series-selector';
+import {getSelectedParameterCode} from './hydrograph-state-selector';
 
 export const getFloodStages = state => state.floodData.stages || [];
 
@@ -31,9 +31,9 @@ export const hasWaterwatchData = createSelector(
  */
 export const isWaterwatchVisible = createSelector(
     hasWaterwatchData,
-    getCurrentParmCd,
+    getSelectedParameterCode,
     (hasFloodLevels, paramCd) =>
-        hasFloodLevels && paramCd == '00065'
+        hasFloodLevels && paramCd === '00065'
 );
 
 /*

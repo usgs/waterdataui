@@ -3,7 +3,7 @@ import config from 'ui/config';
 import {getAvailableParameterCodes} from './parameter-data';
 
 describe('monitoring-location/components/hydrograph/selectors/parameter-data', () => {
-    config.uvPeriodOfRecord = {
+    config.ivPeriodOfRecord = {
         '00060': {
             begin_date: '1980-01-01',
             end_date: '2020-01-01'

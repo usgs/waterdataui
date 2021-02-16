@@ -1,9 +1,9 @@
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
-import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import config from 'ui/config';
+
+import {getGroundwaterLevels} from 'ml/selectors/hydrograph-data-selector';
 
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
@@ -13,23 +13,18 @@ import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
  *      @prop {Array of String} qualifiers
  *      @prop {Number} dateTime
  */
-export const getVisibleGroundwaterLevelPoints = createSelector(
-    getRequestTimeRange('current'),
-    getIVCurrentVariableGroundwaterLevels,
-    (timeRange, gwLevels) => {
-        if (!timeRange || !gwLevels.values) {
+export const getGroundwaterLevelPoints = createSelector(
+    getGroundwaterLevels,
+    gwLevels => {
+        if (!gwLevels) {
             return [];
         }
-        return gwLevels.values
-            .filter((data) => {
-                return data.dateTime > timeRange.start && data.dateTime < timeRange.end;
-            })
-            .map((data) => {
-                return {
-                    ...data,
-                    value: parseFloat(data.value)
-                };
-            });
+        return gwLevels.values.map(data => {
+            return {
+                value: data.value,
+                dateTime: data.dateTime
+            };
+        });
     }
 );
 
@@ -41,16 +36,17 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
  *      @prop {String} result
  *      @prop {String} dateTime in site's time zone.
  */
-export const getVisibleGroundwaterLevelsTableData = createSelector(
-    getCurrentVariable,
-    getVisibleGroundwaterLevelPoints,
-    getIanaTimeZone,
-    (currentVariable, gwLevels, timeZone) => {
-        return gwLevels.map((point) => {
+export const getGroundwaterLevelsTableData = createSelector(
+    getGroundwaterLevels,
+    gwLevels => {
+        if (!gwLevels) {
+            return [];
+        }
+        return gwLevels.values.map((point) => {
             return {
-                parameterName: currentVariable.variableName,
+                parameterName: gwLevels.parameter.name,
                 result: point.value.toString(),
-                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO({
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toISO({
                     suppressMilliseconds: true,
                     suppressSeconds: true
                 })
@@ -65,6 +61,6 @@ export const getVisibleGroundwaterLevelsTableData = createSelector(
  * @return {Function} which returns {Boolean}
  */
 export const anyVisibleGroundwaterLevels = createSelector(
-    getVisibleGroundwaterLevelPoints,
+    getGroundwaterLevelPoints,
     (gwLevels) => gwLevels.length !== 0
 );

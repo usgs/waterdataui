@@ -102,7 +102,19 @@ const checkForMeasuredFahrenheitParameters = function(parameterCode, NWISVariabl
     return isParameterMatching;
 };
 
+export const isCalculatedTemperature = function(parameterCode) {
+    return parameterCode.slice(-1) === config.CALCULATED_TEMPERATURE_VARIABLE_CODE;
+};
 
+export const getConvertedTemperatureParameter = function(parameter) {
+    return {
+        ...parameter,
+        parameterCode: `${parameter.parameterCode}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`,
+        name: parameter.name.replace('C', 'F (calculated)'),
+        description: parameter.description.replace('Celsius', 'Fahrenheit (calculated)'),
+        unit: parameter.unit.replace('C', 'F')
+    };
+};
 /*
 * Converts a Celsius 'variable' from the NWIS system to one we can use to show Fahrenheit.
 * @param {Object} NWISVariable - Has various properties related to descriptions of data

@@ -2,12 +2,9 @@ import 'ui/polyfills';
 
 import wdfnviz from 'wdfn-viz';
 
-import config from 'ui/config';
-
 import {getParamString} from 'ml/url-params';
 
 import {configureStore} from 'ml/store';
-import {retrieveGroundwaterLevels} from 'ml/store/discrete-data';
 import {Actions as uiActions} from 'ml/store/ui-state';
 
 import {attachToNode as CameraComponent} from 'ml/components/cameras';
@@ -26,31 +23,6 @@ const COMPONENTS = {
     'network-list': NetworkListComponent
 };
 
-/*
- * Returns a promise that is resolved once groundwater levels have been fetched. It is
- * immediately resolved if no groundwater is fetchd.
- */
-const loadAllGroundWaterData = function(nodes, store) {
-    const nodesWithGroundWaterLevels =
-        Array.from(nodes).filter(node => node.dataset.component === 'hydrograph' || node.dataset.component === 'dv-hydrograph');
-    if (!nodesWithGroundWaterLevels.length) {
-        return Promise.resolve();
-    }
-
-    const siteno = nodesWithGroundWaterLevels[0].dataset.siteno;
-    if (config.gwPeriodOfRecord) {
-
-        const loadPromises = Object.keys(config.gwPeriodOfRecord).map(function(parameterCode) {
-            const periodOfRecord = config.gwPeriodOfRecord[parameterCode];
-            return store.dispatch(
-                retrieveGroundwaterLevels(siteno, parameterCode, periodOfRecord.begin_date, periodOfRecord.end_date));
-        });
-        return Promise.all(loadPromises);
-    } else {
-        return Promise.resolve();
-    }
-};
-
 const load = function() {
     let pageContainer = document.getElementById('monitoring-location-page-container');
     let store = configureStore({
@@ -60,14 +32,13 @@ const load = function() {
         }
     });
     let nodes = document.getElementsByClassName('wdfn-component');
-    const loadPromise = loadAllGroundWaterData(nodes, store);
 
     for (let node of nodes) {
         // If options is specified on the node, expect it to be a JSON string.
         // Otherwise, use the dataset attributes as the component options.
         const options = node.dataset.options ? JSON.parse(node.dataset.options) : node.dataset;
         const hashOptions = Object.fromEntries(new window.URLSearchParams(getParamString()));
-        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions), loadPromise);
+        COMPONENTS[node.dataset.component](store, node, Object.assign({}, options, hashOptions));
     }
 
     window.onresize = function() {

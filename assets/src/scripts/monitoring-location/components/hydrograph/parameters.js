@@ -1,116 +1,34 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
 import components from 'uswds/src/js/components';
 
-import {line} from 'd3-shape';
 import {select} from 'd3-selection';
 
 import config from 'ui/config';
+import {link} from 'ui/lib/d3-redux';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {Actions} from 'ml/store/instantaneous-value-time-series-data';
+import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydrograph-state-selector';
 
-import {MASK_DESC} from './selectors/drawing-data';
-import {SPARK_LINE_DIM, CIRCLE_RADIUS_SINGLE_PT} from './selectors/layout';
+import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
+import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
-/**
- * Draw a sparkline in a selected SVG element
- *
- * @param {Object} svgSelection
- * @param {Array} of line segment Objects - seriesLineSegments
- * @param {Object} scales - has x property for x scale and y property for y scale
- */
-export const addSparkLine = function(svgSelection, {seriesLineSegments, scales}) {
-    if (seriesLineSegments.length === 0) {
-        return;
-    }
-    let spark = line()
-        .x(function(d) {
-            return scales.x(d.dateTime);
-        })
-        .y(function(d) {
-            return scales.y(d.value);
-        });
-    const seriesDataMasks = seriesLineSegments.map(x => x.classes.dataMask);
-    if (seriesDataMasks.includes(null)) {
-        for (const lineSegment of seriesLineSegments) {
-            if (lineSegment.classes.dataMask === null) {
-                if (lineSegment.points.length === 1) {
-                    svgSelection.append('circle')
-                        .data(lineSegment.points)
-                        .classed('spark-point', true)
-                        .attr('r', CIRCLE_RADIUS_SINGLE_PT/2)
-                        .attr('cx', d => scales.x(d.dateTime))
-                        .attr('cy', d => scales.y(d.value));
-                } else {
-                    svgSelection.append('path')
-                        .attr('d', spark(lineSegment.points))
-                        .classed('spark-line', true);
-                }
-            }
-        }
-    } else {
-        const centerElement = function(svgElement) {
-            const elementWidth = svgElement.node().getBoundingClientRect().width;
-            const xLocation = (SPARK_LINE_DIM.width - elementWidth) / 2;
-            svgElement.attr('x', xLocation);
-        };
-        let svgText = svgSelection.append('text')
-            .attr('x', 0)
-            .attr('y', 0)
-            .classed('sparkline-text', true);
-        const maskDescs = seriesDataMasks.map(x => MASK_DESC[x.toLowerCase()]);
-        const maskDesc = maskDescs.length === 1 ? maskDescs[0] : 'Masked';
-        const maskDescWords = maskDesc.split(' ');
-
-        if (maskDescWords.length > 1) {
-            Array.from(maskDescWords.entries()).forEach(x => {
-                const yPosition = 15 + x[0]*12;
-                const maskText = x[1];
-                let tspan = svgText.append('tspan')
-                    .attr('x', 0)
-                    .attr('y', yPosition)
-                    .text(maskText);
-                centerElement(svgText);
-                centerElement(tspan);
-            });
-        } else {
-            svgText.text(maskDesc)
-                .attr('y', '20');
-            centerElement(svgText);
-        }
-    }
-};
+import {getAvailableParameterCodes} from './selectors/parameter-data';
 
 
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
- * @param  {Object} elem                        d3 selection
- * @param  {String} siteno
- * @param  {Object} availableParameterCodes        parameter metadata to display
- * @param  {Object} lineSegmentsByParmCd        line segments for each parameter code
- * @param  {Object} timeSeriesScalesByParmCd    scales for each parameter code
  */
-export const plotSeriesSelectTable = function(elem,
-    {
-        siteno,
-        availableParameterCodes,
-        lineSegmentsByParmCd,
-        timeSeriesScalesByParmCd
-    }, store) {
-    // Get the position of the scrolled window before removing it so it can be set to the same value.
-    const lastTable = elem.select('#select-time-series table');
-    const scrollTop = lastTable.size() ? lastTable.property('scrollTop') : null;
+export const drawSelectionTable = function(container, store, siteno) {
+    const parameterCodes = getAvailableParameterCodes(store.getState());
 
-    elem.select('#select-time-series').remove();
-
-    if (!availableParameterCodes.length) {
+    if (!Object.keys(parameterCodes).length) {
         return;
     }
 
-    const columnHeaders = ['   ', 'Parameter', 'Preview', '#', 'Period of Record', 'WaterAlert'];
-    const tableContainer = elem.append('div')
+    const columnHeaders = ['   ', 'Parameter', 'Period of Record', 'WaterAlert'];
+    const tableContainer = container.append('div')
         .attr('id', 'select-time-series');
 
     tableContainer.append('label')
@@ -133,18 +51,23 @@ export const plotSeriesSelectTable = function(elem,
     table.append('tbody')
         .attr('class', 'usa-fieldset')
         .selectAll('tr')
-        .data(availableParameterCodes)
+        .data(Object.values(parameterCodes))
         .enter().append('tr')
         .attr('id', d => `time-series-select-table-row-${d.parameterCode}`)
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', (d) => `time-series-parmcd-${d.parameterCode}`)
         .attr('role', 'option')
-        .classed('selected', d => d.selected)
-        .attr('aria-selected', d => d.selected)
+        .call(link(store, (trElem, selectedParameterCode) => {
+            trElem
+                .classed('selected', d => d.parameterCode === selectedParameterCode)
+                .attr('aria-selected', d => d.parameterCode === selectedParameterCode);
+        }, getSelectedParameterCode))
         .on('click', function(event, d) {
-            if (!d.selected) {
-                store.dispatch(Actions.updateIVCurrentVariableAndRetrieveTimeSeries(siteno, d.variableID));
+            const thisClass = select(this).attr('class');
+            if (!thisClass || !thisClass.includes('selected')) {
+                store.dispatch(setSelectedParameterCode(d.parameterCode));
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
             }
         })
         .call(tr => {
@@ -154,8 +77,10 @@ export const plotSeriesSelectTable = function(elem,
                 .attr('type', 'radio')
                 .attr('name', 'param-select-radio-input')
                 .attr('class', 'usa-radio__input')
-                .attr('value', d => `${d.variableID}`)
-                .property('checked', d => d.selected ? true : null);
+                .attr('value', d => `${d.parameterCode}`)
+                .call(link(store, (inputElem, selectedParameterCode) => {
+                    inputElem.property('checked', d => d.parameterCode === selectedParameterCode ? true : null);
+                }, getSelectedParameterCode));
             paramSelectCol.append('label')
                .attr('class', 'usa-radio__label');
             const paramCdCol = tr.append('th')
@@ -165,12 +90,6 @@ export const plotSeriesSelectTable = function(elem,
                 .each(function(d) {
                     appendInfoTooltip(select(this), `Parameter code: ${d.parameterCode}`);
                 });
-            tr.append('td')
-                .append('svg')
-                .attr('width', SPARK_LINE_DIM.width.toString())
-                .attr('height', SPARK_LINE_DIM.height.toString());
-            tr.append('td')
-                .text(param => param.timeSeriesCount);
             tr.append('td')
                 .style('white-space', 'nowrap')
                 .text(d => d.periodOfRecord ?
@@ -199,19 +118,5 @@ export const plotSeriesSelectTable = function(elem,
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
-    components.tooltip.on(elem.node());
-
-    table.property('scrollTop', scrollTop);
-
-    table.selectAll('tbody svg').each(function(d) {
-        let selection = select(this);
-        const paramCd = d.parameterCode;
-        const lineSegments = lineSegmentsByParmCd[paramCd] ? lineSegmentsByParmCd[paramCd] : [];
-        for (const seriesLineSegments of lineSegments) {
-            selection.call(addSparkLine, {
-                seriesLineSegments: seriesLineSegments,
-                scales: timeSeriesScalesByParmCd[paramCd]
-            });
-        }
-    });
+    components.tooltip.on(container.node());
 };

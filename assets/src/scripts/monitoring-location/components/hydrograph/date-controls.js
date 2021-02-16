@@ -6,70 +6,70 @@ import components from 'uswds/src/js/components';
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 
-import {drawLoadingIndicator} from 'd3render/loading-indicator';
+import {getInputsForRetrieval, getSelectedDateRange, getSelectedCustomTimeRange} from 'ml/selectors/hydrograph-state-selector';
 
-import {getAllGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
-import {
-    isLoadingTS,
-    hasAnyTimeSeries,
-    getUserInputsForSelectingTimespan,
-    getCustomTimeRange,
-    getCurrentParmCd
-} from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import {retrieveHydrographData} from 'ml/store/hydrograph-data';
+import {clearGraphBrushOffset, setSelectedCustomTimeRange, setSelectedDateRange} from 'ml/store/hydrograph-state';
 
-import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
-
-
-export const drawDateRangeControls = function(elem, store, siteno) {
-    const DATE_RANGE = [{
-        name: '7 days',
-        period: 'P7D'
-    }, {
-        name: '30 days',
-        period: 'P30D'
-    }, {
-        name: '1 year',
-        period: 'P1Y'
-    }, {
-        name: 'Custom',
-        period: 'custom',
+const DATE_RANGE = [{
+    name: '7 days',
+    period: 'P7D'
+}, {
+    name: '30 days',
+    period: 'P30D'
+}, {
+    name: '1 year',
+    period: 'P365D'
+}, {
+    name: 'Custom',
+    period: 'custom',
+    ariaExpanded: false
+}];
+const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
+    {
+        id: 'custom-input-days-before-today',
+        value: 'days',
+        text: 'Days before today',
         ariaExpanded: false
-    }];
-    const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
-        {
-            id: 'custom-input-days-before-today',
-            value: 'days',
-            text: 'Days before today',
-            checked: true,
-            ariaExpanded: false
-        },
-        {
-            id: 'custom-input-calendar-days',
-            value: 'calendar',
-            text: 'Calendar days',
-            checked: false,
-            ariaExpanded: false
-        }
-    ];
+    },
+    {
+        id: 'custom-input-calendar-days',
+        value: 'calendar',
+        text: 'Calendar days',
+        ariaExpanded: false
+    }
+];
+
+const isCustomPeriod = function(dateRange) {
+    return dateRange !== 'custom' && !DATE_RANGE.find(range => range.period === dateRange);
+}
+const showCustomContainer = function(dateRange) {
+    return dateRange === 'custom' ? true : !DATE_RANGE.find(range => range.period === dateRange);
+}
+
+export const drawDateRangeControls = function(elem, store, siteno, initialPeriod, initialStartTime, initialEndTime) {
+    let isCustomPeriod = false;
+    let isCustomCalendarDays = false;
+    if (initialPeriod) {
+        store.dispatch(setSelectedDateRange(initialPeriod));
+        isCustomPeriod = !DATE_RANGE.find(range => range.period === period);
+    } else if (initialStartTime && initialEndTime) {
+        isCustomCalendarDays = true;
+        store.dispatch(setSelectedCustomTimeRange(
+            DateTime.fromISO(initialStartTime, {zone: config.locationTimeZone}).toMillis(),
+            DateTime.fromISO(initialEndTime, {zone: config.locationTimeZone}).toMillis()));
+    }
+    const isCustomSelected = isCustomPeriod || isCustomCalendarDays;
 
     const containerRadioGroupMainSelectButtons = elem.insert('div', ':nth-child(2)')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
-        .attr('aria-label', 'Time interval select')
-        .call(link(store,function(container, showControls) {
-            container.attr('hidden', showControls ? null : true);
-        }, (state) => {
-            return hasAnyTimeSeries(state) || getAllGroundwaterLevels(state);
-        }));
+        .attr('aria-label', 'Time interval select');
 
     // Add a container that holds the custom selection radio buttons and the form fields
     const containerRadioGroupAndFormButtons = elem.insert('div', ':nth-child(3)')
         .attr('class', 'container-radio-group-and-form-buttons')
-        .call(link(store, (container, userInputsForSelectingTimespan) => {
-            container.attr('hidden', userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
-        }, getUserInputsForSelectingTimespan));
+        .attr('hidden', isCustomSelected ? null : true);
 
     const containerRadioGroupCustomSelectButtons = containerRadioGroupAndFormButtons.append('div')
         .attr('id', 'ts-custom-date-radio-group')
@@ -80,18 +80,14 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-    .call(link(store, (container, userInputsForSelectingTimespan) => {
-        container.attr('hidden', userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'days-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
-    }, getUserInputsForSelectingTimespan));
+        .attr('hidden', isCustomCalendarDays ? true : null);
 
     const containerCustomCalendarDays = containerRadioGroupAndFormButtons.append('div')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .call(link(store, (container, userInputsForSelectingTimespan) => {
-            container.attr('hidden', userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'calendar-input' && userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' ? null : true);
-        }, getUserInputsForSelectingTimespan));
+        .attr('hidden', isCustomCalendarDays ? null : true);
 
     const createRadioButtonsForCustomDaterangeSelection = function(containerRadioGroupCustomSelectButtons) {
         containerRadioGroupCustomSelectButtons.append('p').text('Enter timespan using');
@@ -108,23 +104,19 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('id', d => `${d.value}-input`)
             .attr('class', 'usa-radio__input')
             .attr('value', d => d.value)
-            .property('checked', d => d.checked)
+            .property('checked', d => d.value === 'days' && !isCustomCalendarDays || isCustomCalendarDays)
             .attr('ga-on', 'click')
-            .attr('aria-expanded', d => d.ariaExpanded)
+            .attr('aria-expanded', d => d.value === 'days' && !isCustomCalendarDays || isCustomCalendarDays)
             .attr('ga-event-category', 'TimeSeriesGraph')
             .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
-            .on('change', function() {
-                const selected = listItemForCustomSelectRadioButtons.select('input:checked');
-                const selectedVal = selected.attr('id');
-                store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', selectedVal));
+            .on('change', function(_, d) {
+                containerCustomDaysBeforeToday.attr('hidden', d.value === 'days' ? null : true);
+                containerCustomCalendarDays.attr('hidden', d.value === 'calendar' ? null : true);
             });
         listItemForCustomSelectRadioButtons.append('label')
             .attr('class', 'usa-radio__label')
             .attr('for', (d) => `${d.value}-input`)
             .text((d) => d.text);
-        listItemForCustomSelectRadioButtons.call(link(store, (elem, userInputsForSelectingTimespan) => {
-            elem.select(`#${userInputsForSelectingTimespan.customTimeRangeSelectionButton}`).property('checked', true);
-        }, getUserInputsForSelectingTimespan));
     };
 
     const createControlsForSelectingTimeSpanInDaysFromToday = function() {
@@ -145,7 +137,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
             .attr('id', 'with-hint-input-days-from-today')
             .attr('maxlength', `${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY}`)
             .attr('name', 'with-hint-input-days-from-today')
+            .attr('value', isCustomPeriod ? initialPeriod.slice(1, -2) : '')
             .attr('aria-describedby', 'with-hint-input-days-from-today-info with-hint-input-days-from-today-hint');
+
         numberOfDaysSelection.append('span')
             .text(`${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY} digits allowed`)
             .attr('id', 'with-hint-input-days-from-today-info')
@@ -162,12 +156,7 @@ export const drawDateRangeControls = function(elem, store, siteno) {
         customDaysBeforeTodayAlertBody.append('h3')
             .attr('class', 'usa-alert__heading')
             .text('Requirements');
-        numberOfDaysSelection.call(link(store, (container, userInputsForSelectingTimespan) => {
-            if (userInputsForSelectingTimespan.mainTimeRangeSelectionButton === 'custom' && userInputsForSelectingTimespan.customTimeRangeSelectionButton === 'days-input') {
-                container.select('#with-hint-input-days-from-today')
-                    .property('value', userInputsForSelectingTimespan.numberOfDaysFieldValue);
-            }
-        }, getUserInputsForSelectingTimespan));
+
         // Adds controls for the 'days before today' submit button
         const daysBeforeTodaySubmitContainer = containerCustomDaysBeforeToday.append('div')
             .attr('class', 'submit-button');
@@ -189,14 +178,12 @@ export const drawDateRangeControls = function(elem, store, siteno) {
                     customDaysBeforeTodayValidationContainer.attr('hidden', null);
                 } else {
                     customDaysBeforeTodayValidationContainer.attr('hidden', true);
-                    const parameterCode = getCurrentParmCd(store.getState());
 
-                    store.dispatch(ivTimeSeriesStateActions.setUserInputsForSelectingTimespan('numberOfDaysFieldValue', userSpecifiedNumberOfDays));
-                    store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(
-                        siteno,
-                        parameterCode,
-                        formattedPeriodQueryParameter
-                    )).then(() => store.dispatch(ivTimeSeriesStateActions.clearIVGraphBrushOffset()));
+                    store.dispatch(setUserInputsForSelectingTimespan('numberOfDaysFieldValue', userSpecifiedNumberOfDays));
+                    store.dispatch(setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
+                    store.dispatch(setSelectedDateRange(formattedPeriodQueryParameter));
+                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                        .then(() => store.dispatch(clearGraphBrushOffset()));
                 }
             });
     };
