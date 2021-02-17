@@ -33,6 +33,7 @@ class TestConstructUrl(TestCase):
     def test_with_no_params(self):
         expected = 'https://fakeurl.gov/blah1/blah2'
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
+        
 
 class TestCreateMessage(TestCase):
     def test_create_message(self):
