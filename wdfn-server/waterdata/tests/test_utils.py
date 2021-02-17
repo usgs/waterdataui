@@ -10,8 +10,7 @@ import requests as r
 
 from .. import app
 
-from ..utils import defined_when, execute_get_request, parse_rdb, set_cookie_for_banner_message,\
-    create_message
+from ..utils import defined_when, execute_get_request, parse_rdb, set_cookie_for_banner_message, create_message
 
 
 class TestCreateMessage(TestCase):

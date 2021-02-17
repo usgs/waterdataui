@@ -65,6 +65,8 @@ def create_message(target_email, form_data, user_system_data, timestamp):
         """
     msg.set_content(message_body)
 
+    return msg
+
 
 def set_cookie_for_banner_message(full_function_response_object):
     """
