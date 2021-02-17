@@ -70,7 +70,7 @@ def send_email(message):
 
 def load_lookup_from_backup_file(lookup_name, is_first_load):
     """
-    Loads the lookup information from a file
+    Loads the lookup information from a file and saves the data to app.config (if it can find the file)
     :param lookup_name: The name of the file we would like to open
     :param is_first_load: True if the application has just been restarted
     :return: None
@@ -133,7 +133,7 @@ def get_lookups():
 for lookup in app.config.get('LOOKUP_ENDPOINTS'):
     file_path = os.path.join(app.config.get('DATA_DIR'), f'lookups/{lookup.lower()}.json')
     if os.path.isfile(file_path):
-        load_lookup_from_backup_file(lookup, is_first_load = True)
+        load_lookup_from_backup_file(lookup, is_first_load=True)
     else:
         get_lookups()
 
