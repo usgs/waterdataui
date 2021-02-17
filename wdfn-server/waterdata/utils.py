@@ -64,23 +64,6 @@ def create_message(target_email, form_data, user_system_data, timestamp):
         User Browser/System Details: {user_system_data}
         """
     msg.set_content(message_body)
-    return msg
-
-
-def construct_url(netloc, path, parameters=()):
-    """
-    Build a url from its components.
-
-    :param str netloc: protocol and domain name
-    :param str path: url path
-    :param parameters: query parameters
-    :type parameters: dict or sequence of two-member tuples
-    :return: absolute url
-    :rtype: str
-
-    """
-    encoded_parameters = urlencode(parameters)
-    return urljoin(netloc, '{0}?{1}'.format(path, encoded_parameters))
 
 
 def set_cookie_for_banner_message(full_function_response_object):
