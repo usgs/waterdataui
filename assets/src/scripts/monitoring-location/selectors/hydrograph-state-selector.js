@@ -2,28 +2,31 @@
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
+import config from 'ui/config';
+
 export const isCompareIVDataVisible = state => state.hydrographState.showCompareIVData || false;
 export const isMedianDataVisible = state => state.hydrographState.showMedianData || false;
 
 export const getSelectedDateRange = state => state.hydrographState.selectedDateRange || null;
-export const getSelectedCustomTimeRange = state => state.hydrographState.selectedCustomTimeRange || null;
+export const getSelectedCustomDateRange = state => state.hydrographState.selectedCustomDateRange || null;
 export const getSelectedParameterCode = state => state.hydrographState.selectedParameterCode || null;
 export const getSelectedIVMethodID = state => state.hydrographState.selectedIVMethodID || null;
 export const getGraphCursorOffset = state => state.hydrographState.graphCursorOffset || null;
 export const getGraphBrushOffset = state => state.hydrographState.graphBrushOffset || null;
-export const getUserInputsForTimeRange = state => state.hydrographState.userInputsForTimeRange || null;
 
 export const getInputsForRetrieval = createSelector(
     getSelectedParameterCode,
     getSelectedDateRange,
-    getSelectedCustomTimeRange,
+    getSelectedCustomDateRange,
     isCompareIVDataVisible,
     isMedianDataVisible,
-    (parameterCode, selectedDateRange, selectedCustomTimeRange, loadCompare, loadMedian) => {
+    (parameterCode, selectedDateRange, selectedCustomDateRange, loadCompare, loadMedian) => {
         const isCustomTime = selectedDateRange === 'custom';
         const period = isCustomTime ? null : selectedDateRange;
-        const startTime = isCustomTime ? DateTime.toISO(DateTime.fromMillis(selectedCustomTimeRange.start)) : null;
-        const endTime = isCustomTime ? DateTime.toISO(DateTime.fromMillis(selectedCustomTimeRange.end)) : null;
+        const startTime = isCustomTime ?
+            DateTime.fromISO(selectedCustomDateRange.start, {zone: config.locationTimeZone}).toISO() : null;
+        const endTime = isCustomTime ?
+            DateTime.fromISO(selectedCustomDateRange.end, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
 
         return {
             parameterCode,

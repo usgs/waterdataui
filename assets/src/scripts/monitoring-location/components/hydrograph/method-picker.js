@@ -15,7 +15,7 @@ export const drawMethodPicker = function(elem, store, initialTimeSeriesId) {
     if (initialTimeSeriesId) {
         store.dispatch(setSelectedIVMethodID(initialTimeSeriesId));
     }
-    const pickerContainer = elem.insert('div', ':nth-child(2)')
+    const pickerContainer = elem.insert('div', '.graph-container')
         .attr('id', 'ts-method-select-container');
 
     pickerContainer.append('label')

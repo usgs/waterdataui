@@ -78,32 +78,15 @@ export const setSelectedDateRange = function(dateRange) {
 
 /*
  * Synchronous action sets the custom date range for the hydrograph
- * @param {Number} startTime - epoch in milliseconds
- * @param {Number} endTime - epoch in milliseconds
+ * @param {String} startDate - ISO 8601 Date (yyyy-mm-dd)
+ * @param {String} endDate - ISO 8601 Date (yyyy-mm-dd)
  * @return {Object} - Redux action
  */
-export const setSelectedCustomTimeRange = function(startTime, endTime) {
+export const setSelectedCustomDateRange = function(startDate, endDate) {
     return {
-        type: 'SET_SELECTED_CUSTOM_TIME_RANGE',
-        startTime,
-        endTime
-    };
-};
-
-/*
- * Synchronous action sets
- * @param {String} key which is one of the three following options
- * - customTimeRangeSelectionButton - one of two selections for custom time periods, either 'days-input' or 'calender-input'
- * - mainTimeRangeSelectionButton - one of the four main timeframe selections, 'P7D', 'P30D', 'P1Y', or 'custom'
- * - numberOfDaysFieldValue - number of days from today that is entered in the form field for 'days before today' on the custom date range menu.
- * @param {String} a value suitable for the above mentioned keys
- * @return {Object} - Redux action
- */
-export const setUserInputsForSelectingTimespan = function(key, value) {
-    return {
-        type: 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN',
-        key,
-        value
+        type: 'SET_SELECTED_CUSTOM_DATE_RANGE',
+        startDate,
+        endDate
     };
 };
 
@@ -178,22 +161,14 @@ export const hydrographStateReducer = function(hydrographState=INITIAL_STATE, ac
                 selectedDateRange: action.dateRange
             };
 
-        case 'SET_SELECTED_CUSTOM_TIME_RANGE':
+        case 'SET_SELECTED_CUSTOM_DATE_RANGE':
             return {
                 ...hydrographState,
-                selectedCustomTimeRange: {
-                    start: action.startTime,
-                    end: action.endTime
+                selectedCustomDateRange: {
+                    start: action.startDate,
+                    end: action.endDate
                 }
             };
-
-        case 'SET_USER_INPUTS_FOR_SELECTING_TIMESPAN': {
-            const timespanInputSettings = {};
-            timespanInputSettings[action.key] = action.value;
-            return Object.assign({}, hydrographState, {
-                userInputsForTimeRange: Object.assign({}, hydrographState.userInputsForTimeRange, timespanInputSettings)
-            });
-        }
 
         case 'SET_GRAPH_CURSOR_OFFSET':
             return {

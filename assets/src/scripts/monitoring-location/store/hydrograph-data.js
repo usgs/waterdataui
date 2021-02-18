@@ -276,7 +276,7 @@ export const retrieveHydrographData = function(siteno, {parameterCode, period, s
         dispatch(clearHydrographData());
 
         let timeRange;
-        if (period) {
+        if (period && period !== 'custom') {
             const now = DateTime.local();
             timeRange = {
                 start: now.minus(Duration.fromISO(period)).toMillis(),
@@ -285,7 +285,7 @@ export const retrieveHydrographData = function(siteno, {parameterCode, period, s
         } else {
             timeRange = {
                 start: DateTime.fromISO(startTime).toMillis(),
-                end: DateTime.fromISO(startTime).toMillis()
+                end: DateTime.fromISO(endTime).toMillis()
             };
         }
         dispatch(setHydrographTimeRange(timeRange, 'current'));

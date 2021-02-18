@@ -1,10 +1,8 @@
-import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
-import config from 'ui/config';
 import {listen} from 'ui/lib/d3-redux';
 import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
-import {isCompareIVDataVisible, getSelectedIVMethodID, getSelectedDateRange, getSelectedCustomTimeRange,
+import {isCompareIVDataVisible, getSelectedIVMethodID, getSelectedDateRange, getSelectedCustomDateRange,
     getSelectedParameterCode
 } from 'ml/selectors/hydrograph-state-selector';
 
@@ -24,8 +22,8 @@ export const renderTimeSeriesUrlParams = function(store) {
         methods: getPrimaryMethods,
         compare: isCompareIVDataVisible,
         currentDateRange: getSelectedDateRange,
-        customTimeRange: getSelectedCustomTimeRange
-    }), ({parameterCode, methodId, methods, compare, currentDateRange, customTimeRange}) => {
+        customDateRange: getSelectedCustomDateRange
+    }), ({parameterCode, methodId, methods, compare, currentDateRange, customDateRange}) => {
         let params = new window.URLSearchParams();
 
         /* filter the 'currentDateRange', which comes in one of two forms
@@ -55,12 +53,8 @@ export const renderTimeSeriesUrlParams = function(store) {
                 params.set('period', currentDateRange);
                 break;
             case 'custom':
-                params.set(
-                    'startDT',
-                    DateTime.fromMillis(customTimeRange.start, {zone: config.locationTimeZone}).toFormat('yyyy-LL-dd'));
-                params.set(
-                    'endDT',
-                    DateTime.fromMillis(customTimeRange.end, {zone: config.locationTimeZone}).toFormat('yyyy-LL-dd'));
+                params.set('startDT', customDateRange.start);
+                params.set('endDT', customDateRange.end);
         }
         if (compare) {
             params.set('compare', true);

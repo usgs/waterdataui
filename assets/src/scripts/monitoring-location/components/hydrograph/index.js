@@ -13,13 +13,13 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
-import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomTimeRange, setSelectedDateRange,
+import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDateRange, setSelectedDateRange,
     setSelectedIVMethodID
 } from 'ml/store/hydrograph-state';
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-//import {drawDateRangeControls} from './date-controls';
+import {drawDateRangeControls} from './date-controls';
 import {drawDataTables} from './data-table';
 //import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
@@ -66,11 +66,16 @@ export const attachToNode = function(store,
         .select('.loading-indicator-container')
         .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
 
+    const initialPeriod = startDT && endDT ? 'custom' : period || 'P7D';
+    const initialStartTime = startDT ?
+        DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
+    const initialEndTime = endDT ?
+        DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
     const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
-        period: startDT && endDT ? null : period || 'P7D',
-        startTime: DateTime.fromISO(startDT, {zone: config.locationTimeZone}),
-        endTime: DateTime.fromISO(endDT, {zone: config.locationTimeZone}),
+        period: initialPeriod === 'custom' ? null : initialPeriod,
+        startTime: initialStartTime,
+        endTime: initialEndTime,
         loadCompare: compare,
         loadMedian: false
     }));
@@ -87,13 +92,11 @@ export const attachToNode = function(store,
             store.dispatch(setSelectedDateRange(period));
         } else if (startDT && endDT) {
             store.dispatch(setSelectedDateRange('custom'));
-            store.dispatch(setSelectedCustomTimeRange(
-                DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toMillis(),
-                DateTime.fromISO(endDT, {zone: config.locationTimeZone}).toMillis()));
+            store.dispatch(setSelectedCustomDateRange(startDT, endDT));
         } else {
             store.dispatch(setSelectedDateRange('P7D'));
         }
-        store.dispatch(setSelectedIVMethodID(timeSeriesId));
+        store.dispatch(setSelectedIVMethodID(timeSeriesId));DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO()
     }
 
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
@@ -105,10 +108,6 @@ export const attachToNode = function(store,
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
 
-        // Initialize method picker before rendering the graph in order to set the selected method id
-        if (!showOnlyGraph) {
-            nodeElem.call(drawMethodPicker, store, timeSeriesId);
-        }
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
@@ -122,10 +121,13 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!showOnlyGraph) {
-            /*
-            nodeElem
-                .call(drawDateRangeControls, store, siteno);
-            */
+            nodeElem.call(drawDateRangeControls, store, siteno, initialPeriod, {
+                start: startDT,
+                end: endDT
+            });
+            nodeElem.call(drawMethodPicker, store, timeSeriesId);
+
+
             legendControlsContainer.call(drawGraphControls, store, siteno);
 /*
             nodeElem.select('#iv-graph-list-container')
