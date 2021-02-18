@@ -155,7 +155,7 @@ const getConvertedTimeSeries = function(timeSeries, tsRequestKey, parameterCode)
             return {
                 ...point,
                 qualifiers: [...point.qualifiers],
-                value: point.value ? convertCelsiusToFahrenheit(point.value).toFixed(2) : null
+                value: Number.isNaN(point.value) || point.value === '' || isNaN(point.value) ? null : convertCelsiusToFahrenheit(point.value).toFixed(2)
             };
         }),
         variable: `${timeSeries.variable}${config.CALCULATED_TEMPERATURE_VARIABLE_CODE}`
