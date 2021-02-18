@@ -101,7 +101,8 @@ def load_lookup_from_backup_file(lookup_name, is_first_load):
 # Pull lookup files from S3 bucket and load into application context
 def get_lookups():
     """
-    Makes requests to an AWS Simple Storage Solutions Bucket (S3) to get various 'lookup' files
+    Makes requests to an AWS Simple Storage Solutions Bucket (S3) to get various 'lookup' files, saves the returned
+    data to the app config and writes a backup file.
     :return: None
     """
     if not os.path.exists(os.path.join(app.config.get('DATA_DIR'), 'lookups')):
@@ -119,10 +120,10 @@ def get_lookups():
 
         except ValueError as e:
             app.logger.error('No Lookup JSON returned, failed with error {}'.format(e))
-            load_lookup_from_backup_file(lookup, is_first_load = False)
+            load_lookup_from_backup_file(lookup, is_first_load=False)
         except requests.exceptions.RequestException as e:
             app.logger.error('Request to get lookup file failed for {} with error: {}  '.format(lookup, e))
-            load_lookup_from_backup_file(lookup, is_first_load = False)
+            load_lookup_from_backup_file(lookup, is_first_load=False)
 
 
 # When the application is first started, there will be no backup files saved for the lookups and the lookups

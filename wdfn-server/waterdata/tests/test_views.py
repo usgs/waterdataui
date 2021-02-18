@@ -150,14 +150,14 @@ class TestMonitoringLocationView(TestCase):
         self.assertEqual(response.status_code, 503)
 
 
-class TestHydrologicalUnitView:
+class TestHydrologicalUnitView(TestCase):
     # pylint: disable=R0201
 
     @pytest.fixture(autouse=True)
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
+            url = re.compile(f"{app.config['SERVER_SERVICE_ROOT']}/nwis/site/.*")
             req.get(url, text=PARAMETER_RDB)
             yield
 
@@ -224,8 +224,12 @@ class TestNetworkView(TestCase):
         assert response.status_code == 404
 
 
-class TestCountryStateCountyView:
+class TestCountryStateCountyView(TestCase):
     # pylint: disable=R0201
+    def setUp(self):
+        self.app_client = app.test_client()
+        self.test_url = re.compile(f"{app.config['SERVER_SERVICE_ROOT']}/nwis/site/.*")
+
 
     @pytest.fixture(autouse=True)
     def mock_site_call(self):
