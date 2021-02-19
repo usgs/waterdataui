@@ -6,7 +6,7 @@ import config from 'ui/config';
 import {fetchGroundwaterLevels} from 'ui/web-services/groundwater-levels';
 import {fetchTimeSeries} from 'ui/web-services/instantaneous-values';
 
-import {getConvertedTemperatureParameter} from 'ml/iv-data-utils';
+import {getConvertedTemperatureParameter, hasMeasuredFahrenheitParameter} from 'ml/iv-data-utils';
 
 /*
  * Synchronous Redux action - updatethe hydrograph variables
@@ -27,6 +27,7 @@ const updateHydrographParameters = function(parameters) {
 export const retrieveHydrographParameters = function(siteno) {
     return function(dispatch) {
         const fetchIVParameters = fetchTimeSeries({sites: [siteno]}).then(series => {
+            const allParameterCodes = series.value.timeSeries.map(ts => ts.variable.variableCode[0].value);
             return series.value.timeSeries.reduce((varsByPCode, ts) => {
                 const parameterCode = ts.variable.variableCode[0].value;
                 varsByPCode[parameterCode] = {
@@ -43,7 +44,8 @@ export const retrieveHydrographParameters = function(siteno) {
                     })
                 };
                 // If it is a celsius parameterCode, add a variable for calculated Fahrenheit.
-                if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode)) {
+                if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode) &&
+                    !hasMeasuredFahrenheitParameter(parameterCode, allParameterCodes)) {
                     const fahrenheitParameter = getConvertedTemperatureParameter(varsByPCode[parameterCode]);
                     varsByPCode[fahrenheitParameter.parameterCode] = fahrenheitParameter;
                 }
