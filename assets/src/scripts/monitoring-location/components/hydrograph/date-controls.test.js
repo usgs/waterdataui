@@ -238,7 +238,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             });
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
             expect(retrieveSpy.mock.calls).toHaveLength(1);
-            expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678')
+            expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
                 parameterCode: '00065',
                 period: null,
