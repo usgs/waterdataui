@@ -290,3 +290,17 @@ export const getNearestTime = function(data, time) {
     // Return the nearest data point and its index.
     return datum;
 };
+
+/*
+*
+*/
+export const approvalCodeText = function(approvalCode) {
+    const approvalText = {
+        P: 'Provisional',
+        A: 'Approved',
+        E: 'Estimated',
+        default: 'unknown code'
+    };
+
+    return approvalText[approvalCode] || approvalText.default;
+};

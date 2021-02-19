@@ -5,6 +5,8 @@ import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-
 import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
+import {approvalCodeText} from 'ui/utils';
+
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
  * on the hydrograpnh
@@ -46,6 +48,7 @@ export const getVisibleGroundwaterLevelsTableData = createSelector(
     getVisibleGroundwaterLevelPoints,
     getIanaTimeZone,
     (currentVariable, gwLevels, timeZone) => {
+        console.log('gwLevels', gwLevels)
         return gwLevels.map((point) => {
             return {
                 parameterName: currentVariable.variableName,
@@ -53,7 +56,8 @@ export const getVisibleGroundwaterLevelsTableData = createSelector(
                 dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO({
                     suppressMilliseconds: true,
                     suppressSeconds: true
-                })
+                }),
+                approvals: approvalCodeText(point.qualifiers[0])
             };
         });
     }
