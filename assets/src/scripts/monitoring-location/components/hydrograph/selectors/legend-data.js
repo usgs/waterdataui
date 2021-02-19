@@ -87,31 +87,35 @@ const getMedianMarkers = function(medianMetaData) {
     });
 };
 
-const getFloodLevelMarkers = function(floodLevels) {
-    const FLOOD_LEVEL_DISPLAY = {
-        actionStage: {
-            label: 'Action Stage',
-            class: 'action-stage'
-        },
-        floodStage: {
-            label: 'Flood Stage',
-            class: 'flood-stage'
-        },
-        moderateFloodStage: {
-            label: 'Moderate Flood Stage',
-            class: 'moderate-flood-stage'
-        },
-        majorFloodStage: {
-            label: 'Major Flood Stage',
-            class: 'major-flood-stage'
+const floodLevelDisplay = function(floodLevels) {
+    let floodLevelsForDisplay = {};
+    Object.keys(floodLevels).forEach(key => {
+        if (floodLevels[key]) {
+            const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            // Format label by cutting the camel case word at upper case letters
+            const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+
+            Object.assign(floodLevelsForDisplay,
+                {[key]: {
+                    'label': [label.join(' ')],
+                    'class': [label.join('-').toLowerCase()]
+                }}
+            );
         }
-    };
-    return Object.keys(floodLevels).map((stage) => {
+    });
+
+    return floodLevelsForDisplay;
+};
+
+const getFloodLevelMarkers = function(floodLevels) {
+    const floodLevelsForDisplay = floodLevelDisplay(floodLevels);
+
+    return Object.keys(floodLevelsForDisplay).map((stage) => {
         return [
-            defineTextOnlyMarker(FLOOD_LEVEL_DISPLAY[stage].label),
+            defineTextOnlyMarker(floodLevelsForDisplay[stage].label),
             defineLineMarker(
                 null,
-                `waterwatch-data-series ${FLOOD_LEVEL_DISPLAY[stage].class}`,
+                `waterwatch-data-series ${floodLevelsForDisplay[stage].class}`,
                 `${floodLevels[stage]} ft`)
         ];
     });

@@ -122,7 +122,7 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
         floodData: {
             floodLevels: {
                 site_no: '07144100',
-                action_stage: '20',
+                action_stage: null,
                 flood_stage: '22',
                 moderate_flood_stage: '25',
                 major_flood_stage: '26'
@@ -172,7 +172,7 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             };
             const result = getLegendMarkerRows(newData);
 
-            expect(result).toHaveLength(5);
+            expect(result).toHaveLength(4);
             expect(result[0]).toHaveLength(3);
             expect(result[0][0].type).toEqual(textOnlyMarker);
             expect(result[0][1].type).toEqual(lineMarker);
