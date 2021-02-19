@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.42.0...master)
 ### Fixed
 - The converted Fahrenheit line no longer drops off graph with zero values.
+- Locations with only some flood level indicators no longer show  NaN
+
 ## [0.42.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...waterdataui-0.42.0)
 ### Added
 - Added display of discrete ground water level data on the IV hydrograph.
