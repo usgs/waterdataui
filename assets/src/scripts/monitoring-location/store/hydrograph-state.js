@@ -2,7 +2,7 @@ export const INITIAL_STATE = {
     showCompareIVData: false,
     showMedianData : false,
     selectedDateRange: 'P7D',
-    selectedCustomTimeRange: null,
+    selectedCustomDateRange: null,
     selectedParameterCode: null,
     selectedIVMethodID: null,
     graphCursorOffset: null,

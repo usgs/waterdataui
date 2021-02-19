@@ -46,6 +46,10 @@ const showCustomContainer = function(dateRange) {
     return isCustomPeriod(dateRange) || isCustomDateRange(dateRange);
 };
 
+/*
+ * Set custom form hidden attribute and clear custom container inputs if it is being hidden
+ * @param {Boolean} showCustom
+ */
 const setCustomFormVisibility = function(showCustom) {
     const customContainer = select('#container-radio-group-and-form-buttons');
     customContainer.attr('hidden', showCustom ? null : true);
@@ -55,6 +59,13 @@ const setCustomFormVisibility = function(showCustom) {
     }
 };
 
+/*
+ * Render the time range radio buttons
+ * @param {D3 container} elem
+ * @param {Redux store} store
+ * @param {String} siteno
+ * @param {String} initialDateRange - used to set the initial selected radio button
+ */
 const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
     const listContainer = elem.append('ul')
         .attr('class', 'usa-fieldset usa-list--unstyled');
@@ -81,6 +92,7 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
             setCustomFormVisibility(isCustom);
             li.select('#custom-input').attr('aria-expanded', isCustom);
             if (!isCustom) {
+                store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(selectedValue));
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
             }
@@ -93,6 +105,11 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
         .text((d) => d.name);
 };
 
+/*
+ * Render the radio buttons that select which kind of custom timespan is desired
+ * @param {D3 selection} container
+ * @param {String} initialDateRange - Used to set the initial radio button selection
+ */
 const drawCustomRadioButtons = function(container, initialDateRange) {
     const radioButtonContainer = container.append('div')
         .attr('id', 'ts-custom-date-radio-group')
@@ -132,6 +149,13 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
             .text((d) => d.text);
 };
 
+/*
+ * Render the custom "days before today" container
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ * @param {String} initialDateRange - Used to set the initial contents of the text field.
+ */
 const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateRange) {
     const formContainer = container.append('div')
         .attr('id', 'ts-custom-days-before-today-select-container')
@@ -197,13 +221,20 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 daysBeforeValidationContainer.attr('hidden', null);
             } else {
                 daysBeforeValidationContainer.attr('hidden', true);
+                store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                    .then(() => store.dispatch(clearGraphBrushOffset()));
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
             }
         });
 };
 
+/*
+ * Render a USWDS date picker markup
+ * @param {D3 selection} container
+ * @param {String} id - id for the date picker
+ * @param {String} label - label for the date picker
+ * @param {String} initialDate - ISO 8601 Date format
+ */
 const drawDatePicker = function(container, id, label, initialDate) {
     container.append('label')
         .attr('class', 'usa-label')
@@ -229,6 +260,15 @@ const drawDatePicker = function(container, id, label, initialDate) {
                 .attr('type', 'text');
 };
 
+/*
+ * Render the custom calendar days form
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ * @param {String} initialDateRange - if 'custom' then this container is made visible
+ * @param {Object} initialCustomDateRange - has start and end String properties containing an ISO 8601 date string
+ *      and is used to set the initial values of the calendar pickers
+ */
 const drawCustomCalendarDaysForm = function(container, store, siteno, initialDateRange, initialCustomDateRange) {
     const calendarDaysContainer = container.append('div')
         .attr('id', 'ts-customdaterange-select-container')
@@ -293,17 +333,25 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     calendarDaysValidationContainer.attr('hidden', null);
                 } else {
                     calendarDaysValidationContainer.attr('hidden', true);
+                    store.dispatch(clearGraphBrushOffset());
                     store.dispatch(setSelectedCustomDateRange(DateTime.fromMillis(startTime, {zone: config.locationTimeZone}).toISODate(),
                         DateTime.fromMillis(endTime, {zone: config.locationTimeZone}).toISODate()));
                     store.dispatch(setSelectedDateRange('custom'));
-                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                        .then(() => store.dispatch(clearGraphBrushOffset()));
+                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
                 }
             }
         });
 };
 
-
+/*
+ * Renders the date controls used to set the time range. This can be done by using short cut selections or by
+ * using the custom date range form.
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ * @param {String} siteno
+ * @param {String} initialDateRange
+ * @param {Object} initialCustomDateRange - has string start and end components containing an ISO 8601 date string
+ */
 export const drawDateRangeControls = function(elem, store, siteno, initialDateRange, initialCustomDateRange) {
     // Add a container that holds the custom selection radio buttons and the form fields
     elem.insert('div', '.graph-container')
