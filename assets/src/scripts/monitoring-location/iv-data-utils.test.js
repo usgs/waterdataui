@@ -109,7 +109,7 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
                         'dateTime': 1609516800000
                     },
                     {
-                        'value': 3,
+                        'value': 0.01,
                         'qualifiers': [
                             'P'
                         ],
@@ -221,7 +221,7 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
             'qualifiers': [
                 'P'
             ],
-            'value': '37.40'
+            'value': '32.02'
         },
         {
             'dateTime': 1609518600000,
