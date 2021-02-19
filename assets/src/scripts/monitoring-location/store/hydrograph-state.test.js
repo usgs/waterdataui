@@ -2,7 +2,7 @@ import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {INITIAL_STATE, setCompareDataVisibility, setMedianDataVisibility, setSelectedParameterCode,
-    setSelectedIVMethodID, setSelectedDateRange, setSelectedCustomTimeRange, setUserInputsForSelectingTimespan,
+    setSelectedIVMethodID, setSelectedDateRange, setSelectedCustomDateRange,
     setGraphCursorOffset, setGraphBrushOffset, clearGraphBrushOffset, hydrographStateReducer
 } from './hydrograph-state';
 
@@ -63,35 +63,17 @@ describe('monitoring-location/store/hydrograph-state', () => {
             });
         });
 
-        describe('setSelectedCustomTimeRange', () => {
-            it('sets the selected custom time range', () => {
-                store.dispatch(setSelectedCustomTimeRange(1586880394000, 1587398794000));
+        describe('setSelectedCustomDateRange', () => {
+            it('sets the selected custom date range', () => {
+                store.dispatch(setSelectedCustomDateRange('2020-01-03', '2020-01-16'));
                 const state = store.getState().hydrographState;
 
-                expect(state.selectedCustomTimeRange).toEqual({
-                    start: 1586880394000,
-                    end: 1587398794000
+                expect(state.selectedCustomDateRange).toEqual({
+                    start: '2020-01-03',
+                    end: '2020-01-16'
                 });
             });
         });
-
-        describe('setUserInputsForSelectingTimespan', () => {
-            it('sets the value for which of the main time range selection buttons are checked', () => {
-                store.dispatch(setUserInputsForSelectingTimespan('mainTimeRangeSelectionButton', 'custom'));
-                expect(store.getState().hydrographState.userInputsForTimeRange.mainTimeRangeSelectionButton).toBe('custom');
-            });
-
-            it('sets the value for which of the Custom subselection time range selection buttons are checked', () => {
-                store.dispatch(setUserInputsForSelectingTimespan('customTimeRangeSelectionButton', 'calender-input'));
-                expect(store.getState().hydrographState.userInputsForTimeRange.customTimeRangeSelectionButton).toBe('calender-input');
-            });
-
-            it('sets the value entered in the Custom subselection from field for days before today', () => {
-                store.dispatch(setUserInputsForSelectingTimespan('numberOfDaysFieldValue', '23'));
-                expect(store.getState().hydrographState.userInputsForTimeRange.numberOfDaysFieldValue).toBe('23');
-            });
-        });
-    });
 
         describe('setGraphCursorOffset', () => {
             it('sets the graph cursor offset', () => {
@@ -119,4 +101,5 @@ describe('monitoring-location/store/hydrograph-state', () => {
                 expect(store.getState().hydrographState.graphBrushOffset).toBeNull();
             });
         });
+    });
 });

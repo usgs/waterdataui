@@ -88,35 +88,35 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
                 'variable': '45807042',
                 'points': [
                     {
-                        'value': 2.9,
+                        'value': 0,
                         'qualifiers': [
                             'P'
                         ],
                         'dateTime': 1609515000000
                     },
                     {
-                        'value': 3,
+                        'value': 'something wrong with this value',
                         'qualifiers': [
                             'P'
                         ],
                         'dateTime': 1609515900000
                     },
                     {
-                        'value': 3,
+                        'value': '',
                         'qualifiers': [
                             'P'
                         ],
                         'dateTime': 1609516800000
                     },
                     {
-                        'value': 3,
+                        'value': 0.01,
                         'qualifiers': [
                             'P'
                         ],
                         'dateTime': 1609517700000
                     },
                     {
-                        'value': 3.1,
+                        'value': -3.1,
                         'qualifiers': [
                             'P'
                         ],
@@ -200,42 +200,42 @@ describe('convertCelsiusCollectionsToFahrenheitAndMerge', () => {
             'qualifiers': [
                 'P'
             ],
-            'value': '37.22'
+            'value': '32.00'
         },
         {
             'dateTime': 1609515900000,
             'qualifiers': [
                 'P'
             ],
-            'value': '37.40'
+            'value': null
         },
         {
             'dateTime': 1609516800000,
             'qualifiers': [
                 'P'
             ],
-            'value': '37.40'
+            'value': null
         },
         {
             'dateTime': 1609517700000,
             'qualifiers': [
                 'P'
             ],
-            'value': '37.40'
+            'value': '32.02'
         },
         {
             'dateTime': 1609518600000,
             'qualifiers': [
                 'P'
             ],
-            'value': '37.58'
+            'value': '26.42'
         },
         {
             'dateTime': 1609519500000,
             'qualifiers': [
                 'P', 'Eqp'
             ],
-            'value': null
+            'value': '32.00'
         },
         {
             'dateTime': 1609520400000,
