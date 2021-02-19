@@ -37,7 +37,6 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
                         estimated: false
                     }]
                 },
-
                 '00060:compare': {
                     tsKey: 'compare:P7D',
                     startTime: new Date('2018-03-06T15:45:00.000Z'),
@@ -101,7 +100,7 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
         floodData: {
             floodLevels: {
                 site_no: '07144100',
-                action_stage: '20',
+                action_stage: null,
                 flood_stage: '22',
                 moderate_flood_stage: '25',
                 major_flood_stage: '26'
