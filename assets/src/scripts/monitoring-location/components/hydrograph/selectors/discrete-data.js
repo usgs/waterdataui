@@ -48,7 +48,7 @@ export const getVisibleGroundwaterLevelsTableData = createSelector(
     getVisibleGroundwaterLevelPoints,
     getIanaTimeZone,
     (currentVariable, gwLevels, timeZone) => {
-        console.log('gwLevels', gwLevels)
+
         return gwLevels.map((point) => {
             return {
                 parameterName: currentVariable.variableName,

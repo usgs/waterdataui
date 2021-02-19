@@ -1,11 +1,19 @@
-import {select} from 'd3-selection';
 import {
-    unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
-    wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
+    approvalCodeText, unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
+    calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
     convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
+
+    describe('approvalCodeText', () => {
+        it('Will return a text explanation for a known code', () => {
+            expect(approvalCodeText('A')).toBe('Approved');
+        });
+        it('Will return a text message for any code not known', () => {
+            expect(approvalCodeText('some messed up code')).toBe('unknown code');
+        });
+    });
 
     describe('unicodeHtmlEntity', () => {
 
