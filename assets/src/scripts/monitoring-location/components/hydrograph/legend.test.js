@@ -17,8 +17,6 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
             timeSeries: {
                 '00060:current': {
                     tsKey: 'current:P7D',
-                    startTime: new Date('2018-03-06T15:45:00.000Z'),
-                    endTime: new Date('2018-03-13T13:45:00.000Z'),
                     variable: '45807197',
                     points: [{
                         value: 10,
@@ -36,55 +34,19 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
                         approved: false,
                         estimated: false
                     }]
-                },
-                '00060:compare': {
-                    tsKey: 'compare:P7D',
-                    startTime: new Date('2018-03-06T15:45:00.000Z'),
-                    endTime: new Date('2018-03-06T15:45:00.000Z'),
-                    variable: '45807202',
-                    points: [{
-                        value: 1,
-                        qualifiers: ['A'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 2,
-                        qualifiers: ['A'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: 3,
-                        qualifiers: ['E'],
-                        approved: false,
-                        estimated: false
-                    }]
                 }
             },
             variables: {
                 '45807197': {
                     variableCode: {value: '00060'},
-                    variableName: 'Streamflow',
-                    variableDescription: 'Discharge, cubic feet per second',
                     oid: '45807197'
-                },
-                '45807202': {
-                    variableCode: {value: '00065'},
-                    variableName: 'Gage height',
-                    oid: '45807202'
                 }
             }
         },
         statisticsData: {
             median: {
                 '00060': {
-                    '1': [{
-                        month_nu: '2',
-                        day_nu: '25',
-                        p50_va: '43',
-                        begin_yr: '1970',
-                        end_yr: '2017',
-                        loc_web_ds: 'This method'
-                    }]
+                    '1': [{ }]
                 }
             }
         },
@@ -93,17 +55,7 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
             currentIVDateRange: 'P7D',
             showIVTimeSeries: {
                 current: true,
-                compare: true,
                 median: true
-            }
-        },
-        floodData: {
-            floodLevels: {
-                site_no: '07144100',
-                action_stage: null,
-                flood_stage: '22',
-                moderate_flood_stage: '25',
-                major_flood_stage: '26'
             }
         }
     };
