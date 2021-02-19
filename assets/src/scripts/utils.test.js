@@ -11,7 +11,7 @@ describe('Utils module', () => {
             expect(approvalCodeText('A')).toBe('Approved');
         });
         it('Will return a text message for any code not known', () => {
-            expect(approvalCodeText('some messed up code')).toBe('unknown code');
+            expect(approvalCodeText('some messed up code')).toBe('unknown code: some messed up code');
         });
     });
 
