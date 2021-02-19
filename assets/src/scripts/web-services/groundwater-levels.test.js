@@ -26,7 +26,7 @@ describe('web-services/groundwater-levels', () => {
             site: '354133082042203',
             parameterCode: '72019',
             startDT: '2020-01-01',
-            endDt: '2020-11-17'
+            endDT: '2020-11-17'
         };
 
         it('expects properly formated query parameters in service request', () => {
@@ -35,9 +35,35 @@ describe('web-services/groundwater-levels', () => {
 
             expect(url).toContain(`sites=${fetchParameters.site}`);
             expect(url).toContain(`parameterCd=${fetchParameters.parameterCode}`);
+            expect(url).not.toContain('period');
             expect(url).toContain(`startDT=${fetchParameters.startDT}`);
             expect(url).toContain(`endDT=${fetchParameters.endDT}`);
             expect(url).toContain('format=json');
+        });
+
+        it('expects period to be in query parameters if no startDT and endDT', () => {
+            fetchGroundwaterLevels({
+                site: '354133082042203',
+                parameterCode: '72019',
+                period: 'P7D'
+            });
+            const url = fakeServer.requests[0].url;
+
+            expect(url).toContain('period=P7D');
+            expect(url).not.toContain('startDT');
+            expect(url).not.toContain('endDT');
+        });
+
+        it('expect no time parameters if all are null', () => {
+            fetchGroundwaterLevels({
+                site: '354133082042203',
+                parameterCode: '72019'
+            });
+            const url = fakeServer.requests[0].url;
+
+            expect(url).not.toContain('period');
+            expect(url).not.toContain('startDT');
+            expect(url).not.toContain('endDT');
         });
 
         it('Successful fetch returns a JSON object with ground water levels', () => {
