@@ -120,9 +120,9 @@ const getMedianMarkers = function(medianMetaData) {
 const floodLevelDisplay = function(floodLevels) {
     let floodLevelsForDisplay = {};
     Object.keys(floodLevels).forEach(key => {
-        if (!isNaN(floodLevels[key])) {
+        if (floodLevels[key]) {
             const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
-            // Format label by cutting at the camel case word at upper case letters
+            // Format label by cutting the camel case word at upper case letters
             const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
 
             Object.assign(floodLevelsForDisplay,
