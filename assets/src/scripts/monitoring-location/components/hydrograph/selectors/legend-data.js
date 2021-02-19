@@ -121,7 +121,9 @@ const floodLevelDisplay = function(floodLevels) {
     let floodLevelsForDisplay = {};
     Object.keys(floodLevels).forEach(key => {
         if (!isNaN(floodLevels[key])) {
-            const label = key.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+            const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            // Format label by cutting at the camel case word at upper case letters
+            const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
 
             Object.assign(floodLevelsForDisplay,
                 {[key]: {
