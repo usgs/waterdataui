@@ -96,7 +96,7 @@ export const attachToNode = function(store,
         } else {
             store.dispatch(setSelectedDateRange('P7D'));
         }
-        store.dispatch(setSelectedIVMethodID(timeSeriesId));DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO()
+        store.dispatch(setSelectedIVMethodID(timeSeriesId));
     }
 
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
