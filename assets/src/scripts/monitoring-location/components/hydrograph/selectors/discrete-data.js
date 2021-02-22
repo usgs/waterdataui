@@ -17,6 +17,7 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
     getRequestTimeRange('current'),
     getIVCurrentVariableGroundwaterLevels,
     (timeRange, gwLevels) => {
+        console.log('gwLevels ', gwLevels)
         if (!timeRange || !gwLevels.values) {
             return [];
         }

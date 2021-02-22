@@ -61,6 +61,12 @@ svg {
     }
   }
 
+  .gw-level-point {
+    stroke: $default-time-series;
+    stroke-width: 2px;
+    fill: none;
+  }
+
   .ts-compare {
     stroke-width: 1px;
     stroke: $default-time-series-compare;
@@ -183,11 +189,6 @@ svg {
       stroke: #9a9b77;
       stroke-width: 2px;
     }
-  }
-  .gw-level-point {
-    stroke: red;
-    stroke-width: 2px;
-    fill: none;
   }
 
   .waterwatch-data-series {
