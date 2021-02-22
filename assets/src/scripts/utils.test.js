@@ -1,20 +1,10 @@
 import {
-    approvalCodeText, unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
+    unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
     calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
     convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
-
-    describe('approvalCodeText', () => {
-        it('Will return a text explanation for a known code', () => {
-            expect(approvalCodeText('A')).toBe('Approved');
-        });
-        it('Will return a text message for any code not known', () => {
-            expect(approvalCodeText('some messed up code')).toBe('unknown code: some messed up code');
-        });
-    });
-
     describe('unicodeHtmlEntity', () => {
 
         it('Can determine the unicode of a decimal entity', () => {

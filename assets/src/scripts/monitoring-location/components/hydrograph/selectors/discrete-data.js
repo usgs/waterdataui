@@ -5,8 +5,6 @@ import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-
 import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
-import {approvalCodeText} from 'ui/utils';
-
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
  * on the hydrograpnh
@@ -34,6 +32,22 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
             });
     }
 );
+
+/*
+* When given an approval code, will return the text equivalent
+*  @param {String} approvalCode - Usually a letter such as 'A'
+*   @return {String} - an easy to understand text version of an approval code
+*/
+const approvalCodeText = function(approvalCode) {
+    const approvalText = {
+        P: 'Provisional',
+        A: 'Approved',
+        R: 'Revised',
+        default: `unknown code: ${approvalCode}`
+    };
+
+    return approvalText[approvalCode] || approvalText.default;
+};
 
 /*
  * Selector function which returns a function that returns an array of gw data appropriate

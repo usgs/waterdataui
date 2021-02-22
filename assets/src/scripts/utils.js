@@ -300,8 +300,8 @@ export const approvalCodeText = function(approvalCode) {
     const approvalText = {
         P: 'Provisional',
         A: 'Approved',
+        R: 'Revised',
         E: 'Estimated',
-        p: 'Partial record',
         default: `unknown code: ${approvalCode}`
     };
 
