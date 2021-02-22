@@ -35,13 +35,7 @@ export const retrieveHydrographParameters = function(siteno) {
                     name: ts.variable.variableName,
                     description: ts.variable.variableDescription,
                     unit: ts.variable.unit.unitCode,
-                    hasIVData: true,
-                    ivMethods: ts.values.map(value => {
-                        return {
-                            description: value.method.methodDescription,
-                            methodID: value.method.methodID
-                        };
-                    })
+                    hasIVData: true
                 };
                 // If it is a celsius parameterCode, add a variable for calculated Fahrenheit.
                 if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode) &&
