@@ -130,19 +130,19 @@ const TEST_DATA = {
                 },
                 values: [{
                     value: '0',
-                    qualifiers: [],
+                    qualifiers: ['A', '1'],
                     dateTime: 1520351100000
                 }, {
                     value: '0.01',
-                    qualifiers: [],
+                    qualifiers: ['P', '1'],
                     dateTime: 1520352000000
                 }, {
                     value: '0.02',
-                    qualifiers: [],
+                    qualifiers: ['R', '1'],
                     dateTime: 1520352900000
                 }, {
                     value: '0.03',
-                    qualifiers: [],
+                    qualifiers: ['A', '1'],
                     dateTime: 1520353800000
                 }]
             }
@@ -190,5 +190,6 @@ describe('monitoring-location/components/hydrograph/data-table', () => {
         expect(testDiv.selectAll('table').size()).toBe(1);
         expect(testDiv.select('#gw-table-container').select('caption').text()).toEqual('Field visit data');
         expect(testDiv.select('tbody').selectAll('tr').size()).toBe(2);
+        expect(testDiv.selectAll('.approvals').size()).toBe(2);
     });
 });

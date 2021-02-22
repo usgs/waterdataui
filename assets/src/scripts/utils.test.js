@@ -1,12 +1,10 @@
-import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
-    wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
+    calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
     convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
-
     describe('unicodeHtmlEntity', () => {
 
         it('Can determine the unicode of a decimal entity', () => {
