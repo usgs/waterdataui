@@ -7,11 +7,6 @@ export const INITIAL_STATE = {
     selectedIVMethodID: null,
     graphCursorOffset: null,
     graphBrushOffset: null,
-    userInputsForTimeRange: {
-        mainTimeRangeSelectionButton: 'P7D',
-        customTimeRangeSelectionButton: 'days-input',
-        numberOfDaysFieldValue: ''
-    }
 };
 
 /*
