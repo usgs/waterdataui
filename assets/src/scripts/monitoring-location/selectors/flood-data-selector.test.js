@@ -131,15 +131,8 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                         major_flood_stage: '26'
                     }
                 },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '45807197'
-                },
-                ivTimeSeriesData: {
-                    variables: {
-                        '45807197': {
-                            variableCode: {value: '00060'}
-                        }
-                    }
+                hydrographState: {
+                    selectedParameterCode: '00060'
                 }
             })).toBeFalsy();
         });
@@ -149,15 +142,8 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                 floodData: {
                     floodLevels: null
                 },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '45807197'
-                },
-                ivTimeSeriesData: {
-                    variables: {
-                        '45807197': {
-                            variableCode: {value: '00065'}
-                        }
-                    }
+                hydrographState: {
+                    selectedParameterCode: '00065'
                 }
             })).toBeFalsy();
         });
@@ -173,15 +159,8 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                          major_flood_stage: '26'
                      }
                  },
-                ivTimeSeriesState: {
-                    currentIVVariableID: '45807197'
-                },
-                ivTimeSeriesData: {
-                    variables: {
-                        '45807197': {
-                            variableCode: {value: '00065'}
-                        }
-                    }
+                hydrographState: {
+                    selectedParameterCode: '00065'
                 }
             })).toBeTruthy();
         });
