@@ -37,8 +37,8 @@ const getLegendDisplay = createSelector(
     anyVisibleGroundwaterLevels,
     (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
         return {
-            primaryIV: currentClasses,
-            compareIV: showCompare ? compareClasses : undefined,
+            primaryIV: currentClasses.length ? currentClasses : undefined,
+            compareIV: showCompare && compareClasses.length ? compareClasses : undefined,
             median: showMedian ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
             groundwaterLevels: showGroundWaterLevels
@@ -49,7 +49,6 @@ const getLegendDisplay = createSelector(
 const getIVMarkers = function(dataKind, uniqueIVKinds) {
     let maskMarkers = [];
     let lineMarkers = [];
-    const textMarker = defineTextOnlyMarker(TS_LABEL[dataKind]);
     uniqueIVKinds.forEach(ivKind => {
         if (ivKind.isMasked) {
             maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
@@ -57,7 +56,7 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
             return lineMarkers.push(defineLineMarker(null, `line-segment ts-${ivKind.class} ts-${dataKind}`, ivKind.label));
         }
     });
-    return [textMarker, ...lineMarkers, ...maskMarkers];
+    return [...lineMarkers, ...maskMarkers];
 };
 
 /*
@@ -131,7 +130,7 @@ const getFloodLevelMarkers = function(floodLevels) {
  */
 export const getLegendMarkerRows = createSelector(
     getLegendDisplay,
-    (displayItems) => {
+    displayItems => {
         const markerRows = [];
         let currentTsMarkerRow = displayItems.primaryIV ? getIVMarkers('primary', displayItems.primaryIV) : undefined;
         const compareTsMarkerRow = displayItems.compareIV ? getIVMarkers('compare', displayItems.compareIV) : undefined;
@@ -147,10 +146,10 @@ export const getLegendMarkerRows = createSelector(
             }
         }
         if (currentTsMarkerRow) {
-            markerRows.push(currentTsMarkerRow);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['primary'])].concat(currentTsMarkerRow));
         }
         if (compareTsMarkerRow) {
-            markerRows.push(compareTsMarkerRow);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['compare'])].concat(compareTsMarkerRow));
         }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
         return markerRows;

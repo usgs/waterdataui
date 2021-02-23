@@ -3,10 +3,10 @@ import {DateTime} from 'luxon';
 
 import * as utils from 'ui/utils';
 
-import {createXScale, createYScale, getTimeRange, getMainYScale, getBrushYScale} from './scales';
+import {createXScale, createYScale, getGraphTimeRange, getMainYScale, getBrushYScale} from './scales';
 
 
-describe('monitoring-location/components/hydrograph/scales', () => {
+describe('monitoring-location/components/hydrograph/selector/scales', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
 
     const timeZone = 'America/Los_Angeles';
@@ -54,7 +54,7 @@ describe('monitoring-location/components/hydrograph/scales', () => {
         expect(range[1]).toEqual(0);
     });
 
-    it('WDFN-66: yScale deals with range [0,1] correctly', () => {
+    it('yScale deals with range [0,1] correctly', () => {
         expect(yScale(1)).not.toBeNaN();
         expect(yScale(.5)).not.toBeNaN();
         expect(yScale(.999)).not.toBeNaN();
@@ -104,119 +104,42 @@ describe('monitoring-location/components/hydrograph/scales', () => {
         expect(singleLinear10 - singleLinear20).toBeCloseTo(singleLinear20 - singleLinear30);
     });
 
-    describe('getTimeRange', () => {
+    describe('getGraphTimeRange', () => {
         const TEST_STATE = {
-            ianaTimeZone: 'America/Chicago',
-            ivTimeSeriesData: {
-                queryInfo: {
-                    'current:P7D': {
-                        notes: {
-                            requestDT: 1490936400000,
-                            'filter:timeRange': {
-                                mode: 'PERIOD',
-                                periodDays: 7,
-                                modifiedSince: null
-                            }
-                        }
-                    }
+            hydrographData: {
+                currentTimeRange: {
+                    start: 1613511058824,
+                    end: 1614115858824
                 }
             },
-            ivTimeSeriesState: {
-                currentIVDateRange: 'P7D',
-                ivGraphBrushOffset: null
+            hydrographState: {
+                graphBrushOffset: {
+                    start: 10000000000,
+                    end: 500000
+                }
             }
         };
 
-        it('Return full time range if not brush offset is set for both BRUSH and MAIN', () => {
-            expect(getTimeRange('BRUSH', 'current')(TEST_STATE)).toEqual({
-                start: 1490331600000,
-                end: 1490936400000
-            });
-            expect(getTimeRange('MAIN', 'current')(TEST_STATE)).toEqual({
-                start: 1490331600000,
-                end: 1490936400000
-            });
+        it('If graph is BRUSH, the time range is always used the time range', () => {
+            expect(getGraphTimeRange('BRUSH', 'current')(TEST_STATE)).toEqual(TEST_STATE.hydrographData.currentTimeRange);
         });
 
-        it('Return the full time range for BRUSH but reduce MAIN by brush offset', () => {
-            const testState = {
+        it('If graph is MAIN and the brush offset is null the time range is the full range', () => {
+            expect(getGraphTimeRange('MAIN', 'current')({
                 ...TEST_STATE,
-                ivTimeSeriesState: {
-                    ...TEST_STATE.ivTimeSeriesState,
-                    ivGraphBrushOffset: {
-                        start: 100000,
-                        end: 900000
-                    }
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    graphBrushOffset: null
                 }
-            };
-            expect(getTimeRange('BRUSH', 'current')(testState)).toEqual({
-                start: 1490331600000,
-                end: 1490936400000
-            });
-            expect(getTimeRange('MAIN', 'current')(testState)).toEqual({
-                start: 1490331700000,
-                end: 1490935500000
-            });
-        });
-    });
-
-    describe('getMainYScale', () => {
-
-        it('Creates a scale when there is no initial data', () => {
-            const STATE = {
-                ivTimeSeriesData: {},
-                statisticsData: {},
-                ivTimeSeriesState: {
-                    showIVTimeSeries: {
-                        current: true,
-                        compare: false,
-                        median: false
-                    },
-                    currentVariableID: null
-                },
-                ui: {
-                    width: 200,
-                    windowWidth: 600
-                },
-                discreteData: {}
-            };
-            expect(getMainYScale(STATE).name).toBe('scale');
-            expect(getBrushYScale(STATE).name).toBe('scale');
+            })).toEqual(TEST_STATE.hydrographData.currentTimeRange);
         });
 
-        it('Creates a scale when there is initial data', () => {
-            const STATE = {
-                ivTimeSeriesData: {
-                    variables: {
-                       '00060ID': {
-                           variableCode: {
-                               value: '00060'
-                           }
-                       }
-                    },
-                    timeSeries: {
-                        '00060ID': {
-                            variable: '00060ID',
-                            points: []
-                        }
-                    }
-                },
-                statisticsData: {},
-                ivTimeSeriesState: {
-                    showIVTimeSeries: {
-                        current: true,
-                        compare: false
-                    },
-                    currentIVVariableID: '00060ID'
-                },
-                ui: {
-                    width: 200,
-                    windowWidth: 600
-                },
-                discreteData: {}
-            };
-            expect(getMainYScale(STATE).name).toBe('scale');
-            expect(getBrushYScale(STATE).name).toBe('scale');
+        it('If graph is main the time range will be the time range with the brush offset applied', () => {
+            const state = TEST_STATE.hydrographState;
+            expect(getGraphTimeRange('MAIN', 'current')(TEST_STATE)).toEqual({
+                start: TEST_STATE.hydrographData.currentTimeRange.start + state.graphBrushOffset.start,
+                end: TEST_STATE.hydrographData.currentTimeRange.end - state.graphBrushOffset.end
+            });
         });
     });
 });

@@ -17,10 +17,9 @@ import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
 import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
-
-import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 
 import {drawGroundwaterLevels} from './discrete-data';
 import {drawDataSegments} from './time-series-lines';
