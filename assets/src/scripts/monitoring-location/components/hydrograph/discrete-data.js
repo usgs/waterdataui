@@ -3,6 +3,10 @@ import {defineCircleMarker} from 'd3render/markers';
 const GW_LEVEL_RADIUS = 7;
 const GW_LEVEL_CLASS = 'gw-level-point';
 
+const adjustClassForApprovalCode = function(groundwaterPointData) {
+    return groundwaterPointData['qualifiers'][0];
+};
+
 /*
  * Render the ground water level symbols on the svg in their own group. If the group exists, remove
  * it before rendering again.
@@ -20,8 +24,9 @@ export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale, enab
     }
 
     levels.forEach((level) => {
+        console.log('in drawGroundwaterLevels, with level: ', level)
         group.append('circle')
-            .attr('class', GW_LEVEL_CLASS)
+            .attr('class', `${GW_LEVEL_CLASS} approval-code-${adjustClassForApprovalCode(level).toLowerCase()}`)
             .attr('r', GW_LEVEL_RADIUS)
             .attr('cx', xScale(level.dateTime))
             .attr('cy', yScale(level.value));

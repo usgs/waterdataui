@@ -60,9 +60,17 @@ svg {
       opacity: $not-current-method-opacity;
     }
   }
-
+  /* This case will catch any groundwater approval codes that are not approved (including provisional)
+   and color them to match provisional.
+   */
   .gw-level-point {
     stroke: $default-time-series;
+    stroke-width: 2px;
+    fill: none;
+  }
+
+  .gw-level-point.approval-code-a {
+    stroke: $approved-time-series;
     stroke-width: 2px;
     fill: none;
   }
