@@ -24,7 +24,6 @@ export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale, enab
     }
 
     levels.forEach((level) => {
-        console.log('in drawGroundwaterLevels, with level: ', level)
         group.append('circle')
             .attr('class', `${GW_LEVEL_CLASS} approval-code-${adjustClassForApprovalCode(level).toLowerCase()}`)
             .attr('r', GW_LEVEL_RADIUS)

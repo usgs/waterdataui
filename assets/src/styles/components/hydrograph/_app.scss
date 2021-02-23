@@ -185,7 +185,11 @@
       }
     }
     .gwlevel-tooltip-text {
-      color: red;
+      color: $default-time-series;
+      font-weight: normal;
+    }
+    .gwlevel-tooltip-text.approval-code-a {
+      color: $approved-time-series;
       font-weight: normal;
     }
   }

@@ -50,6 +50,7 @@ const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
 };
 
 const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
+    console.log('in getGWLevelTextInfo with point: ', point)
     if (!point) {
         return null;
     }
@@ -57,7 +58,7 @@ const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
     const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
     return {
         label: `${valueLabel} - ${timeLabel}`,
-        classes: ['gwlevel-tooltip-text']
+        classes: ['gwlevel-tooltip-text', `approval-code-${point['qualifiers'][0].toLowerCase()}`]
     };
 };
 
