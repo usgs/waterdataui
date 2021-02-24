@@ -50,7 +50,6 @@ const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
 };
 
 const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
-    console.log('in getGWLevelTextInfo with point: ', point)
     if (!point) {
         return null;
     }

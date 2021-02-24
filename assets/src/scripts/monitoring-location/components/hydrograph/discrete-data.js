@@ -1,4 +1,4 @@
-import {defineCircleMarker} from 'd3render/markers';
+import {defineCircleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 const GW_LEVEL_RADIUS = 7;
 const GW_LEVEL_CLASS = 'gw-level-point';
@@ -38,4 +38,18 @@ export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale, enab
  */
 export const getGroundwaterLevelsMarker = function() {
     return defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Field visit');
+};
+
+export const getGroundwaterLevelsMarkers = function(groundwaterApprovals) {
+    let groundwaterMarkers = [];
+    groundwaterMarkers.push(defineTextOnlyMarker('Field Visit: '));
+
+    if (groundwaterApprovals.provisional) {
+        groundwaterMarkers.push(defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Provisional'));
+    }
+    if (groundwaterApprovals.approved) {
+        groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS} approval-code-a`, GW_LEVEL_RADIUS, 'Approved'));
+    }
+    return groundwaterMarkers;
+    // return defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Field visit');
 };

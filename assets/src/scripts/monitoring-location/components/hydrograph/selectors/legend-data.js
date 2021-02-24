@@ -7,9 +7,12 @@ import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-
 import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
 import {getGroundwaterLevelsMarker} from '../discrete-data';
+import {getGroundwaterLevelsMarkers} from '../discrete-data';
 
 import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
-import {anyVisibleGroundwaterLevels} from './discrete-data';
+
+import {getVisibleGroundwaterLevelsTableData} from './discrete-data';
+
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -48,6 +51,28 @@ const getUniqueClasses = memoize(tsKey => createSelector(
  *      @prop median {Object} - median meta data - each property represents a time series for the current parameter code
  *      @prop floodLevels {Object} -
  */
+// const getLegendDisplay = createSelector(
+//     (state) => state.ivTimeSeriesState.showIVTimeSeries,
+//     getCurrentVariableMedianMetadata,
+//     getUniqueClasses('current'),
+//     getUniqueClasses('compare'),
+//     isWaterwatchVisible,
+//     getWaterwatchFloodLevels,
+//     anyVisibleGroundwaterLevels,
+//     (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
+//         return {
+//             current: showSeries.current ? currentClasses : undefined,
+//             compare: showSeries.compare ? compareClasses : undefined,
+//             median: showSeries.median ? medianSeries : undefined,
+//             floodLevels: showWaterWatch ? floodLevels : undefined,
+//             groundwaterLevels: showGroundWaterLevels
+//         };
+//     }
+// );
+
+
+
+
 const getLegendDisplay = createSelector(
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
     getCurrentVariableMedianMetadata,
@@ -55,17 +80,22 @@ const getLegendDisplay = createSelector(
     getUniqueClasses('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
-    anyVisibleGroundwaterLevels,
-    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
+    getVisibleGroundwaterLevelsTableData,
+    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, groundwaterPoints) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
-            groundwaterLevels: showGroundWaterLevels
+            groundwaterPoints: groundwaterPoints.length !== 0 ? groundwaterPoints : undefined
         };
     }
 );
+
+
+
+
+
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
     let tsMarkers;
@@ -153,6 +183,24 @@ const getFloodLevelMarkers = function(floodLevels) {
 
 
 
+const getGroundwaterApprovals = function(groundwaterPoints) {
+    const groundwaterApprovals = {
+        provisional: false,
+        approved: false
+    };
+
+    Object.keys(groundwaterPoints).forEach(key => {
+        if(Object.values(groundwaterPoints[key]).includes('Approved') ||
+            Object.values(groundwaterPoints[key]).includes('Revised')) {
+            groundwaterApprovals.approved = true;
+        } else {
+            groundwaterApprovals.provisional = true;
+        }
+    });
+
+    return groundwaterApprovals;
+};
+
 
 /*
  * Factory function  that returns an array of array of markers to be used for the
@@ -168,12 +216,14 @@ export const getLegendMarkerRows = createSelector(
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];
         const floodMarkerRows = displayItems.floodLevels ? getFloodLevelMarkers(displayItems.floodLevels) : [];
         /* Add groundwater marker to current row */
-        if (displayItems.groundwaterLevels) {
-            const gwLevelMarker = getGroundwaterLevelsMarker();
+        if (displayItems.groundwaterPoints) {
+            const groundwaterApprovals = getGroundwaterApprovals(displayItems.groundwaterPoints);
+            const gwLevelMarker = getGroundwaterLevelsMarkers(groundwaterApprovals);
             if (currentTsMarkerRow) {
                 currentTsMarkerRow.push(gwLevelMarker);
             } else {
-                currentTsMarkerRow = [gwLevelMarker];
+                currentTsMarkerRow = gwLevelMarker;
+                console.log('gwLevelMarker ', gwLevelMarker)
             }
         }
         if (currentTsMarkerRow) {
@@ -183,6 +233,7 @@ export const getLegendMarkerRows = createSelector(
             markerRows.push(compareTsMarkerRow);
         }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
+        console.log('markerRows ', markerRows)
         return markerRows;
     }
 );
