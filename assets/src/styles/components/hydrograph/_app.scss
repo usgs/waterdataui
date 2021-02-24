@@ -184,12 +184,16 @@
         color: $estimated-time-series-compare;
       }
     }
-    // Every groundwater approval code other than 'A' for accepted will be colored the 'provisional' color
+    // Every groundwater approval code other than 'A' or 'R' for accepted/revised will be colored the 'provisional' color
     .gwlevel-tooltip-text {
       color: $default-time-series;
       font-weight: normal;
     }
     .gwlevel-tooltip-text.approval-code-a {
+      color: $approved-time-series;
+      font-weight: normal;
+    }
+    .gwlevel-tooltip-text.approval-code-r {
       color: $approved-time-series;
       font-weight: normal;
     }

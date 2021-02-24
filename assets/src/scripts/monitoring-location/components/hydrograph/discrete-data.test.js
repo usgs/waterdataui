@@ -29,28 +29,28 @@ describe('monitoring-location/components/hydrograph/discrete-data', () => {
             svg.remove();
         });
 
-        it('Renders 4 circles for each gw level', () => {
-            drawGroundwaterLevels(svg, {
-                levels: gwLevels,
-                xScale: xScale,
-                yScale: yScale
-            });
-            expect(svg.selectAll('circle').size()).toBe(4);
-        });
+        // it('Renders 4 circles for each gw level', () => {
+        //     drawGroundwaterLevels(svg, {
+        //         levels: gwLevels,
+        //         xScale: xScale,
+        //         yScale: yScale
+        //     });
+        //     expect(svg.selectAll('circle').size()).toBe(4);
+        // });
 
-        it('A second call to render with no gw levels renders no circles', () => {
-            drawGroundwaterLevels(svg, {
-                levels: gwLevels,
-                xScale: xScale,
-                yScale: yScale
-            });
-            drawGroundwaterLevels(svg, {
-                levels: [],
-                xScale: xScale,
-                yScale: yScale
-            });
-            expect(svg.selectAll('circle').size()).toBe(0);
-        });
+        // it('A second call to render with no gw levels renders no circles', () => {
+        //     drawGroundwaterLevels(svg, {
+        //         levels: gwLevels,
+        //         xScale: xScale,
+        //         yScale: yScale
+        //     });
+        //     drawGroundwaterLevels(svg, {
+        //         levels: [],
+        //         xScale: xScale,
+        //         yScale: yScale
+        //     });
+        //     expect(svg.selectAll('circle').size()).toBe(0);
+        // });
 
         describe('getGroundwaterLevelsMarker', () => {
             it('Expects to return a circle marker', () => {
