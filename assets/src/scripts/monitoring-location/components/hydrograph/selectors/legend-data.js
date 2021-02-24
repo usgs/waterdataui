@@ -6,7 +6,6 @@ import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3r
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getGroundwaterLevelsMarker} from '../discrete-data';
 import {getGroundwaterLevelsMarkers} from '../discrete-data';
 
 import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
@@ -43,35 +42,6 @@ const getUniqueClasses = memoize(tsKey => createSelector(
     }
 ));
 
-/**
- * Returns a Redux selector function that returns an object of attributes to be used
- * to generate the legend markers. The properties will be undefined if not visible
- *      @prop current {Object} - see getUniqueClasses
- *      @prop compare {Object} - see getUniqueClasses
- *      @prop median {Object} - median meta data - each property represents a time series for the current parameter code
- *      @prop floodLevels {Object} -
- */
-// const getLegendDisplay = createSelector(
-//     (state) => state.ivTimeSeriesState.showIVTimeSeries,
-//     getCurrentVariableMedianMetadata,
-//     getUniqueClasses('current'),
-//     getUniqueClasses('compare'),
-//     isWaterwatchVisible,
-//     getWaterwatchFloodLevels,
-//     anyVisibleGroundwaterLevels,
-//     (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
-//         return {
-//             current: showSeries.current ? currentClasses : undefined,
-//             compare: showSeries.compare ? compareClasses : undefined,
-//             median: showSeries.median ? medianSeries : undefined,
-//             floodLevels: showWaterWatch ? floodLevels : undefined,
-//             groundwaterLevels: showGroundWaterLevels
-//         };
-//     }
-// );
-
-
-
 
 const getLegendDisplay = createSelector(
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
@@ -91,10 +61,6 @@ const getLegendDisplay = createSelector(
         };
     }
 );
-
-
-
-
 
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
