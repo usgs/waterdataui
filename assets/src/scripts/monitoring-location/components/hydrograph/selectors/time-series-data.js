@@ -11,11 +11,9 @@ const formatTime = function(timeInMillis) {
     return DateTime.fromMillis(timeInMillis, {zone: config.locationTimeZone}).toFormat('L/d/yyyy tt ZZZ');
 };
 /**
- * Factory function creates a function that:
- * Returns the current show state of a time series.
- * @param  {Object}  state     Redux store
- * @param  {String}  tsKey Time series key
- * @return {Boolean}           Show state of the time series
+ * Returns a Redux selector function which returns whether the dataKind time series is visible
+ * @param  {String} dataKind - 'primary', 'compare', 'median'
+ * @return {Function}
  */
 export const isVisible = memoize(dataKind => createSelector(
     isCompareIVDataVisible,
@@ -35,23 +33,8 @@ export const isVisible = memoize(dataKind => createSelector(
 );
 
 /**
- * Returns a Redux selector function which returns the label to be used for the Y axis
- */
-export const getYLabel = createSelector(
-    getPrimaryParameter,
-    parameter => parameter ? parameter.description : ''
-);
-
-/*
- * Returns a Redux selector function which returns the label to be used for the secondary y axis
- */
-export const getSecondaryYLabel= function() {
-    return ''; // placeholder for ticket WDFN-370
-};
-
-
-/**
  * Returns a Redux selector function which returns the title to be used for the hydrograph
+ * @return {Function}
  */
 export const getTitle = createSelector(
     getPrimaryParameter,
@@ -59,7 +42,7 @@ export const getTitle = createSelector(
     getPrimaryMethods,
     (parameter, methodID, methods) => {
         let title = parameter ? parameter.name : '';
-        if (methodID && methods.length) {
+        if (methodID && methods.length > 1) {
             const thisMethod = methods.find(method => method.methodID === methodID);
             if (thisMethod && thisMethod.methodDescription) {
                 title = `${title}, ${thisMethod.methodDescription}`;
@@ -72,6 +55,7 @@ export const getTitle = createSelector(
 
 /*
  * Returns a Redux selector function which returns the description of the hydrograph
+ * @return {Function}
  */
 export const getDescription = createSelector(
     getPrimaryParameter,
@@ -85,6 +69,10 @@ export const getDescription = createSelector(
     }
 );
 
+/*
+ * Returns a Redux selector function which returns the primary parameter's unit code.
+ * @return {Function}
+ */
 export const getPrimaryParameterUnitCode = createSelector(
     getPrimaryParameter,
     parameter => parameter ? parameter.unit : null
