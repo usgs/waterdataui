@@ -217,6 +217,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }
+    console.log('Rendering graph svg');
     const graphSvg = graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)

@@ -71,6 +71,7 @@ export const attachToNode = function(store,
         DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
     const initialEndTime = endDT ?
         DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
+debugger;
     const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
         period: initialPeriod === 'custom' ? null : initialPeriod,
@@ -102,8 +103,8 @@ export const attachToNode = function(store,
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
-
     fetchDataPromise.then(() => {
+        console.log('Fetched data');
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});

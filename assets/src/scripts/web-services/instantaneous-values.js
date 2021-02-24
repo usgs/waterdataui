@@ -57,4 +57,3 @@ export const fetchTimeSeries = function({sites, parameterCode= null, period=null
             throw reason;
         });
 };
-

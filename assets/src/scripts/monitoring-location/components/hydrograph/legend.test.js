@@ -4,61 +4,18 @@ import sinon from 'sinon';
 import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
 import {drawTimeSeriesLegend} from './legend';
-
+import
 
 describe('monitoring-location/components/hydrograph/legend module', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
 
-    const TEST_DATA = {
-        ivTimeSeriesData: {
-            timeSeries: {
-                '00060:current': {
-                    tsKey: 'current:P7D',
-                    variable: '45807197',
-                    points: [{
-                        value: 10,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: null,
-                        qualifiers: ['P', 'ICE'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: null,
-                        qualifiers: ['P', 'FLD'],
-                        approved: false,
-                        estimated: false
-                    }]
-                }
-            },
-            variables: {
-                '45807197': {
-                    variableCode: {value: '00060'},
-                    oid: '45807197'
-                }
-            }
-        },
-        statisticsData: {
-            median: {
-                '00060': {
-                    '1': [{ }]
-                }
-            }
-        },
-        ivTimeSeriesState: {
-            currentIVVariableID: '45807197',
-            currentIVDateRange: 'P7D',
-            showIVTimeSeries: {
-                current: true,
-                median: true
-            }
+    const TEST_STATE = {
+        hydrographData: {
+            primaryIVData: TE
         }
-    };
+    }
 
     describe('legends should render', () => {
 

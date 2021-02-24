@@ -60,7 +60,7 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
 };
 
 /*
- * @param {Object} medianMetData
+ * @param {Object} medianMetaData
  * @return {Array of Array} - each subarray rpresents the markes for a time series median data
  */
 const getMedianMarkers = function(medianMetaData) {
