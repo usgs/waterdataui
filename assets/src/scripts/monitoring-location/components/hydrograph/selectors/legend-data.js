@@ -215,25 +215,19 @@ export const getLegendMarkerRows = createSelector(
         const compareTsMarkerRow = displayItems.compare ? getTsMarkers('compare', displayItems.compare) : undefined;
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];
         const floodMarkerRows = displayItems.floodLevels ? getFloodLevelMarkers(displayItems.floodLevels) : [];
-        /* Add groundwater marker to current row */
-        if (displayItems.groundwaterPoints) {
-            const groundwaterApprovals = getGroundwaterApprovals(displayItems.groundwaterPoints);
-            const gwLevelMarker = getGroundwaterLevelsMarkers(groundwaterApprovals);
-            if (currentTsMarkerRow) {
-                currentTsMarkerRow.push(gwLevelMarker);
-            } else {
-                currentTsMarkerRow = gwLevelMarker;
-                console.log('gwLevelMarker ', gwLevelMarker)
-            }
-        }
+
         if (currentTsMarkerRow) {
             markerRows.push(currentTsMarkerRow);
         }
         if (compareTsMarkerRow) {
             markerRows.push(compareTsMarkerRow);
         }
+        if (displayItems.groundwaterPoints) {
+            const gwLevelMarker = getGroundwaterLevelsMarkers(getGroundwaterApprovals(displayItems.groundwaterPoints));
+            markerRows.push(gwLevelMarker);
+        }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
-        console.log('markerRows ', markerRows)
+
         return markerRows;
     }
 );

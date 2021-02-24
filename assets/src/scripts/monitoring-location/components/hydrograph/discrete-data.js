@@ -51,5 +51,4 @@ export const getGroundwaterLevelsMarkers = function(groundwaterApprovals) {
         groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS} approval-code-a`, GW_LEVEL_RADIUS, 'Approved'));
     }
     return groundwaterMarkers;
-    // return defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Field visit');
 };
