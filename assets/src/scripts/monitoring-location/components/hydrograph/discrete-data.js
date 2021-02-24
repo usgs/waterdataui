@@ -15,7 +15,6 @@ const GROUNDWATER_LINE_CLASSES = {
 * @param {Object} groundwaterDataPoints -  details about a single groundwater data point
 * @return {Object} Details that expand on the meaning of the approval code.
 */
-
 export const getDetailsForApprovalCode = function(groundwaterPointData) {
     const groundwaterLineClass = {
         'A': GROUNDWATER_LINE_CLASSES.APPROVED,
