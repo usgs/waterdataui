@@ -174,13 +174,15 @@ const getFloodLevelMarkers = function(floodLevels) {
 const getGroundwaterApprovals = function(groundwaterPoints) {
     const groundwaterApprovals = {
         provisional: false,
-        approved: false
+        approved: false,
+        revised: false
     };
 
     Object.keys(groundwaterPoints).forEach(key => {
-        if(Object.values(groundwaterPoints[key]).includes('Approved') ||
-            Object.values(groundwaterPoints[key]).includes('Revised')) {
+        if (Object.values(groundwaterPoints[key]).includes('Approved')) {
             groundwaterApprovals.approved = true;
+        } else if (Object.values(groundwaterPoints[key]).includes('Revised')) {
+            groundwaterApprovals.revised = true;
         } else {
             groundwaterApprovals.provisional = true;
         }

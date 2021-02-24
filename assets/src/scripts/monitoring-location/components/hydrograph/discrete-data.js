@@ -3,8 +3,25 @@ import {defineCircleMarker, defineTextOnlyMarker} from 'd3render/markers';
 const GW_LEVEL_RADIUS = 7;
 const GW_LEVEL_CLASS = 'gw-level-point';
 
-const adjustClassForApprovalCode = function(groundwaterPointData) {
-    return groundwaterPointData['qualifiers'][0];
+const GROUNDWATER_LINE_CLASSES = {
+    'APPROVED': {label: 'Approved', class: 'approved'},
+    'PROVISIONAL': {label: 'Provisional', class: 'provisional'},
+    'REVISED': {label: 'Revised', class: 'revised'},
+    'UNKNOWN_CODE': {label: '', class: 'unknown-code'}
+};
+
+export const getDetailsForApprovalCode = function(groundwaterPointData) {
+    const approvalCode = 'qualifiers' in groundwaterPointData ?
+        groundwaterPointData['qualifiers'][0] : 'default';
+
+    const groundwaterLineClass = {
+        'A': GROUNDWATER_LINE_CLASSES.APPROVED,
+        'R': GROUNDWATER_LINE_CLASSES.REVISED,
+        'P': GROUNDWATER_LINE_CLASSES.PROVISIONAL,
+        'default': GROUNDWATER_LINE_CLASSES.UNKNOWN_CODE
+    };
+
+    return groundwaterLineClass[approvalCode] || groundwaterLineClass['default'];
 };
 
 /*
@@ -25,7 +42,7 @@ export const drawGroundwaterLevels = function(svg, {levels, xScale, yScale, enab
 
     levels.forEach((level) => {
         group.append('circle')
-            .attr('class', `${GW_LEVEL_CLASS} approval-code-${adjustClassForApprovalCode(level).toLowerCase()}`)
+            .attr('class', `${GW_LEVEL_CLASS} ${getDetailsForApprovalCode(level).class}`)
             .attr('r', GW_LEVEL_RADIUS)
             .attr('cx', xScale(level.dateTime))
             .attr('cy', yScale(level.value));
@@ -45,10 +62,13 @@ export const getGroundwaterLevelsMarkers = function(groundwaterApprovals) {
     groundwaterMarkers.push(defineTextOnlyMarker('Field Visit: '));
 
     if (groundwaterApprovals.provisional) {
-        groundwaterMarkers.push(defineCircleMarker(null, GW_LEVEL_CLASS, GW_LEVEL_RADIUS, 'Provisional'));
+        groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS} ${GROUNDWATER_LINE_CLASSES.PROVISIONAL.class}`, GW_LEVEL_RADIUS, GROUNDWATER_LINE_CLASSES.PROVISIONAL.label));
     }
     if (groundwaterApprovals.approved) {
-        groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS} approval-code-a`, GW_LEVEL_RADIUS, 'Approved'));
+        groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS}  ${GROUNDWATER_LINE_CLASSES.APPROVED.class}`, GW_LEVEL_RADIUS, GROUNDWATER_LINE_CLASSES.APPROVED.label));
+    }
+    if (groundwaterApprovals.revised) {
+        groundwaterMarkers.push(defineCircleMarker(null, `${GW_LEVEL_CLASS}  ${GROUNDWATER_LINE_CLASSES.REVISED.class}`, GW_LEVEL_RADIUS, GROUNDWATER_LINE_CLASSES.REVISED.label));
     }
     return groundwaterMarkers;
 };
