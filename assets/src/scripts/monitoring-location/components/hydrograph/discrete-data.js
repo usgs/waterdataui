@@ -10,10 +10,13 @@ const GROUNDWATER_LINE_CLASSES = {
     'UNKNOWN_CODE': {label: '', class: 'unknown-code'}
 };
 
-export const getDetailsForApprovalCode = function(groundwaterPointData) {
-    const approvalCode = 'qualifiers' in groundwaterPointData ?
-        groundwaterPointData['qualifiers'][0] : 'default';
+/*
+* Helper function that takes a raw approval code and matches it to a more detail object
+* @param {Object} groundwaterDataPoints -  details about a single groundwater data point
+* @return {Object} Details that expand on the meaning of the approval code.
+*/
 
+export const getDetailsForApprovalCode = function(groundwaterPointData) {
     const groundwaterLineClass = {
         'A': GROUNDWATER_LINE_CLASSES.APPROVED,
         'R': GROUNDWATER_LINE_CLASSES.REVISED,
@@ -21,7 +24,7 @@ export const getDetailsForApprovalCode = function(groundwaterPointData) {
         'default': GROUNDWATER_LINE_CLASSES.UNKNOWN_CODE
     };
 
-    return groundwaterLineClass[approvalCode] || groundwaterLineClass['default'];
+    return groundwaterLineClass[groundwaterPointData['qualifiers'][0] ] || groundwaterLineClass['default'];
 };
 
 /*
