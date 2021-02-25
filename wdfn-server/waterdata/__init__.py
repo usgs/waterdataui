@@ -138,6 +138,9 @@ for lookup in app.config.get('LOOKUP_ENDPOINTS'):
     else:
         get_lookups()
 
+# Start a new thread that will run in the background. That thread will trigger the application to pull lookup files from
+# S3 on a scheduled basis. So, if the lookup files have changed, the application will get the changes within
+# the selected timeframe--probably every 24 hours.
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(lambda: get_lookups(), 'interval', hours=24)
