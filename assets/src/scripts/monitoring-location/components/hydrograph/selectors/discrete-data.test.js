@@ -47,10 +47,10 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
                             oid: '45807042'
                         },
                         values: [
-                            {value: '12.0', dateTime: 1489672800000},
-                            {value: '13.0', dateTime: 1490536800000},
-                            {value: '14.5', dateTime: 1490882400000},
-                            {value: '14.0', dateTime: 1491055200000}
+                            {value: '12.0', qualifiers: 'P', dateTime: 1489672800000},
+                            {value: '13.0', qualifiers: 'P', dateTime: 1490536800000},
+                            {value: '14.5', qualifiers: 'A', dateTime: 1490882400000},
+                            {value: '14.0', qualifiers: 'E', dateTime: 1491055200000}
                         ]
                     }
                 }
@@ -85,12 +85,22 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
 
             expect(result).toHaveLength(2);
             expect(result[0]).toEqual({
-                value: 13.0,
-                dateTime: 1490536800000
+                'approvals': {
+                    'class': 'provisional',
+                    'label': 'Provisional'
+                },
+                'dateTime': 1490536800000,
+                'qualifiers': 'P',
+                'value': 13
             });
             expect(result[1]).toEqual({
-                value: 14.5,
-                dateTime: 1490882400000
+                'approvals': {
+                    'class': 'approved',
+                    'label': 'Approved'
+                },
+                'dateTime': 1490882400000,
+                'qualifiers': 'A',
+                'value': 14.5
             });
         });
     });
@@ -123,11 +133,13 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
 
             expect(result).toHaveLength(2);
             expect(result[0]).toEqual({
+                approvals: 'Provisional',
                 parameterName: 'Depth to water level',
                 result: '13',
                 dateTime: '2017-03-26T09:00-05:00'
             });
             expect(result[1]).toEqual({
+                'approvals': 'Approved',
                 parameterName: 'Depth to water level',
                 result: '14.5',
                 dateTime: '2017-03-30T09:00-05:00'

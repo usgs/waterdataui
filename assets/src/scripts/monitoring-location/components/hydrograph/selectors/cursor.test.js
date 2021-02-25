@@ -216,15 +216,15 @@ const TEST_STATE_THREE_VARS = {
                 },
                 values: [{
                     value: '10',
-                    qualifiers: [],
+                    qualifiers: ['A', '1'],
                     dateTime: 1522346400000
                 }, {
                     value: '20',
-                    qualifiers: [],
+                    qualifiers: ['P', '1'],
                     dateTime: 1522347300000
                 }, {
                     value: '30',
-                    qualifiers: [],
+                    qualifiers: ['P', '1'],
                     dateTime: 1522348200000
                 }]
             }
@@ -517,9 +517,16 @@ describe('monitoring-location/components/hydrograph/cursor module', () => {
             };
 
             expect(getGroundwaterLevelCursorPoint(testState)).toEqual({
-                value: 20,
-                qualifiers: [],
-                dateTime: 1522347300000
+                'approvals': {
+                    'class': 'provisional',
+                    'label': 'Provisional'
+                },
+                'dateTime': 1522347300000,
+                'qualifiers': [
+                    'P',
+                    '1'
+                ],
+                'value': 20
             });
         });
     });

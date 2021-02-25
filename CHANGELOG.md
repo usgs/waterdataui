@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.42.0...master)
+### Added
+- A column indicating the approval status of the data shows in the DV Data Table.
+- Color coding of provisional and approved data for groundwater on hydrograph
+
+### Fixed
+- The converted Fahrenheit line no longer drops off graph with zero values.
+- Locations with only some flood level indicators no longer show  NaN
+
 ### Changed
 - The lookup files for location metadata are no longer stored in the repository and are instead pulled from AWS S3.
 

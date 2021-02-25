@@ -6,10 +6,12 @@ import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3r
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
 
-import {getGroundwaterLevelsMarker} from '../discrete-data';
+import {getGroundwaterLevelsMarkers} from '../discrete-data';
 
 import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
-import {anyVisibleGroundwaterLevels} from './discrete-data';
+
+import {getVisibleGroundwaterLevelsTableData} from './discrete-data';
+
 
 const TS_LABEL = {
     'current': 'Current: ',
@@ -46,7 +48,8 @@ const getUniqueClasses = memoize(tsKey => createSelector(
  *      @prop current {Object} - see getUniqueClasses
  *      @prop compare {Object} - see getUniqueClasses
  *      @prop median {Object} - median meta data - each property represents a time series for the current parameter code
- *      @prop floodLevels {Object} -
+ *      @prop floodLevels {Object} - The flood level descriptions
+ *      @prop groundwaterPoints {Object} - Data describing the groundwater point currently visible on hydrograph
  */
 const getLegendDisplay = createSelector(
     (state) => state.ivTimeSeriesState.showIVTimeSeries,
@@ -55,17 +58,18 @@ const getLegendDisplay = createSelector(
     getUniqueClasses('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
-    anyVisibleGroundwaterLevels,
-    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
+    getVisibleGroundwaterLevelsTableData,
+    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, groundwaterPoints) => {
         return {
             current: showSeries.current ? currentClasses : undefined,
             compare: showSeries.compare ? compareClasses : undefined,
             median: showSeries.median ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
-            groundwaterLevels: showGroundWaterLevels
+            groundwaterPoints: groundwaterPoints.length !== 0 ? groundwaterPoints : undefined
         };
     }
 );
+
 
 const getTsMarkers = function(tsKey, uniqueClasses) {
     let tsMarkers;
@@ -117,37 +121,75 @@ const getMedianMarkers = function(medianMetaData) {
     });
 };
 
-const getFloodLevelMarkers = function(floodLevels) {
-    const FLOOD_LEVEL_DISPLAY = {
-        actionStage: {
-            label: 'Action Stage',
-            class: 'action-stage'
-        },
-        floodStage: {
-            label: 'Flood Stage',
-            class: 'flood-stage'
-        },
-        moderateFloodStage: {
-            label: 'Moderate Flood Stage',
-            class: 'moderate-flood-stage'
-        },
-        majorFloodStage: {
-            label: 'Major Flood Stage',
-            class: 'major-flood-stage'
+/*
+* Helper function that returns the class and description of active flood levels
+* @prop {Object} floodLevels - The list of all possible flood levels
+* @return {Object} A grouping of only the active flood levels for that location
+*/
+const floodLevelDisplay = function(floodLevels) {
+    let floodLevelsForDisplay = {};
+    Object.keys(floodLevels).forEach(key => {
+        if (floodLevels[key]) {
+            const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            // Format label by cutting the camel case word at upper case letters
+            const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+
+            Object.assign(floodLevelsForDisplay,
+                {[key]: {
+                    'label': [label.join(' ')],
+                    'class': [label.join('-').toLowerCase()]
+                }}
+            );
         }
-    };
-    return Object.keys(floodLevels).map((stage) => {
+    });
+
+    return floodLevelsForDisplay;
+};
+
+/*
+* Function that returns a group of flood levels for display on the legend
+* @prop {Object} floodLevels - The list of all possible flood levels
+* @return {Object} The text label and information on the class so the line in the legend will have the correct styles
+*/
+const getFloodLevelMarkers = function(floodLevels) {
+    const floodLevelsForDisplay = floodLevelDisplay(floodLevels);
+
+    return Object.keys(floodLevelsForDisplay).map((stage) => {
         return [
-            defineTextOnlyMarker(FLOOD_LEVEL_DISPLAY[stage].label),
+            defineTextOnlyMarker(floodLevelsForDisplay[stage].label),
             defineLineMarker(
                 null,
-                `waterwatch-data-series ${FLOOD_LEVEL_DISPLAY[stage].class}`,
+                `waterwatch-data-series ${floodLevelsForDisplay[stage].class}`,
                 `${floodLevels[stage]} ft`)
         ];
     });
 };
 
 
+/*
+* Function that finds out if the points visible on the graph contain 'approved' data.
+* @prop {Object} groundwaterPoints - data about the points currently visible on hydrograph
+* @ return {Object} Grouping of Boolean values indicating whether or not the data is approved/provisional
+ */
+const getGroundwaterApprovals = function(groundwaterPoints) {
+    const groundwaterApprovals = {
+        provisional: false,
+        approved: false,
+        revised: false
+    };
+
+    Object.keys(groundwaterPoints).forEach(key => {
+        if (Object.values(groundwaterPoints[key]).includes('Approved')) {
+            groundwaterApprovals.approved = true;
+        } else if (Object.values(groundwaterPoints[key]).includes('Revised')) {
+            groundwaterApprovals.revised = true;
+        } else {
+            groundwaterApprovals.provisional = true;
+        }
+    });
+
+    return groundwaterApprovals;
+};
 
 
 /*
@@ -163,22 +205,19 @@ export const getLegendMarkerRows = createSelector(
         const compareTsMarkerRow = displayItems.compare ? getTsMarkers('compare', displayItems.compare) : undefined;
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];
         const floodMarkerRows = displayItems.floodLevels ? getFloodLevelMarkers(displayItems.floodLevels) : [];
-        /* Add groundwater marker to current row */
-        if (displayItems.groundwaterLevels) {
-            const gwLevelMarker = getGroundwaterLevelsMarker();
-            if (currentTsMarkerRow) {
-                currentTsMarkerRow.push(gwLevelMarker);
-            } else {
-                currentTsMarkerRow = [gwLevelMarker];
-            }
-        }
+
         if (currentTsMarkerRow) {
             markerRows.push(currentTsMarkerRow);
         }
         if (compareTsMarkerRow) {
             markerRows.push(compareTsMarkerRow);
         }
+        if (displayItems.groundwaterPoints) {
+            const gwLevelMarker = getGroundwaterLevelsMarkers(getGroundwaterApprovals(displayItems.groundwaterPoints));
+            markerRows.push(gwLevelMarker);
+        }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
+
         return markerRows;
     }
 );

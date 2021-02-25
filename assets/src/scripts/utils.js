@@ -290,3 +290,20 @@ export const getNearestTime = function(data, time) {
     // Return the nearest data point and its index.
     return datum;
 };
+
+/*
+* When given an approval code, will return the text equivalent
+*  @param {String} approvalCode - Usually a letter such as 'A'
+*   @return {String} - an easy to understand text version of an approval code
+*/
+export const approvalCodeText = function(approvalCode) {
+    const approvalText = {
+        P: 'Provisional',
+        A: 'Approved',
+        R: 'Revised',
+        E: 'Estimated',
+        default: `unknown code: ${approvalCode}`
+    };
+
+    return approvalText[approvalCode] || approvalText.default;
+};
