@@ -85,14 +85,22 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
 
             expect(result).toHaveLength(2);
             expect(result[0]).toEqual({
+                'approvals': {
+                    'class': 'provisional',
+                    'label': 'Provisional'
+                },
+                'dateTime': 1490536800000,
                 'qualifiers': 'P',
-                value: 13.0,
-                dateTime: 1490536800000
+                'value': 13
             });
             expect(result[1]).toEqual({
+                'approvals': {
+                    'class': 'approved',
+                    'label': 'Approved'
+                },
+                'dateTime': 1490882400000,
                 'qualifiers': 'A',
-                value: 14.5,
-                dateTime: 1490882400000
+                'value': 14.5
             });
         });
     });

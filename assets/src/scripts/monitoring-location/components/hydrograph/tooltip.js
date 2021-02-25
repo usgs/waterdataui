@@ -15,7 +15,6 @@ import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
-
 const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
     let label = '';
     if (tsPoint) {
@@ -57,7 +56,7 @@ const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
     const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
     return {
         label: `${valueLabel} - ${timeLabel}`,
-        classes: ['gwlevel-tooltip-text']
+        classes: ['gwlevel-tooltip-text', `${point.approvals.class}`]
     };
 };
 

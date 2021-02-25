@@ -96,7 +96,7 @@ export const drawGraphBrush = function(container, store) {
                     enableClip: () => false
                 })))
                 .call(link(store, drawGroundwaterLevels, createStructuredSelector({
-                    levels: getVisibleGroundwaterLevelPoints,
+                    points: getVisibleGroundwaterLevelPoints,
                     xScale: getBrushXScale('current'),
                     yScale: getBrushYScale,
                     enableClip: () => false
