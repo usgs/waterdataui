@@ -1,8 +1,6 @@
 
 import {link} from 'ui/lib/d3-redux';
 
-import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
-
 import {getSelectedParameterCode} from 'ml/selectors/hydrograph-state-selector';
 import {getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 
@@ -12,11 +10,10 @@ import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrog
 import {isVisible} from './selectors/time-series-data';
 
 /*
- * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
+ * Create the last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
 export const drawGraphControls = function(elem, store, siteno) {
-
     const graphControlDiv = elem.append('ul')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)
@@ -37,11 +34,13 @@ export const drawGraphControls = function(elem, store, siteno) {
             const state = store.getState();
             const currentTimeRange = getTimeRange('current')(state);
             store.dispatch(setCompareDataVisibility(this.checked));
-            store.dispatch(retrievePriorYearIVData(siteno, {
-                parameterCode: getSelectedParameterCode(state),
-                startTime: currentTimeRange.start,
-                endTime: currentTimeRange.end
-            }));
+            if (this.checked) {
+                store.dispatch(retrievePriorYearIVData(siteno, {
+                    parameterCode: getSelectedParameterCode(state),
+                    startTime: currentTimeRange.start,
+                    endTime: currentTimeRange.end
+                }));
+            }
         })
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {
@@ -66,7 +65,9 @@ export const drawGraphControls = function(elem, store, siteno) {
         .attr('ga-event-action', 'toggleMedian')
         .on('click', function() {
             store.dispatch(setMedianDataVisibility(this.checked));
-            store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())));
+            if (this.checked) {
+                store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())));
+            }
         })
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {

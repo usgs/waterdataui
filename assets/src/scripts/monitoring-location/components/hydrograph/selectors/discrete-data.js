@@ -29,6 +29,22 @@ export const getGroundwaterLevelPoints = createSelector(
 );
 
 /*
+* When given an approval code, will return the text equivalent
+*  @param {String} approvalCode - Usually a letter such as 'A'
+*   @return {String} - an easy to understand text version of an approval code
+*/
+const approvalCodeText = function(approvalCode) {
+    const approvalText = {
+        P: 'Provisional',
+        A: 'Approved',
+        R: 'Revised',
+        default: `unknown code: ${approvalCode}`
+    };
+
+    return approvalText[approvalCode] || approvalText.default;
+};
+
+/*
  * Selector function which returns a function that returns an array of gw data appropriate
  * for use in a table.
  * @return {Function} - Function returns an array of visible ground water values with properties:
@@ -49,7 +65,8 @@ export const getGroundwaterLevelsTableData = createSelector(
                 dateTime: DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toISO({
                     suppressMilliseconds: true,
                     suppressSeconds: true
-                })
+                }),
+                approvals: approvalCodeText(point.qualifiers[0])
             };
         });
     }

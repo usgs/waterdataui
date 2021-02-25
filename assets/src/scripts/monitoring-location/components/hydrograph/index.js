@@ -102,7 +102,6 @@ export const attachToNode = function(store,
     // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
-
     fetchDataPromise.then(() => {
         nodeElem
             .select('.loading-indicator-container')

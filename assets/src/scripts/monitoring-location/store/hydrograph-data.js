@@ -103,47 +103,49 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
             startTime: startTime,
             endTime: endTime
         }).then(data => {
-            const tsData = data.value.timeSeries[0];
-            // Create parameter object and adjust data if parameter code is calculated
-            let parameter = {
-                parameterCode: tsData.variable.variableCode[0].value,
-                name: tsData.variable.variableName,
-                description: tsData.variable.variableDescription,
-                unit: tsData.variable.unit.unitCode
-            };
-            if (isCalculatedTemperatureCode) {
-                parameter = getConvertedTemperatureParameter(parameter);
-            }
-
-            // Convert values from strings to float and set to null if they have the noDataValue.
-            // If calculated parameter code, update the value.
-            const noDataValue = tsData.variable.noDataValue;
-            const values = tsData.values.reduce((valuesByMethodId, value) => {
-                valuesByMethodId[value.method[0].methodID] = {
-                    points: value.value.map(point => {
-                        let pointValue = parseFloat(point.value);
-                        pointValue = pointValue === noDataValue ? null : pointValue;
-                        if (pointValue && isCalculatedTemperatureCode) {
-                            pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
-                        }
-                        return {
-                            value: pointValue,
-                            qualifiers: point.qualifiers,
-                            dateTime: DateTime.fromISO(point.dateTime).toMillis()
-                        };
-                    }),
-                    method: {
-                        ...value.method[0],
-                        methodID: value.method[0].methodID.toString()
-                    }
+            if (data.value && data.value.timeSeries && data.value.timeSeries.length) {
+                const tsData = data.value.timeSeries[0];
+                // Create parameter object and adjust data if parameter code is calculated
+                let parameter = {
+                    parameterCode: tsData.variable.variableCode[0].value,
+                    name: tsData.variable.variableName,
+                    description: tsData.variable.variableDescription,
+                    unit: tsData.variable.unit.unitCode
                 };
-                return valuesByMethodId;
-            }, {});
+                if (isCalculatedTemperatureCode) {
+                    parameter = getConvertedTemperatureParameter(parameter);
+                }
 
-            dispatch(addIVHydrographData(dataKind, {
-                parameter,
-                values
-            }));
+                // Convert values from strings to float and set to null if they have the noDataValue.
+                // If calculated parameter code, update the value.
+                const noDataValue = tsData.variable.noDataValue;
+                const values = tsData.values.reduce((valuesByMethodId, value) => {
+                    valuesByMethodId[value.method[0].methodID] = {
+                        points: value.value.map(point => {
+                            let pointValue = parseFloat(point.value);
+                            pointValue = pointValue === noDataValue ? null : pointValue;
+                            if (pointValue && isCalculatedTemperatureCode) {
+                                pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
+                            }
+                            return {
+                                value: pointValue,
+                                qualifiers: point.qualifiers,
+                                dateTime: DateTime.fromISO(point.dateTime).toMillis()
+                            };
+                        }),
+                        method: {
+                            ...value.method[0],
+                            methodID: value.method[0].methodID.toString()
+                        }
+                    };
+                    return valuesByMethodId;
+                }, {});
+
+                dispatch(addIVHydrographData(dataKind, {
+                    parameter,
+                    values
+                }));
+            }
         });
     };
 };

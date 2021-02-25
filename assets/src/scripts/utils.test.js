@@ -1,12 +1,10 @@
-import {select} from 'd3-selection';
 import {
     unicodeHtmlEntity, getHtmlFromString, replaceHtmlEntities, setEquality,
-    wrap, mediaQuery, calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
+    calcStartTime, callIf, parseRDB, convertFahrenheitToCelsius,
     convertCelsiusToFahrenheit, sortedParameters, getNearestTime} from './utils';
 
 
 describe('Utils module', () => {
-
     describe('unicodeHtmlEntity', () => {
 
         it('Can determine the unicode of a decimal entity', () => {
@@ -145,46 +143,45 @@ describe('Utils module', () => {
     describe('sortedParameters', () => {
 
         const testVars = {
-            20214: {
-                oid: '20214',
-                variableCode: {'value': '00065', variableID: 20214},
-                variableDescription: 'Gage Height, meters',
-                variableName: 'Gage Height, m'
+            '00060': {
+                parameterCode: '00060',
+                name: 'Streamflow, ft3/s',
+                description: 'Discharge, cubic feet per second',
+                unit: 'ft3/s',
+                hasIVData: true
             },
-            1701: {
-                oid: '1701',
-                variableCode: {value: '91102', variableID: 1701},
-                variableDescription: 'Mass, cobalt(II) chloride, kilogram',
-                variableName: 'Mass, cobalt(II) chloride, kg'
+            '00010': {
+                parameterCode: '00010',
+                name: 'Temperature, water, C',
+                description: 'Temperature, water, degrees Celsius',
+                unit: 'deg C',
+                hasIVData: true
             },
-            501: {
-                oid: '501',
-                variableCode: {value: '20018', variableID: 501},
-                variableDescription: 'Volume, bromine, liter',
-                variableName: 'Volume, bromine, L'
+            '00010F': {
+                parameterCode: '00010F',
+                name: 'Temperature, water, F',
+                description: 'Temperature, water, degrees Fahrenheit',
+                unit: 'deg F',
+                hasIVData: true
             },
-            17778: {
-                oid: '17778',
-                variableCode: {value: '72019', variableID: 17778},
-                variableDescription: 'Depth to water level, meters below land surface',
-                variableName: 'Depth to water level, m'
+            '72019': {
+                parameterCode: '72019',
+                name: 'Depth to water level, ft below land surface',
+                description: 'Depth to water level, feet below land surface',
+                unit: 'ft',
+                hasIVData: true,
+                hasGWLevelsData: true
             },
-            42: {
-                oid: '42',
-                variableCode: {value: '83452', variableID: 42},
-                variableDescription: 'Cross-sectional area, millibarn',
-                variableName: 'Cross-sectional area, mb'
-            },
-            88450: {
-                oid: '88450',
-                variableCode: {value: '00060', variableID: 88450},
-                variableDescription: 'Discharge, cubic meters per second',
-                variableName: 'Discharge, m3/s'
+            '62610': {
+                parameterCode: '62610',
+                name: 'Groundwater level above NGVD 1929, feet',
+                description: 'Groundwater level above NGVD 1929, feet',
+                unit: 'ft',
+                hasGWLevelsData: true
             }
         };
-
         it('sorts a group of parameters', () => {
-            expect(sortedParameters(testVars).map(x => x.oid)).toEqual(['20214', '88450', '17778', '42', '1701', '501']);
+            expect(sortedParameters(testVars).map(x => x.parameterCode)).toEqual(['00060', '72019', '62610', '00010', '00010F']);
         });
 
         it('handles the case where variables are empty', () => {

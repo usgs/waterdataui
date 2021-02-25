@@ -3,61 +3,19 @@ import {select} from 'd3-selection';
 import {configureStore} from 'ml/store';
 
 import {drawMethodPicker} from './method-picker';
+import {TEST_PRIMARY_IV_DATA} from './mock-hydrograph-state';
 
 describe('monitoring-location/components/hydrograph/method-picker', () => {
 
     describe('drawMethodPicker', () => {
-        const DATA = [12, 13, 14, 15, 16].map(hour => {
-            return {
-                dateTime: new Date(`2018-01-03T${hour}:00:00.000Z`).getTime(),
-                qualifiers: ['P'],
-                value: hour
-            };
-        });
-
         const TEST_STATE = {
-            ivTimeSeriesData: {
-                timeSeries: {
-                    '69930:00010:current': {
-                        points: DATA,
-                        tsKey: 'current:P7D',
-                        variable: '00010id',
-                        method: 69930
-                    },
-                    '69931:00010:current': {
-                        points: DATA,
-                        tsKey: 'current:P7D',
-                        variable: '00010id',
-                        method: 69931
-                    }
-                },
-                variables: {
-                    '00010id': {
-                        oid: '00010id',
-                        variableCode: {
-                            value: '00010'
-                        },
-                        unit: {
-                            unitCode: 'deg C'
-                        }
-                    }
-                },
-                methods: {
-                    69930: {
-                        methodDescription: 'Description 1',
-                        methodID: 69930
-                    },
-                    69931: {
-                        methodDescription: 'Description 2',
-                        methodID: 69931
-                    }
-                }
+            hydrographData: {
+                primaryIVData: TEST_PRIMARY_IV_DATA
             },
-            ivTimeSeriesState: {
-                currentIVVariableID: '00010id'
+            hydrographState: {
+                selectedIVMethodID: '90649'
             }
         };
-
         let div;
         beforeEach(() => {
             div = select('body').append('div');
@@ -70,14 +28,40 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
         it('Creates a picker and sets the currentMethodID', () => {
             let store = configureStore(TEST_STATE);
             div.call(drawMethodPicker, store);
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(div.select('div').property('hidden')).toEqual(false);
-                    expect(div.select('select').property('value')).toEqual('69930');
-                    expect(store.getState().ivTimeSeriesState.currentIVMethodID).toEqual(69930);
-                    resolve();
-                });
+
+            expect(div.select('#ts-method-select-container').attr('hidden')).toBeNull();
+            expect(div.select('select').property('value')).toEqual('90649');
+        });
+
+        it('selecting a different method updates the store', () => {
+            let store = configureStore(TEST_STATE);
+            div.call(drawMethodPicker, store);
+
+            const newOption = div.select('option[value="252055"]');
+            newOption.attr('selected', true);
+
+            div.select('select').dispatch('change');
+
+            expect(store.getState().hydrographState.selectedIVMethodID).toBe('252055');
+        });
+
+        it('Expects if the data has only one method then the picker will be hidden', () => {
+            let store = configureStore({
+                ...TEST_STATE,
+                hydrographData: {
+                    primaryIVData: {
+                        ...TEST_STATE,
+                        values: {
+                            '90649': {
+                                ...TEST_PRIMARY_IV_DATA.values['90649']
+                            }
+                        }
+                    }
+                }
             });
+            div.call(drawMethodPicker, store);
+
+            expect(div.select('#ts-method-select-container').attr('hidden')).toBe('true');
         });
     });
 });

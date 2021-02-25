@@ -4,7 +4,7 @@ import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 import sinon from 'sinon';
 
-import {MOCK_IV_DATA, MOCK_GWLEVEL_DATA, MOCK_STATISTICS_JSON} from 'ui/mock-service-data';
+import {MOCK_IV_DATA, MOCK_TEMP_C_IV_DATA, MOCK_GWLEVEL_DATA, MOCK_STATISTICS_JSON} from 'ui/mock-service-data';
 
 import * as ivDataService from 'ui/web-services/instantaneous-values';
 import * as groundwaterLevelService from 'ui/web-services/groundwater-levels';
@@ -12,7 +12,7 @@ import * as statisticsDataService from 'ui/web-services/statistics-data';
 
 import config from 'ui/config';
 
-import {hydrographDataReducer, retrieveHydrographData, retrieveMedianStatistics, retrievePriorYearIVData } from './hydrograph-data';
+import {hydrographDataReducer, retrieveHydrographData, retrieveMedianStatistics, retrievePriorYearIVData} from './hydrograph-data';
 
 describe('monitoring-location/store/hydrograph-data', () => {
     let store;
@@ -20,13 +20,6 @@ describe('monitoring-location/store/hydrograph-data', () => {
     let restoreConsole;
 
     config.locationTimeZone = 'America/Chicago';
-
-    ivDataService.fetchTimeSeries =
-        jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_IV_DATA)));
-    groundwaterLevelService.fetchGroundwaterLevels =
-        jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_GWLEVEL_DATA)));
-    statisticsDataService.fetchSiteStatistics =
-        jest.fn().mockReturnValue(Promise.resolve(MOCK_STATISTICS_JSON));
 
     luxon.DateTime.local = jest.fn().mockReturnValue(luxon.DateTime.fromISO('2021-02-10T12:00'));
     beforeEach(() => {
@@ -50,6 +43,15 @@ describe('monitoring-location/store/hydrograph-data', () => {
 
     describe('retrieveHydrographData', () => {
         describe('The correct web services are called', () => {
+            beforeEach(() => {
+                ivDataService.fetchTimeSeries =
+                    jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_IV_DATA)));
+                groundwaterLevelService.fetchGroundwaterLevels =
+                    jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_GWLEVEL_DATA)));
+                statisticsDataService.fetchSiteStatistics =
+                    jest.fn().mockReturnValue(Promise.resolve(MOCK_STATISTICS_JSON));
+            });
+
             it('Expects to retrieve groundwater and IV data if both are in the period of record', () => {
                 config.ivPeriodOfRecord = {
                     '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
@@ -206,10 +208,219 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 expect(mockStatsCalls).toHaveLength(0);
             });
         });
-        /*
-        TODO: Tests to consider adding: Tests to make sure data is inserted into the store correctly,
-        Tests to see if temperature calculation for fahrenheit works.
-         */
+
+        describe('data is loaded into the Redux store', () => {
+            beforeEach(() => {
+                ivDataService.fetchTimeSeries =
+                    jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_IV_DATA)));
+                groundwaterLevelService.fetchGroundwaterLevels =
+                    jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_GWLEVEL_DATA)));
+                statisticsDataService.fetchSiteStatistics =
+                    jest.fn().mockReturnValue(Promise.resolve(MOCK_STATISTICS_JSON));
+            });
+
+            it('Expect IV data is stored when available', () => {
+                config.ivPeriodOfRecord = {
+                    '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+                config.gwPeriodOfRecord = {};
+
+                return store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00060',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: false,
+                    loadMedian: true
+                })).then(() => {
+                    const hydrographData = store.getState().hydrographData;
+
+                    expect(hydrographData.currentTimeRange).toEqual({
+                        start: 1612375200000,
+                        end: 1612980000000
+                    });
+                    expect(hydrographData.primaryIVData.parameter).toEqual({
+                        parameterCode: '00060',
+                        name: 'Streamflow, ft&#179;/s',
+                        description: 'Discharge, cubic feet per second',
+                        unit: 'ft3/s'
+                    });
+                    expect(hydrographData.primaryIVData.values['158049'].points).toHaveLength(670);
+                    expect(hydrographData.primaryIVData.values['158049'].points[0]).toEqual({
+                        value: 302,
+                        qualifiers: ['P'],
+                        dateTime: 1514926800000
+                    });
+                });
+            });
+
+            it('Expect GW data is stored when requested', () => {
+                config.ivPeriodOfRecord = {};
+                config.gwPeriodOfRecord = {
+                    '72019': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+
+                return store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '72019',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: false,
+                    loadMedian: true
+                })).then(() => {
+                    const hydrographData = store.getState().hydrographData;
+
+                    expect(hydrographData.currentTimeRange).toEqual({
+                        start: 1612375200000,
+                        end: 1612980000000
+                    });
+
+                    expect(hydrographData.groundwaterLevels.parameter).toEqual({
+                        parameterCode: '72019',
+                        name: 'Depth to water level, ft below land surface',
+                        description: 'Depth to water level, feet below land surface',
+                        unit: 'ft'
+                    });
+                    expect(hydrographData.groundwaterLevels.values).toHaveLength(7);
+                    expect(hydrographData.groundwaterLevels.values[0]).toEqual({
+                        value: 26.07,
+                        qualifiers: ['A', '1'],
+                        dateTime: 1579770360000
+                    });
+                });
+            });
+        });
+
+        describe('retrieveHydrographData when calculated Fahrenheit is requested', () => {
+            beforeEach(() => {
+                ivDataService.fetchTimeSeries =
+                    jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_TEMP_C_IV_DATA)));
+                config.ivPeriodOfRecord = {
+                    '00010': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+                config.gwPeriodOfRecord = {};
+            });
+
+            it('Expects celsius temperature to be retrieved when calculated is requested', () => {
+                store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00010F',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: false,
+                    loadMedian: true
+                }));
+
+                const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
+                expect(mockIVCalls).toHaveLength(1);
+                expect(mockIVCalls[0][0]).toEqual({
+                    sites: ['11112222'],
+                    parameterCode: '00010',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null
+                });
+            });
+
+            it('Expects calculated fahrenheit to be stored when requested', () => {
+                return store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00010F',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: false,
+                    loadMedian: true
+                })).then(() => {
+                    const hydrographData = store.getState().hydrographData;
+
+                    expect(hydrographData.primaryIVData.parameter).toEqual({
+                        parameterCode : '00010F',
+                        name: 'Temperature, water, &#176;F (calculated)',
+                        description: 'Temperature, water, degrees Fahrenheit (calculated)',
+                        unit: 'deg F'
+                    });
+                });
+
+            });
+        });
+    });
+
+    describe('retrievePriorYearIVData', () => {
+        beforeEach(() => {
+            ivDataService.fetchTimeSeries =
+                jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_IV_DATA)));
+            config.ivPeriodOfRecord = {
+                '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+            };
+
+            return store.dispatch(retrieveHydrographData('11112222', {
+                parameterCode: '00060',
+                period: 'P7D',
+                startTime: null,
+                endTime: null,
+                loadCompare: false,
+                loadMedian: false
+            }));
+        });
+
+        it('Expects a call to retrievePriorYearIVData sets the prioryearTimeRange and fetches the data', () => {
+            const currentTimeRange = store.getState().hydrographData.currentTimeRange;
+            return store.dispatch(retrievePriorYearIVData('11112222', {
+                parameterCode: '00060',
+                startTime: currentTimeRange.start,
+                endTime: currentTimeRange.end
+            })).then(() => {
+                const hydrographData = store.getState().hydrographData;
+                expect(hydrographData.prioryearTimeRange).toEqual({
+                    start: 1580839200000,
+                    end: 1581444000000
+                });
+                const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
+                expect(mockIVCalls).toHaveLength(2);
+                expect(mockIVCalls[1][0]).toEqual({
+                    sites: ['11112222'],
+                    parameterCode: '00060',
+                    period: undefined,
+                    startTime: '2020-02-04T12:00:00.000-06:00',
+                    endTime: '2020-02-11T12:00:00.000-06:00'
+                });
+
+                expect(hydrographData.compareIVData).toBeDefined();
+            });
+        });
+    });
+
+    describe('retrieveMedianStatistics', () => {
+        beforeEach(() => {
+            ivDataService.fetchTimeSeries =
+                jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_IV_DATA)));
+            statisticsDataService.fetchSiteStatistics =
+                jest.fn().mockReturnValue(Promise.resolve(MOCK_STATISTICS_JSON));
+            config.ivPeriodOfRecord = {
+                '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+            };
+
+            return store.dispatch(retrieveHydrographData('11112222', {
+                parameterCode: '00060',
+                period: 'P7D',
+                startTime: null,
+                endTime: null,
+                loadCompare: false,
+                loadMedian: false
+            }));
+        });
+
+        it('Expects median data to fetched and stored', () => {
+            return store.dispatch(retrieveMedianStatistics('11112222', '00060')).then(() => {
+                const mockStatsCalls = statisticsDataService.fetchSiteStatistics.mock.calls;
+                expect(mockStatsCalls).toHaveLength(1);
+                expect(mockStatsCalls[0][0]).toEqual({
+                    siteno: '11112222',
+                    statType: 'median',
+                    params: ['00060']
+                });
+                expect(store.getState().hydrographData.medianStatisticsData).toBeDefined();
+            });
+        });
     });
 });
-

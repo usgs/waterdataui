@@ -44,7 +44,7 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
     const rectHeight = Math.abs(yRangeEnd - yRangeStart);
 
     const maskGroup = group.append('g')
-        .attr('class', 'dv-mask-group');
+        .attr('class', 'iv-mask-group');
 
     maskGroup.append('rect')
         .attr('x', xRangeStart)
@@ -93,18 +93,18 @@ export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKi
 export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegmentsMap, dataKind, xScale, yScale, enableClip}, container) {
     container = container || elem.append('g');
 
-    const elemId = `ts-${dataKind}-group`;
+    const elemClass = `ts-${dataKind}-group`;
     const isCurrentMethodID = function(thisMethodID) {
         return currentMethodID ? currentMethodID === thisMethodID : true;
     };
 
-    container.selectAll(`#${elemId}`).remove();
+    container.selectAll(`.${elemClass}`).remove();
     if (!visible || !tsSegmentsMap) {
         return;
     }
     const tsLineGroup = container
         .append('g')
-            .attr('id', elemId);
+            .attr('class', elemClass);
 
     if (enableClip) {
         tsLineGroup.attr('clip-path', 'url(#graph-clip)');

@@ -215,8 +215,8 @@ export const getPrimaryValueRange = createSelector(
 export const getYTickDetails = createSelector(
     getPrimaryValueRange,
     getPrimaryParameter,
-    (yDomain, parameterCode) => {
-        const isSymlog = SYMLOG_PARMS.indexOf(parameterCode) > -1;
+    (yDomain, parameter) => {
+        const isSymlog = SYMLOG_PARMS.indexOf(parameter.parameterCode) > -1;
 
         let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 

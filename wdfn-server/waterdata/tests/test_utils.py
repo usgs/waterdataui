@@ -2,7 +2,7 @@
 Unit tests for the main WDFN views.
 """
 
-from unittest import TestCase, mock, skip
+from unittest import TestCase, mock
 
 from flask import Response
 
@@ -34,8 +34,8 @@ class TestConstructUrl(TestCase):
         expected = 'https://fakeurl.gov/blah1/blah2'
         self.assertEqual(construct_url(self.test_netloc, self.test_path), expected)
 
+
 class TestCreateMessage(TestCase):
-    @skip('Test fails on Macs')
     def test_create_message(self):
         target_email = 'test@test.com'
         form_data = {
@@ -244,8 +244,7 @@ class TestParseRdb(TestCase):
         result = parse_rdb(iter(self.test_rdb_lines))
         expected_1 = {'agency_cd': 'USGS',
                       'site_no': '345670',
-                      'station_nm':
-                      'Some Random Site',
+                      'station_nm': 'Some Random Site',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '200.94977778',
                       'dec_long_va': '-100.12763889',
@@ -255,7 +254,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                     }
+                      }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
                       'station_nm':
@@ -269,7 +268,7 @@ class TestParseRdb(TestCase):
                       'alt_acy_va': ' .1',
                       'alt_datum_cd': 'NAVD88',
                       'huc_cd': '02070010'
-                     }
+                      }
         self.assertDictEqual(next(result), expected_1)
         self.assertDictEqual(next(result), expected_2)
 

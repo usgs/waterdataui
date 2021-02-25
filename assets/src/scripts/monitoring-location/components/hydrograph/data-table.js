@@ -14,12 +14,12 @@ const TABLE_CAPTION = {
 
 const COLUMN_HEADINGS = {
     iv: ['Parameter', 'Time', 'Result', 'Approval', 'Masks'],
-    gw: ['Parameter', 'Time', 'Result']
+    gw: ['Parameter', 'Time', 'Result', 'Approval']
 };
 
 const VALUE_NAMES = {
     iv: ['parameterName', 'dateTime', 'result', 'approvals', 'masks'],
-    gw: ['parameterName', 'dateTime', 'result']
+    gw: ['parameterName', 'dateTime', 'result', 'approvals']
 };
 
 const CONTAINER_ID = {

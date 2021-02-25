@@ -6,14 +6,15 @@ import {sortedParameters} from 'ui/utils';
 
 /**
  * Returns a Redux selector function which returns an sorted array of metadata
- * for each available parameter code. Each object has the following properties:
- *      @prop {String} variableID
+ * for each available parameter . Each object has the following properties:
  *      @prop {String} parameterCode
  *      @prop {String} description
- *      @prop {Boolean} selected - True if this is the currently selected parameter
- *      @prop {Number} timeSeriesCount - count of unique time series for this parameter
+ *      @prop {Object} periodOfRecord - with beginDate and endDate String properties
+ *      @prop {Object} waterAlert - with Boolean hasWaterAlert and if true, additional String properties
+ *          (subscriptionParameterCode, displayText, tooltipText)
+ * Other properties from the Redux store are also included
  */
-export const getAvailableParameterCodes = createSelector(
+export const getAvailableParameters = createSelector(
     (state) => state.hydrographParameters,
     allParameters => {
         if (!Object.keys(allParameters).length) {

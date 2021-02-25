@@ -122,7 +122,7 @@ describe('monitoring-location/store/discrete-data', () => {
                 expect(state.discreteData.groundwaterLevels['52331280'].values).toHaveLength(7);
                 expect(state.discreteData.groundwaterLevels['52331280'].values[0]).toEqual({
                     value: '26.07',
-                    qualifiers: [],
+                    qualifiers: ['A', '1'],
                     dateTime: 1579770360000
                 });
             });

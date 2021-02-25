@@ -40,12 +40,6 @@ export default {
         ]
     },
 
-    // Below is a listing of the known temperature codes and counterparts
-    // '00020': '00021' - air temperature C:F
-    // '00010': '00011' - water temperature C:F
-    // '45589': '45590' - Temperature, internal, within equipment shelter C:F
-    CELSIUS_CODES_WITH_FAHRENHEIT_COUNTERPARTS: ['00020', '00010', '45589'],
-
     WATER_ALERT_PARAMETER_CODES: [
         '00060',
         '00055',

@@ -37,8 +37,8 @@ const getLegendDisplay = createSelector(
     anyVisibleGroundwaterLevels,
     (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, showGroundWaterLevels) => {
         return {
-            primaryIV: currentClasses,
-            compareIV: showCompare ? compareClasses : undefined,
+            primaryIV: currentClasses.length ? currentClasses : undefined,
+            compareIV: showCompare && compareClasses.length ? compareClasses : undefined,
             median: showMedian ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
             groundwaterLevels: showGroundWaterLevels
@@ -49,7 +49,6 @@ const getLegendDisplay = createSelector(
 const getIVMarkers = function(dataKind, uniqueIVKinds) {
     let maskMarkers = [];
     let lineMarkers = [];
-    const textMarker = defineTextOnlyMarker(TS_LABEL[dataKind]);
     uniqueIVKinds.forEach(ivKind => {
         if (ivKind.isMasked) {
             maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
@@ -57,11 +56,11 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
             return lineMarkers.push(defineLineMarker(null, `line-segment ts-${ivKind.class} ts-${dataKind}`, ivKind.label));
         }
     });
-    return [textMarker, ...lineMarkers, ...maskMarkers];
+    return [...lineMarkers, ...maskMarkers];
 };
 
 /*
- * @param {Object} medianMetData
+ * @param {Object} medianMetaData
  * @return {Array of Array} - each subarray rpresents the markes for a time series median data
  */
 const getMedianMarkers = function(medianMetaData) {
@@ -87,31 +86,35 @@ const getMedianMarkers = function(medianMetaData) {
     });
 };
 
-const getFloodLevelMarkers = function(floodLevels) {
-    const FLOOD_LEVEL_DISPLAY = {
-        actionStage: {
-            label: 'Action Stage',
-            class: 'action-stage'
-        },
-        floodStage: {
-            label: 'Flood Stage',
-            class: 'flood-stage'
-        },
-        moderateFloodStage: {
-            label: 'Moderate Flood Stage',
-            class: 'moderate-flood-stage'
-        },
-        majorFloodStage: {
-            label: 'Major Flood Stage',
-            class: 'major-flood-stage'
+const floodLevelDisplay = function(floodLevels) {
+    let floodLevelsForDisplay = {};
+    Object.keys(floodLevels).forEach(key => {
+        if (floodLevels[key]) {
+            const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+            // Format label by cutting the camel case word at upper case letters
+            const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
+
+            Object.assign(floodLevelsForDisplay,
+                {[key]: {
+                    'label': [label.join(' ')],
+                    'class': [label.join('-').toLowerCase()]
+                }}
+            );
         }
-    };
-    return Object.keys(floodLevels).map((stage) => {
+    });
+
+    return floodLevelsForDisplay;
+};
+
+const getFloodLevelMarkers = function(floodLevels) {
+    const floodLevelsForDisplay = floodLevelDisplay(floodLevels);
+
+    return Object.keys(floodLevelsForDisplay).map((stage) => {
         return [
-            defineTextOnlyMarker(FLOOD_LEVEL_DISPLAY[stage].label),
+            defineTextOnlyMarker(floodLevelsForDisplay[stage].label),
             defineLineMarker(
                 null,
-                `waterwatch-data-series ${FLOOD_LEVEL_DISPLAY[stage].class}`,
+                `waterwatch-data-series ${floodLevelsForDisplay[stage].class}`,
                 `${floodLevels[stage]} ft`)
         ];
     });
@@ -127,7 +130,7 @@ const getFloodLevelMarkers = function(floodLevels) {
  */
 export const getLegendMarkerRows = createSelector(
     getLegendDisplay,
-    (displayItems) => {
+    displayItems => {
         const markerRows = [];
         let currentTsMarkerRow = displayItems.primaryIV ? getIVMarkers('primary', displayItems.primaryIV) : undefined;
         const compareTsMarkerRow = displayItems.compareIV ? getIVMarkers('compare', displayItems.compareIV) : undefined;
@@ -143,10 +146,10 @@ export const getLegendMarkerRows = createSelector(
             }
         }
         if (currentTsMarkerRow) {
-            markerRows.push(currentTsMarkerRow);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['primary'])].concat(currentTsMarkerRow));
         }
         if (compareTsMarkerRow) {
-            markerRows.push(compareTsMarkerRow);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['compare'])].concat(compareTsMarkerRow));
         }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
         return markerRows;

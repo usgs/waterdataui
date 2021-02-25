@@ -22,14 +22,14 @@ function getNumberOfDays(period) {
 
 /**
  * Get a given time series dataset from Water Services.
- * @param  {Array}   sites  Array of site IDs to retrieve.
- * @param  {Array}   parameterCodes Optional array of parameter codes
+ * @param  {Array}  sites  Array of site IDs to retrieve.
+ * @param  {String}  parameterCodes
  * @param {String} period - ISO 8601 Duration
  * @param {String} startTime - ISO 8601 time
  * @param {String} endTime - ISO 8601 time
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const fetchTimeSeries = function({sites, parameterCode, period=null, startTime=null, endTime=null}) {
+export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -57,4 +57,3 @@ export const fetchTimeSeries = function({sites, parameterCode, period=null, star
             throw reason;
         });
 };
-

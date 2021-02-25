@@ -1,236 +1,101 @@
 import {select} from 'd3-selection';
+import sinon from 'sinon';
 
 import {configureStore} from 'ml/store';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import * as hydrographData from 'ml/store/hydrograph-data';
 
 import {drawGraphControls} from './graph-controls';
+import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/hydrograph/graph-controls', () => {
-
-    const TEST_STATE = {
-        ivTimeSeriesData: {
-            timeSeries: {
-                '00010:current': {
-                    points: [{
-                        dateTime: 1514926800000,
-                        value: 4,
-                        qualifiers: ['P']
-                    }],
-                    method: 'method1',
-                    tsKey: 'current:P7D',
-                    variable: '45807190'
-                },
-                '00060:current': {
-                    points: [{
-                        dateTime: 1514926800000,
-                        value: 10,
-                        qualifiers: ['P']
-                    }],
-                    method: 'method1',
-                    tsKey: 'current:P7D',
-                    variable: '45807197'
-                },
-                '00060:compare': {
-                    points: [{
-                        dateTime: 1514926800000,
-                        value: 10,
-                        qualifiers: ['P']
-                    }],
-                    method: 'method1',
-                    tsKey: 'compare:P7D',
-                    variable: '45807197'
-                }
-            },
-            timeSeriesCollections: {
-                'coll1': {
-                    variable: '45807197',
-                    timeSeries: ['00060:current']
-                },
-                'coll2': {
-                    variable: '45807197',
-                    timeSeries: ['00060:compare']
-                },
-                'coll3': {
-                    variable: '45807197',
-                    timeSeries: ['00060:median']
-                },
-                'coll4': {
-                    variable: '45807190',
-                    timeSeries: ['00010:current']
-                }
-            },
-            queryInfo: {
-                'current:P7D': {
-                    notes: {
-                        'filter:timeRange':  {
-                            mode: 'PERIOD',
-                            periodDays: 7
-                        },
-                        requestDT: 1522425600000
-                    }
-                }
-            },
-            requests: {
-                'current:P7D': {
-                    timeSeriesCollections: ['coll1']
-                },
-                'compare:P7D': {
-                    timeSeriesCollections: ['coll2', 'col4']
-                }
-            },
-            variables: {
-                '45807197': {
-                    variableCode: {
-                        value: '00060'
-                    },
-                    oid: '45807197',
-                    variableName: 'Test title for 00060',
-                    variableDescription: 'Test description for 00060',
-                    unit: {
-                        unitCode: 'unitCode'
-                    }
-                },
-                '45807190': {
-                    variableCode: {
-                        value: '00010'
-                    },
-                    oid: '45807190',
-                    unit: {
-                        unitCode: 'unitCode'
-                    }
-                }
-            },
-            methods: {
-                'method1': {
-                    methodDescription: 'method description'
-                }
-            }
-        },
-        statisticsData : {
-            median: {
-                '00060': {
-                    '1234': [
-                        {
-                            month_nu: '2',
-                            day_nu: '20',
-                            p50_va: '40',
-                            begin_yr: '1970',
-                            end_yr: '2017',
-                            loc_web_ds: 'This method'
-                        }, {
-                            month_nu: '2',
-                            day_nu: '21',
-                            p50_va: '41',
-                            begin_yr: '1970',
-                            end_yr: '2017',
-                            loc_web_ds: 'This method'
-                        }, {
-                            month_nu: '2',
-                            day_nu: '22',
-                            p50_va: '42',
-                            begin_yr: '1970',
-                            end_yr: '2017',
-                            loc_web_ds: 'This method'
-                        }
-                    ]
-                }
-            }
-        },
-        ivTimeSeriesState: {
-            currentIVVariableID: '45807197',
-            currentIVDateRange: 'P7D',
-            showIVTimeSeries: {
-                current: true,
-                compare: true,
-                median: true
-            },
-            loadingIVTSKeys: []
-        },
-        ui: {
-            width: 400
-        }
-    };
-
     describe('drawGraphControls', () => {
 
         let div;
+        let fakeServer;
         let store;
+        let retrievePriorYearSpy, retrieveMedianStatisticsSpy;
 
         beforeEach(() => {
             div = select('body').append('div');
-            store = configureStore(TEST_STATE);
-            div.call(drawGraphControls, store);
+            store = configureStore({
+                hydrographData: {
+                    currentTimeRange: TEST_CURRENT_TIME_RANGE
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: false,
+                    selectedParameterCode: '72019'
+                }
+            });
+            fakeServer = sinon.createFakeServer();
+            retrievePriorYearSpy = jest.spyOn(hydrographData, 'retrievePriorYearIVData');
+            retrieveMedianStatisticsSpy = jest.spyOn(hydrographData, 'retrieveMedianStatistics');
+
+            drawGraphControls(div, store, '11112222');
         });
 
         afterEach(() => {
+            fakeServer.restore();
             div.remove();
         });
 
         // last year checkbox tests
-        it('Should render the compare toggle checked', () => {
+        it('Should render the compare toggle unchecked', () => {
             const checkbox = select('#last-year-checkbox');
             expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(true);
+            expect(checkbox.property('checked')).toBe(false);
         });
 
-        it('Should render the compare toggle unchecked', () => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    const checkbox = select('#last-year-checkbox');
-                    expect(checkbox.size()).toBe(1);
-                    expect(checkbox.property('checked')).toBe(false);
-                    resolve();
-                });
+        it('Should set the compare visibility to true and retrieve the Prior year data', () => {
+            const checkbox = select('#last-year-checkbox');
+            checkbox.property('checked', true);
+            checkbox.dispatch('click');
+
+            expect(store.getState().hydrographState.showCompareIVData).toBe(true);
+            expect(retrievePriorYearSpy).toHaveBeenCalledWith('11112222', {
+                parameterCode: '72019',
+                startTime: TEST_CURRENT_TIME_RANGE.start,
+                endTime: TEST_CURRENT_TIME_RANGE.end
             });
         });
 
-        it('should be enabled if there are last year data', () => {
-            expect(select('#last-year-checkbox').property('disabled')).toBeFalsy();
+        it('Changing the compare visibility back to false should set the visibility but not retrieve the Prior year data', () => {
+            const checkbox = select('#last-year-checkbox');
+            checkbox.property('checked', true);
+            checkbox.dispatch('click');
+
+            checkbox.property('checked', false);
+            checkbox.dispatch('click');
+            expect(store.getState().hydrographState.showCompareIVData).toBe(false);
+            expect(retrievePriorYearSpy.mock.calls).toHaveLength(1);
         });
 
-        it('should be disabled if there are no last year data', () => {
-            store.dispatch(Actions.setCurrentIVVariable('45807190'));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(select('#last-year-checkbox').property('disabled')).toBeTruthy();
-                    resolve();
-                });
-            });
-        });
-
-        // median checkbox tests
-        it('Should render the median toggle checked', () => {
+        //median visibility tests
+        it('Should render the median toggle unchecked', () => {
             const checkbox = select('#median-checkbox');
             expect(checkbox.size()).toBe(1);
-            expect(checkbox.property('checked')).toBe(true);
+            expect(checkbox.property('checked')).toBe(false);
         });
 
-        it('Should render the median toggle unchecked', () => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    const checkbox = select('#median-checkbox');
-                    expect(checkbox.size()).toBe(1);
-                    expect(checkbox.property('checked')).toBe(false);
-                    resolve();
-                });
-            });
+        it('Should set the median visibility to true and retrieve the median statistics data', () => {
+            const checkbox = select('#median-checkbox');
+            checkbox.property('checked', true);
+            checkbox.dispatch('click');
+
+            expect(store.getState().hydrographState.showMedianData).toBe(true);
+            expect(retrieveMedianStatisticsSpy).toHaveBeenCalledWith('11112222', '72019');
         });
 
-        it('should be enabled if there are median statistics data', () => {
-            expect(select('#median-checkbox').property('disabled')).toBeFalsy();
-        });
+        it('Changing the median visibility back to false should set the visibility but not retrieve the median data', () => {
+            const checkbox = select('#median-checkbox');
+            checkbox.property('checked', true);
+            checkbox.dispatch('click');
 
-        it('should be disabled if there are no median statistics data', () => {
-            store.dispatch(Actions.setCurrentIVVariable('45807190'));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(select('#median-checkbox').property('disabled')).toBeTruthy();
-                    resolve();
-                });
-            });
+            checkbox.property('checked', false);
+            checkbox.dispatch('click');
+            expect(store.getState().hydrographState.showMedianData).toBe(false);
+            expect(retrieveMedianStatisticsSpy.mock.calls).toHaveLength(1);
         });
     });
 });

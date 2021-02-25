@@ -1,3 +1,4 @@
+import mockConsole from 'jest-mock-console';
 import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 import sinon from 'sinon';
@@ -10,6 +11,7 @@ describe('monitoring-location/store/network module', () => {
     /* eslint no-use-before-define: 0 */
     let store;
     let fakeServer;
+    let restoreConsole;
 
     beforeEach(() => {
         store = createStore(
@@ -22,10 +24,12 @@ describe('monitoring-location/store/network module', () => {
             applyMiddleware(thunk)
         );
         fakeServer = sinon.createFakeServer();
+        restoreConsole = mockConsole();
     });
 
     afterEach(() => {
         fakeServer.restore();
+        restoreConsole();
     });
 
     describe('networkDataReducer and Actions', () => {

@@ -6,14 +6,37 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 
+/*
+ * Returns a selector function which returns the time range for the timeRangeKind.
+ * @param {String} timeRangeKind - 'current' or 'prioryear'
+ * @return {Function}
+ * */
 export const getTimeRange = memoize((timeRangeKind) => state => state.hydrographData[`${timeRangeKind}TimeRange`] || null);
 
-export const getIVData = memoize((dataKind) => state => state.hydrographData[`${dataKind}IVData`]) || null;
+/*
+ *Returns a selector function which returns the IV data for the dataKind
+ * @param {String} dataKind - 'primary' or 'compare'
+ * @return {Function}
+ */
+export const getIVData = memoize((dataKind) => state => state.hydrographData[`${dataKind}IVData`] || null);
 
+/*
+ * Returns a selector function which returns the median statistics data
+ * @return {Function}
+ */
 export const getMedianStatisticsData = state => state.hydrographData.medianStatisticsData || null;
 
+/*
+ * Returns a selector function which returns the groundwater levels data
+ * @return {Function}
+ */
 export const getGroundwaterLevels = state => state.hydrographData.groundwaterLevels ||  null;
 
+/*
+ * Returns a selector which returns an Array [min, max] where min and max represent the value range for the IV data of dataKind
+ * @param {String} dataKind - 'primary' or 'compare'
+ * @return {Function}
+ */
 export const getIVValueRange = memoize(dataKind => createSelector(
     getIVData(dataKind),
     ivData => {
@@ -33,6 +56,11 @@ export const getIVValueRange = memoize(dataKind => createSelector(
     }
 ));
 
+/*
+ * Returns a selector which returns an Array [min, max] representing the value range of the groundwater
+ * levels data
+ * @return {Function}
+ */
 export const getGroundwaterLevelsValueRange = createSelector(
     getGroundwaterLevels,
     gwLevels => {
@@ -47,6 +75,11 @@ export const getGroundwaterLevelsValueRange = createSelector(
     }
 );
 
+/*
+ * Returns a selector function which returns the parameter that the hydrographData is representing
+ * an is an Object containing the parameter code, name, description, and unit
+ * @return {Function}
+ */
 export const getPrimaryParameter = createSelector(
     getIVData('primary'),
     getGroundwaterLevels,
@@ -61,6 +94,10 @@ export const getPrimaryParameter = createSelector(
     }
 );
 
+/*
+ * Returns a selector function which returns an array of methods that have IV time series
+ * @return {Function}
+ */
 export const getPrimaryMethods = createSelector(
     getIVData('primary'),
     ivData => {
@@ -74,9 +111,11 @@ export const getPrimaryMethods = createSelector(
 /*
  * @return {Function} which returns an Object with keys by tsId. Each property
  * is an {Object} as follows:
- * @prop {Array of Object} values - where each object has point, dateTime keys
- * @prop {String} description - statistic description
- * the value at local time for the month/day in the original statistics data
+ *      @prop {Array of Object} values - where each object has point, dateTime keys
+ *      @prop {String} description - statistic description
+ *      @prop {String} beginYear
+ *      @prop {String} endYear
+ *      the value at local time for the month/day in the original statistics data
  */
 export const getPrimaryMedianStatisticsData = createSelector(
     getTimeRange('current'),
@@ -118,6 +157,10 @@ export const getPrimaryMedianStatisticsData = createSelector(
     }
 );
 
+/*
+ * Returns a selector function which returns an Array [min, max] which represents the range
+ * of the median data that is being shown.
+ */
 export const getPrimaryMedianStatisticsValueRange = createSelector(
     getPrimaryMedianStatisticsData,
     statsData => {

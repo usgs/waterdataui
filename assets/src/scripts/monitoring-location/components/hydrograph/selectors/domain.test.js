@@ -1,6 +1,5 @@
 import {
     extendDomain,
-    getYDomain,
     getYTickDetails,
     getFullArrayOfAdditionalTickMarks,
     getLowestAbsoluteValueOfTickValues,
@@ -58,64 +57,9 @@ describe('monitoring-location/components/hydrograph/selectors/domain module', ()
         });
     });
 
-    describe('getYDomain', () => {
-        function pts(arr) {
-            return arr.map(val => {
-                return {
-                    value: val
-                };
-            });
-        }
-
-        it('is inclusive to all points with symlog', () => {
-            const domain = getYDomain(
-                [pts([1, 2, 3]), pts([5, 6, 7]), pts([-10, 2])],
-                {variableCode: {value: '00060'}}
-            );
-            expect(domain[0]).toBeLessThanOrEqual(-10);
-            expect(domain[1]).toBeGreaterThanOrEqual(7);
-        });
-
-        it('is inclusive to all points with linear', () => {
-            const domain = getYDomain(
-                [pts([1, 2, 3]), pts([5, 6, 7]), pts([-10, 2])],
-                {variableCode: {value: '00065'}}
-            );
-            expect(domain[0]).toBeLessThanOrEqual(-10);
-            expect(domain[1]).toBeGreaterThanOrEqual(7);
-        });
-
-        it('ignores non-finite values', () => {
-            const domain = getYDomain(
-                [pts([-Infinity, NaN, 1, 2, 3, Infinity])],
-                {variableCode: {value: '00065'}}
-            );
-            const padding = (3 - 1) * .2;
-            expect(domain).toEqual([1 - padding, 3 + padding]);
-        });
-
-        it('handles single point values', () => {
-            const domain = getYDomain(
-                [pts([100])]
-            );
-            expect(domain[0]).toBeLessThanOrEqual(50);
-            expect(domain[1]).toBeGreaterThanOrEqual(150);
-        });
-
-        it('handles single point values of 0', () => {
-            const domainSymlog = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00060'}});
-            expect(domainSymlog[0]).toBeLessThanOrEqual(0);
-            expect(domainSymlog[1]).toBeGreaterThanOrEqual(1);
-
-            const domainLinear = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00045'}});
-            expect(domainLinear[0]).toBeLessThanOrEqual(0);
-            expect(domainLinear[1]).toBeGreaterThanOrEqual(1);
-        });
-    });
-
     describe('getYTickDetails', () => {
         it('returns ticks and a formatting function', () => {
-            const tickDetails = getYTickDetails.resultFunc([0, 1]);
+            const tickDetails = getYTickDetails.resultFunc([0, 1], {parameterCode: '00065'});
             expect(tickDetails.tickValues).toEqual(expect.any(Array));
             expect(tickDetails.tickFormat).toEqual(expect.any(Function));
             expect(tickDetails.tickFormat(1)).toEqual(expect.any(String));

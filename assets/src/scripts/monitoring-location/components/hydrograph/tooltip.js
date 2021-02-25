@@ -11,7 +11,7 @@ import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 import {getGraphCursorOffset} from 'ml/selectors/hydrograph-state-selector';
 import {setGraphCursorOffset} from 'ml/store/hydrograph-state';
 
-import {getCursorTime, getIVDataCursorPoints, getIVDataTooltipPoints, getGroundwaterLevelCursorPoint,
+import {getCursorTime, getIVDataCursorPoint, getIVDataTooltipPoint, getGroundwaterLevelCursorPoint,
     getGroundwaterLevelTooltipPoint
 } from './selectors/cursor';
 import {getMainLayout} from './selectors/layout';
@@ -43,8 +43,8 @@ const getGWLevelTextInfo = function(point, unitCode) {
 };
 
 const createTooltipTextGroup = function(elem, {
-    currentPoints,
-    comparePoints,
+    currentPoint,
+    comparePoint,
     gwLevelPoint,
     parameter,
     layout
@@ -60,14 +60,14 @@ const createTooltipTextGroup = function(elem, {
             .call(adjustMarginOfTooltips);
     }
     const unitCode = parameter ? parameter.unit : '';
-    const currentTooltipData = Object.values(currentPoints).map((tsPoint) => {
-        return getIVDataTooltipTextInfo(tsPoint, 'primary', unitCode);
-    });
-    const compareTooltipData = Object.values(comparePoints).map((tsPoint) => {
-        return getIVDataTooltipTextInfo(tsPoint, 'compare', unitCode);
-    });
 
-    let tooltipTextData = currentTooltipData.concat(compareTooltipData);
+    let tooltipTextData = [];
+    if (currentPoint) {
+        tooltipTextData.push(getIVDataTooltipTextInfo(currentPoint, 'primary', unitCode));
+    }
+    if(comparePoint) {
+        tooltipTextData.push(getIVDataTooltipTextInfo(comparePoint, 'compare', unitCode));
+    }
     if (gwLevelPoint) {
         tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode));
     }
@@ -100,8 +100,8 @@ const createTooltipTextGroup = function(elem, {
  */
 export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
-        currentPoints: getIVDataCursorPoints('primary', 'current'),
-        comparePoints: getIVDataCursorPoints('compare', 'prioryear'),
+        currentPoint: getIVDataCursorPoint('primary', 'current'),
+        comparePoint: getIVDataCursorPoint('compare', 'prioryear'),
         gwLevelPoint: getGroundwaterLevelCursorPoint,
         parameter: getPrimaryParameter,
         layout: getMainLayout
@@ -122,11 +122,17 @@ export const drawTooltipFocus = function(elem, store) {
     })));
 
     elem.call(link(store, drawFocusCircles, createSelector(
-        getIVDataTooltipPoints('primary', 'current'),
-        getIVDataTooltipPoints('compare', 'prioryear'),
+        getIVDataTooltipPoint('primary', 'current'),
+        getIVDataTooltipPoint('compare', 'prioryear'),
         getGroundwaterLevelTooltipPoint,
         (current, compare, gwLevel) => {
-            let points = current.concat(compare);
+            let points = [];
+            if (current) {
+                points.push(current);
+            }
+            if (compare) {
+                points.push(compare);
+            }
             if (gwLevel) {
                 points.push(gwLevel);
             }

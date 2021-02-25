@@ -38,7 +38,7 @@ export const HASH_ID = {
 };
 
 // Lines will be split if the difference exceeds 72 minutes.
-export const SEVENTY_TWO_MINUTES = 60 * 1000 * 72;
+const SEVENTY_TWO_MINUTES = 60 * 1000 * 72;
 
 const PARM_CODES_TO_ACCUMULATE = ['00045'];
 
@@ -71,6 +71,8 @@ const transformToCumulative = function(points) {
  *      @prop {Number} value
  *      @prop {Number} dateTime - in epoch milliseconds
  *      @prop {Boolean} isMasked
+ *      @prop {String} maskedQualifier
+ *      @prop {String} approvalQualifier
  *      @prop {String} label - human readable label
  *      @prop {String} class - can be used to style the data
  * Note that some parameter codes accumulate data across the time range. For those
@@ -160,7 +162,9 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
         }
         const getNewSegment = function(point) {
             return {
-                ...point,
+                isMasked: point.isMasked,
+                label: point.label,
+                class: point.class,
                 points: []
             };
         };
@@ -180,8 +184,7 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
                 const hasGap = point.dateTime - previousDate >= SEVENTY_TWO_MINUTES;
                 const pointLabelHasChanged = newSegment.label !== point.label;
 
-                if (!newSegment.isMasked && !point.isMasked && hasGap) {
-                    // there is a gap between two line segments so start a new segment
+                if (!newSegment.isMasked && !point.isMasked && hasGap)  {// there is a gap between two line segments so start a new segment
                     segments.push(newSegment);
                     newSegment = getNewSegment(point);
 
