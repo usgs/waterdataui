@@ -45,7 +45,7 @@ export const drawMethodPicker = function(elem, store, initialTimeSeriesId) {
                     .attr('selected', method.methodID === selectedMethodID ? true : null)
                     .node().value = method.methodID;
             });
-            pickerContainer.property('hidden', methods.length <= 1);
+            pickerContainer.attr('hidden', methods.length <= 1 ? true: null);
             if (methods.length) {
                 elem.dispatch('change');
             }

@@ -1,6 +1,6 @@
 import config from 'ui/config';
 
-import {getAvailableParameterCodes} from './parameter-data';
+import {getAvailableParameters} from './parameter-data';
 
 describe('monitoring-location/components/hydrograph/selectors/parameter-data', () => {
     config.ivPeriodOfRecord = {
@@ -68,15 +68,15 @@ describe('monitoring-location/components/hydrograph/selectors/parameter-data', (
         }
     };
 
-    describe('getAvailableParameterCodes', () => {
+    describe('getAvailableParameters', () => {
         it('Return an empty array if no variables for IV or discrete data groundwater levels are defined', () => {
-            expect(getAvailableParameterCodes({
+            expect(getAvailableParameters({
                 hydrographParameters: {}
             })).toHaveLength(0);
         });
 
         it('Expects sorted array of parameter codes', () => {
-            const parameters = getAvailableParameterCodes({
+            const parameters = getAvailableParameters({
                 hydrographParameters: TEST_PARAMETERS
             });
             expect(parameters).toHaveLength(5);

@@ -54,7 +54,8 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
         .y(function(d) {
             return yscale(d.point);
         });
-    const medianGrp = elem.append('g');
+    const medianGrp = elem.append('g')
+        .attr('class', 'median-stats-group');
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
@@ -147,19 +148,14 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName, agencyCode, sitename, showTooltip) {
+const drawTitle = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
     if (showMLName) {
         titleDiv.append('div')
-            .call(link(store,(elem, {mlName, agencyCode}) => {
-                elem.attr('class', 'monitoring-location-name-div')
-                    .html(`${mlName}, ${agencyCode} ${siteNo}`);
-            }, createStructuredSelector({
-                mlName: sitename,
-                agencyCode: agencyCode
-            })));
+            .attr('class', 'monitoring-location-name-div')
+            .html(`${sitename}, ${agencyCode} ${siteNo}`);
     }
     titleDiv.append('div')
         .call(link(store,(elem, {title, parameter}) => {
@@ -173,7 +169,7 @@ const createTitle = function(elem, store, siteNo, showMLName, agencyCode, sitena
         })));
 };
 
-const watermark = function(elem, store) {
+const drawWatermark = function(elem, store) {
     // These constants will need to change if the watermark svg is updated
     const watermarkHalfHeight = 87 / 2;
     const watermarkHalfWidth = 235 / 2;
@@ -206,18 +202,16 @@ const watermark = function(elem, store) {
  */
 export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let graphDiv;
-
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'hydrograph-interaction')
         .attr('ga-event-action', 'clickOnTimeSeriesGraph')
-        .call(watermark, store)
-        .call(createTitle, store, siteNo, agencyCode, sitename, showMLName, showTooltip);
+        .call(drawWatermark, store)
+        .call(drawTitle, store, siteNo, agencyCode, sitename, showMLName, showTooltip);
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }
-    console.log('Rendering graph svg');
     const graphSvg = graphDiv.append('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .classed('hydrograph-svg', true)

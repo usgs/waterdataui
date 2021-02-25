@@ -13,7 +13,7 @@ import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydr
 import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
-import {getAvailableParameterCodes} from './selectors/parameter-data';
+import {getAvailableParameters} from './selectors/parameter-data';
 
 
 /**
@@ -21,9 +21,9 @@ import {getAvailableParameterCodes} from './selectors/parameter-data';
  * a row changes the active parameter code.
  */
 export const drawSelectionTable = function(container, store, siteno) {
-    const parameterCodes = getAvailableParameterCodes(store.getState());
+    const parameters = getAvailableParameters(store.getState());
 
-    if (!Object.keys(parameterCodes).length) {
+    if (!Object.keys(parameters).length) {
         return;
     }
 
@@ -51,7 +51,7 @@ export const drawSelectionTable = function(container, store, siteno) {
     table.append('tbody')
         .attr('class', 'usa-fieldset')
         .selectAll('tr')
-        .data(Object.values(parameterCodes))
+        .data(Object.values(parameters))
         .enter().append('tr')
         .attr('id', d => `time-series-select-table-row-${d.parameterCode}`)
         .attr('ga-on', 'click')

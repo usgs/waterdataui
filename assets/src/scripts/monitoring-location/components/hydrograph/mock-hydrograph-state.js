@@ -5,7 +5,8 @@ export const TEST_CURRENT_TIME_RANGE = {
 export const TEST_PRIMARY_IV_DATA = {
     parameter: {
         parameterCode: '72019',
-        name: 'Depth to water level'
+        name: 'Depth to water level',
+        unit: 'ft'
     },
     values: {
         '90649': {
@@ -21,7 +22,15 @@ export const TEST_PRIMARY_IV_DATA = {
                 {value: 25.9, qualifiers: ['P'], dateTime: 1600620300000}
             ],
             method: {
-                methodID: '90649'
+                methodID: '90649',
+                methodDescription: '90649 method description'
+            }
+        },
+        '252055': {
+            points: [],
+            method: {
+                methodDescription: 'From multiparameter sonde',
+                methodID: '252055'
             }
         }
     }

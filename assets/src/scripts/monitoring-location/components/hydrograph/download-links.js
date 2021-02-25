@@ -1,6 +1,7 @@
 /**
  *  Module with functions for processing and structuring download link URLs
  */
+/*
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
@@ -24,6 +25,7 @@ import {anyVisibleGroundwaterLevels} from './selectors/discrete-data';
  * @param {String} timeSeriesType - one of two options, 'current' or 'compare'
  * @return {String} a URL usable to retrieve station data from WaterServices
  */
+/*
 const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation, parameterCode, timeSeriesType) {
     let url = '';
     const key = currentIVDateRange === 'P7D' ? `${timeSeriesType}:${currentIVDateRange}` : `${timeSeriesType}:${currentIVDateRange}:${parameterCode}`;
@@ -51,7 +53,7 @@ const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation,
 * @param {store} store - The Redux store, in the form of a JavaScript object
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
-
+/*
 export const renderDownloadLinks = function(elem, store, siteno) {
     elem.call(link(store, (elem, {
         currentIVDateRange,
@@ -154,3 +156,4 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         requestTimeRange: getRequestTimeRange('current')
     })));
 };
+*/

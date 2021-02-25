@@ -6,7 +6,7 @@ import {sortedParameters} from 'ui/utils';
 
 /**
  * Returns a Redux selector function which returns an sorted array of metadata
- * for each available parameter code. Each object has the following properties:
+ * for each available parameter . Each object has the following properties:
  *      @prop {String} parameterCode
  *      @prop {String} description
  *      @prop {Object} periodOfRecord - with beginDate and endDate String properties
@@ -14,7 +14,7 @@ import {sortedParameters} from 'ui/utils';
  *          (subscriptionParameterCode, displayText, tooltipText)
  * Other properties from the Redux store are also included
  */
-export const getAvailableParameterCodes = createSelector(
+export const getAvailableParameters = createSelector(
     (state) => state.hydrographParameters,
     allParameters => {
         if (!Object.keys(allParameters).length) {
