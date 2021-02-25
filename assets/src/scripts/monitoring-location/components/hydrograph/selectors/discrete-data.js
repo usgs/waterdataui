@@ -5,6 +5,23 @@ import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-
 import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
 
+
+/*
+* Helper function that takes a raw approval code and matches it to a more detail object
+* @param {Object} approvalCode -  details about a single groundwater data point
+* @return {Object} Details that expand on the meaning of the approval code.
+*/
+export const getDetailsForApprovalCode = function(approvalCode) {
+    const groundwaterLineClass = {
+        'A': {label: 'Approved', class: 'approved'},
+        'P': {label: 'Provisional', class: 'provisional'},
+        'R': {label: 'Revised', class: 'revised'},
+        'default': {label: `code ${approvalCode}`, class: `unknown-code-${approvalCode}`}
+    };
+
+    return groundwaterLineClass[approvalCode] || groundwaterLineClass['default'];
+};
+
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
  * on the hydrograpnh
@@ -27,27 +44,14 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
             .map((data) => {
                 return {
                     ...data,
-                    value: parseFloat(data.value)
+                    value: parseFloat(data.value),
+                    approvals: getDetailsForApprovalCode(data.qualifiers[0])
                 };
             });
     }
 );
 
-/*
-* When given an approval code, will return the text equivalent
-*  @param {String} approvalCode - Usually a letter such as 'A'
-*   @return {String} - an easy to understand text version of an approval code
-*/
-const approvalCodeText = function(approvalCode) {
-    const approvalText = {
-        P: 'Provisional',
-        A: 'Approved',
-        R: 'Revised',
-        default: `unknown code: ${approvalCode}`
-    };
 
-    return approvalText[approvalCode] || approvalText.default;
-};
 
 /*
  * Selector function which returns a function that returns an array of gw data appropriate
@@ -71,7 +75,7 @@ export const getVisibleGroundwaterLevelsTableData = createSelector(
                     suppressMilliseconds: true,
                     suppressSeconds: true
                 }),
-                approvals: approvalCodeText(point.qualifiers[0])
+                approvals: getDetailsForApprovalCode(point.qualifiers[0]).label
             };
         });
     }
