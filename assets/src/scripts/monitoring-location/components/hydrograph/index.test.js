@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 import sinon from 'sinon';
 
 import * as utils from 'ui/utils';
@@ -14,7 +14,7 @@ import {attachToNode} from './index';
 import {
     TEST_CURRENT_TIME_RANGE,
     TEST_GW_LEVELS,
-    TEST_HYDROGRAPH_PARAMETERS,
+    TEST_HYDROGRAPH_PARAMETERS, TEST_MEDIAN_DATA,
     TEST_PRIMARY_IV_DATA
 } from './mock-hydrograph-state';
 
@@ -246,21 +246,20 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(retrieveHydrographParametersSpy).not.toHaveBeenCalled();
         });
     });
-    /*
-    TODO: Trying to why this is showing strange warnings. leaving out for now
-    */
-    xdescribe('Tests for rendering once fetching is complete', () => {
 
+    describe('Tests for rendering once fetching is complete when showOnlyGraph is false', () => {
         let store;
         beforeEach(() => {
             store = configureStore({
                 hydrographData: {
                     primaryIVData: TEST_PRIMARY_IV_DATA,
                     currentTimeRange: TEST_CURRENT_TIME_RANGE,
-                    groundwaterLevels: TEST_GW_LEVELS
+                    groundwaterLevels: TEST_GW_LEVELS,
+                    medianStatisticsData: TEST_MEDIAN_DATA
                 },
                 hydrographState: {
-                    selectedIVMethodID: '90649'
+                    selectedIVMethodID: '90649',
+                    showMedianData: true
                 },
                 hydrographParameters: TEST_HYDROGRAPH_PARAMETERS,
                 floodData: {},
@@ -270,8 +269,116 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
 
             hydrographData.retrieveHydrographData = jest.fn(() => {
-                return function(dispatch) {
-                    console.log('In mocked retrieveHydrographData');
+                return function() {
+                    return Promise.resolve();
+                };
+            });
+            hydrographParameters.retrieveHydrographParameters = jest.fn(() => {
+                return function() {
+                    return Promise.resolve();
+                };
+            });
+            attachToNode(store, graphNode, {
+                ...INITIAL_PARAMETERS,
+                showOnlyGraph: false
+            });
+        });
+
+        it('loading indicator should be hidden', () => {
+            expect(nodeElem.select('.loading-indicator').size()).toBe(0);
+        });
+
+        it('should render the correct number of svg nodes', () => {
+            expect(selectAll('svg').size()).toBe(4);
+        });
+
+        it('should have a title div', () => {
+            const titleDiv = selectAll('.time-series-graph-title');
+            expect(titleDiv.size()).toBe(1);
+            expect(titleDiv.select('div').text()).toContain('Depth to water level');
+            expect(titleDiv.select('.usa-tooltip').text()).toEqual('Depth to water level, feet');
+        });
+
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
+
+        it('should render time series data as a line', () => {
+            // There should be four segments
+            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(4);
+        });
+
+        it('should render a rectangle for masked data', () => {
+            expect(selectAll('.hydrograph-svg g.iv-mask-group').size()).toBe(1);
+        });
+
+        it('should have a point for the median stat data with a label', () => {
+            expect(selectAll('#median-points path').size()).toBe(1);
+            expect(selectAll('#median-points text').size()).toBe(0);
+        });
+
+        it('should have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(1);
+        });
+
+        it('should have .cursor-slider-svg element', () => {
+            expect(selectAll('.cursor-slider-svg').size()).toBe(1);
+        });
+
+        it('should have date control elements', () => {
+            expect(selectAll('#ts-daterange-select-container').size()).toBe(1);
+            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(1);
+        });
+
+        it('should have method select element', () => {
+            expect(selectAll('#ts-method-select-container').size()).toBe(1);
+        });
+
+        it('should have the select time series element', () => {
+            expect(selectAll('#select-time-series').size()).toBe(1);
+        });
+
+        it('should have tooltips for the select series table', () => {
+            // one for each of the two parameters and the WaterAlert links
+            expect(selectAll('table .usa-tooltip').size()).toBe(10);
+        });
+
+        it('should have data tables for hydrograph data', () => {
+            expect(select('#iv-hydrograph-data-table-container').size()).toBe(1);
+            expect(select('#gw-hydrograph-data-table-container').size()).toBe(1);
+        });
+    });
+
+    describe('Tests for rendering once fetching is complete when showOnlyGraph is true', () => {
+        let store;
+        beforeEach(() => {
+            store = configureStore({
+                hydrographData: {
+                    primaryIVData: TEST_PRIMARY_IV_DATA,
+                    currentTimeRange: TEST_CURRENT_TIME_RANGE,
+                    groundwaterLevels: TEST_GW_LEVELS,
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    selectedIVMethodID: '90649',
+                    showMedianData: true
+                },
+                hydrographParameters: TEST_HYDROGRAPH_PARAMETERS,
+                floodData: {},
+                ui: {
+                    width: 1000
+                }
+            });
+
+            hydrographData.retrieveHydrographData = jest.fn(() => {
+                return function() {
+                    return Promise.resolve();
+                };
+            });
+            hydrographParameters.retrieveHydrographParameters = jest.fn(() => {
+                return function() {
                     return Promise.resolve();
                 };
             });
@@ -285,149 +392,59 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(nodeElem.select('.loading-indicator').size()).toBe(0);
         });
 
-        /*
-                xit('should render the correct number of svg nodes', () => {
-                    console.log('In SVg test');
-                    expect(selectAll('svg').size()).toBe(4);
-                });
-            });
-                it('should have a title div', () => {
-                    const titleDiv = selectAll('.time-series-graph-title');
-                    expect(titleDiv.size()).toBe(1);
-                    expect(titleDiv.select('div').text()).toContain('Test title for 00060, method description');
-                    expect(titleDiv.select('.usa-tooltip').text()).toEqual('Test description for 00060');
-                });
+        it('should render the correct number of svg nodes', () => {
+            expect(selectAll('svg').size()).toBe(2);
+        });
 
-                it('should have a defs node', () => {
-                    expect(selectAll('defs').size()).toBe(1);
-                    expect(selectAll('defs mask').size()).toBe(1);
-                    expect(selectAll('defs pattern').size()).toBe(2);
-                });
+        it('should have a title div', () => {
+            const titleDiv = selectAll('.time-series-graph-title');
+            expect(titleDiv.size()).toBe(1);
+        });
 
-                it('should render time series data as a line', () => {
-                    // There should be one segment per time-series. Each is a single
-                    // point, so should be a circle.
-                    expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
-                });
+        it('should have a defs node', () => {
+            expect(selectAll('defs').size()).toBe(1);
+            expect(selectAll('defs mask').size()).toBe(1);
+            expect(selectAll('defs pattern').size()).toBe(2);
+        });
 
-                it('should render a rectangle for masked data', () => {
-                    expect(selectAll('.hydrograph-svg g.current-mask-group').size()).toBe(1);
-                });
+        it('should render time series data as a line', () => {
+            // There should be four segments
+            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(4);
+        });
 
-                it('should have a point for the median stat data with a label', () => {
-                    expect(selectAll('#median-points path').size()).toBe(1);
-                    expect(selectAll('#median-points text').size()).toBe(0);
-                });
+        it('should render a rectangle for masked data', () => {
+            expect(selectAll('.hydrograph-svg g.iv-mask-group').size()).toBe(1);
+        });
 
-                it('should have brush element for the hydrograph', () => {
-                    expect(selectAll('.brush').size()).toBe(1);
-                });
+        it('should have a point for the median stat data with a label', () => {
+            expect(selectAll('#median-points path').size()).toBe(1);
+            expect(selectAll('#median-points text').size()).toBe(0);
+        });
 
-                it('should have .cursor-slider-svg element', () => {
-                    expect(selectAll('.cursor-slider-svg').size()).toBe(1);
-                });
+        it('should not have brush element for the hydrograph', () => {
+            expect(selectAll('.brush').size()).toBe(0);
+        });
 
-                it('should have date control elements', () => {
-                    expect(selectAll('#ts-daterange-select-container').size()).toBe(1);
-                    expect(selectAll('#ts-customdaterange-select-container').size()).toBe(1);
-                });
+        it('should not have .cursor-slider-svg element', () => {
+            expect(selectAll('.cursor-slider-svg').size()).toBe(0);
+        });
 
-                it('should have method select element', () => {
-                    expect(selectAll('#ts-method-select-container').size()).toBe(1);
-                });
+        it('should not have date control elements', () => {
+            expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
+            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
+        });
 
-                it('should have the select time series element', () => {
-                    expect(selectAll('#select-time-series').size()).toBe(1);
-                });
+        it('should not have method select element', () => {
+            expect(selectAll('#ts-method-select-container').size()).toBe(0);
+        });
 
-                it('should have tooltips for the select series table', () => {
-                    // one for each of the two parameters and the WaterAlert links
-                    expect(selectAll('table .usa-tooltip').size()).toBe(4);
-                });
+        it('should not have the select time series element', () => {
+            expect(selectAll('#select-time-series').size()).toBe(0);
+        });
 
-                it('should have data tables for hydrograph data', () => {
-                    expect(select('#iv-hydrograph-data-table-container').size()).toBe(1);
-                    expect(select('#gw-hydrograph-data-table-container').size()).toBe(1);
-                });
-            });
-
-            describe('hide elements when showOnlyGraph is set to true', () => {
-                let store;
-                let resolvedLoadPromise = Promise.resolve();
-                beforeEach(() => {
-                    jest.spyOn(ivTimeSeriesDataActions, 'retrieveIVTimeSeries').mockReturnValue(function() {
-                        return Promise.resolve({});
-                    });
-
-                    store = configureStore({
-                        ...TEST_STATE,
-                        ivTimeSeriesData: {
-                            ...TEST_STATE.ivTimeSeriesData,
-                            timeSeries: {
-                                ...TEST_STATE.ivTimeSeriesData.timeSeries,
-                                'method1:00060:current': {
-                                    ...TEST_STATE.ivTimeSeriesData.timeSeries['method1:00060:current'],
-                                    startTime: 1514926800000,
-                                    endTime: 1514930400000,
-                                    points: [{
-                                        dateTime: 1514926800000,
-                                        value: 10,
-                                        qualifiers: ['P']
-                                    }, {
-                                        dateTime: 1514930400000,
-                                        value: null,
-                                        qualifiers: ['P', 'FLD']
-                                    }]
-                                }
-                            }
-                        },
-                        ivTimeSeriesState: {
-                            showIVTimeSeries: {
-                                current: true,
-                                compare: true,
-                                median: true
-                            },
-                            currentIVVariableID: '45807197',
-                            currentIVDateRange: 'P7D',
-                            currentIVMethodID: 'method1',
-                            loadingIVTSKeys: [],
-                            ivGraphBrushOffset: null
-                        },
-                        ui: {
-                            windowWidth: 400,
-                            width: 400
-                        }
-
-                    });
-
-                    attachToNode(store, graphNode, {siteno: '123456788', showOnlyGraph: true}, resolvedLoadPromise);
-                });
-
-                it('should not have brush element for the hydrograph', () => {
-                    expect(selectAll('.brush').size()).toBe(0);
-                });
-
-                it('should not have slider-wrapper element', () => {
-                    expect(selectAll('.slider-wrapper').size()).toBe(0);
-                });
-
-                it('should not have date control elements', () => {
-                    expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
-                    expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
-                    expect(selectAll('#ts-container-radio-group-and-form-buttons').size()).toBe(0);
-                });
-
-                it('should not have method select element', () => {
-                    expect(selectAll('#ts-method-select-container').size()).toBe(0);
-                });
-
-                it('should not have the select time series element', () => {
-                    expect(selectAll('#select-time-series').size()).toBe(0);
-                });
-
-                it('should not have the data table', () => {
-                    expect(select('#iv-data-table-container').selectAll('table').size()).toBe(0);
-                });
-         */
+        it('should not have data tables for hydrograph data', () => {
+            expect(select('#iv-hydrograph-data-table-container').size()).toBe(0);
+            expect(select('#gw-hydrograph-data-table-container').size()).toBe(0);
+        });
     });
 });

@@ -44,7 +44,7 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
     const rectHeight = Math.abs(yRangeEnd - yRangeStart);
 
     const maskGroup = group.append('g')
-        .attr('class', 'dv-mask-group');
+        .attr('class', 'iv-mask-group');
 
     maskGroup.append('rect')
         .attr('x', xRangeStart)

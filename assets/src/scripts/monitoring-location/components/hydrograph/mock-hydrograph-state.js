@@ -6,6 +6,7 @@ export const TEST_PRIMARY_IV_DATA = {
     parameter: {
         parameterCode: '72019',
         name: 'Depth to water level',
+        description: 'Depth to water level, feet',
         unit: 'ft'
     },
     values: {

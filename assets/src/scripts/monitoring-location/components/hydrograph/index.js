@@ -103,8 +103,6 @@ export const attachToNode = function(store,
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
     fetchDataPromise.then(() => {
-        debugger;
-        console.log('Fetched data');
         nodeElem
             .select('.loading-indicator-container')
             .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
