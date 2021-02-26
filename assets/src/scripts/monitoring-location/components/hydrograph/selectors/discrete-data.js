@@ -31,8 +31,9 @@ const getDetailsForApprovalCode = function(qualifiers) {
  * @return {Function} which returns an {Array} of groundwater level object with properties:
  *      @prop {Float} value
  *      @prop {Number} dateTime
- *      @prop {String} class - a class that can be used to style this point
+ *      @prop {Array of String} classes - a class that can be used to style this point
  *      @prop {String} label - a human readable label for this kind of point
+ *      @prop {Number} radius - used to draw the circle marker
  */
 export const getGroundwaterLevelPoints = createSelector(
     getGroundwaterLevels,
@@ -53,6 +54,13 @@ export const getGroundwaterLevelPoints = createSelector(
     }
 );
 
+/*
+ * Returns a selector function which returns the unique classes/label/radius for the gw level points
+ * @return {Function} which returns an {Array of Object} with the following properties:
+ *      @prop {Array of String} classes
+ *      @prop {String} label
+ *      @prop {Number} radius
+ */
 export const getUniqueGWKinds = createSelector(
     getGroundwaterLevelPoints,
     gwPoints => {
@@ -74,6 +82,7 @@ export const getUniqueGWKinds = createSelector(
  *      @prop {String} parameterName
  *      @prop {String} result
  *      @prop {String} dateTime in site's time zone.
+ *      @prop {String} approvals
  */
 export const getGroundwaterLevelsTableData = createSelector(
     getPrimaryParameter,
@@ -94,14 +103,4 @@ export const getGroundwaterLevelsTableData = createSelector(
             };
         });
     }
-);
-
-/*
- * Returns a selector function that returns true if any ground water
- * levels are visible.
- * @return {Function} which returns {Boolean}
- */
-export const anyVisibleGroundwaterLevels = createSelector(
-    getGroundwaterLevelPoints,
-    (gwLevels) => gwLevels.length !== 0
 );

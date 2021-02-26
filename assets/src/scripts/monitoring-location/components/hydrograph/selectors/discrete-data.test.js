@@ -121,16 +121,4 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             });
         });
     });
-
-    describe('anyVisibleGroundwaterLevels', () => {
-        it('Return false if no visible ground water levels', () => {
-            expect(anyVisibleGroundwaterLevels({
-                hydrographData: {}
-            })).toBe(false);
-        });
-
-        it('Return true if visible ground water levels', () => {
-            expect(anyVisibleGroundwaterLevels(TEST_STATE)).toBe(true);
-        });
-    });
 });
