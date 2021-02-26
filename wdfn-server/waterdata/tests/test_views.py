@@ -13,6 +13,7 @@ from .. import app
 from ..views import __version__
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
+from .lookup_snippets import SAMPLE_COUNTRY_STATE_COUNTY_LOOKUP, HUC_LOOKUP, NWIS_CODE_LOOKUP
 
 
 class TestHomeView(TestCase):
@@ -76,6 +77,9 @@ class TestMonitoringLocationView(TestCase):
         self.test_rdb_text = SITE_RDB
         self.test_rdb_lines = self.test_rdb_text.split('\n')
         self.headers = {'Accept': 'application/ld+json'}
+        app.config['HUC_LOOKUP'] = HUC_LOOKUP
+        app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = SAMPLE_COUNTRY_STATE_COUNTY_LOOKUP
+        app.config['NWIS_CODE_LOOKUP'] = NWIS_CODE_LOOKUP
 
     @mock.patch('waterdata.views.NwisWebServices.get_site_parameters')
     @mock.patch('waterdata.views.NwisWebServices.get_site')
@@ -150,11 +154,14 @@ class TestMonitoringLocationView(TestCase):
         self.assertEqual(response.status_code, 503)
 
 
-# Failing !!!!!!
 class TestHydrologicalUnitView:
     # pylint: disable=R0201
-
     @pytest.fixture(autouse=True)
+    def setUp(self):
+        self.app_client = app.test_client()
+        app.config['HUC_LOOKUP'] = HUC_LOOKUP
+        app.config['NWIS_CODE_LOOKUP'] = NWIS_CODE_LOOKUP
+
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
@@ -179,8 +186,7 @@ class TestHydrologicalUnitView:
         response = client.get('/hydrological-unit/01010001/monitoring-locations/')
         assert response.status_code == 200
         text = response.data.decode('utf-8')
-        # There are eight instances of this site in MOCK_SITE_LIST_2.
-        assert text.count('01630500') == 16, 'Expected site 01630500 in output'
+        assert text.count('472121068204001') == 2, 'Expected site 472121068204001 in output'
 
 
 class TestNetworkView(TestCase):
@@ -225,19 +231,18 @@ class TestNetworkView(TestCase):
         assert response.status_code == 404
 
 
-# Failing !!!!!!
+
 class TestCountryStateCountyView:
     # pylint: disable=R0201
+    @pytest.fixture(autouse=True)
     def setUp(self):
         self.app_client = app.test_client()
-        self.test_url = re.compile(f"{app.config['SERVER_SERVICE_ROOT']}/nwis/site/.*")
+        app.config['COUNTRY_STATE_COUNTY_LOOKUP'] = SAMPLE_COUNTRY_STATE_COUNTY_LOOKUP
 
-
-    @pytest.fixture(autouse=True)
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
+            url = f'{app.config["SERVER_SERVICE_ROOT"]}/nwis/site/.*'
             req.get(url, text=PARAMETER_RDB)
             yield
 
@@ -262,7 +267,7 @@ class TestCountryStateCountyView:
         response = client.get('/states/23/counties/003/monitoring-locations/')
         assert response.status_code == 200
         text = response.data.decode('utf-8')
-        assert text.count('01630500') == 16, 'Expected site 01630500 in output'
+        assert text.count('01011400') == 2, 'Expected site 01011400 in output'
 
 
 class TestTimeSeriesComponentView:

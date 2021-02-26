@@ -95,7 +95,6 @@ def load_lookup_from_backup_file(lookup_name, startup=False):
                     send_email(message)
     except FileNotFoundError:
         app.logger.error('No previous file found.')
-        # No email during local development (set your instance/config.py)
         # Don't expect the lookup file to exist when the application first starts.
         if startup is not True:
             app.logger.error('This will cause the application to fail.')
