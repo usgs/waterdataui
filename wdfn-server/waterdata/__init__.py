@@ -171,7 +171,6 @@ def add_lookups_to_app_context():
         if os.path.isfile(file_path):
             load_lookup_from_backup_file(lookup, startup=True)
         else:
-            print('ran')
             get_lookup(lookup)
 
 
