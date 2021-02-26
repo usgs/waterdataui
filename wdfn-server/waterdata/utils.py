@@ -4,7 +4,7 @@ Utility functions
 """
 from flask import request
 from functools import update_wrapper
-from urllib.parse import urlencode, urljoin
+from urllib.parse import urljoin
 from email.message import EmailMessage
 
 import requests as r

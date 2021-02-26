@@ -11,7 +11,7 @@ PROJECT_HOME = os.path.dirname(__file__)
 
 # controls environment specific behavior
 # acceptable values: 'local', 'development', 'staging', 'prod'
-DEPLOYMENT_ENVIRONMENT = 'development'
+DEPLOYMENT_ENVIRONMENT = 'local'
 
 # FEATURE FLAGS
 TIMESERIES_AUDIO_ENABLED = True
