@@ -24,6 +24,10 @@ export const SYMLOG_PARMS = [
     '72137'
 ];
 
+const useSymlog = function(parameter) {
+    return parameter ? SYMLOG_PARMS.indexOf(parameter.parameterCode) > -1 : false;
+};
+
 /*
  * The helper functions are exported as an aid to testing. Only the selectors are actually imported into other modules
  */
@@ -137,7 +141,7 @@ export const getRoundedTickValues = function(additionalTickValues, yDomain) {
 /**
  *  Helper function that, when negative values are present on the y-axis, adds additional negative values to the set of
  *  tick values used to fill tick mark value gaps on the y-axis on some log scale graphs
- * @param {array} additionalTickValues, a set of tick mark values
+ * @param {array} tickValues, a set of tick mark values
  * @returns {array} additionalTickValues, a set of tick mark values with (when needed) additional negative values
  */
 export const generateNegativeTicks = function(tickValues, additionalTickValues) {
@@ -201,7 +205,7 @@ export const getPrimaryValueRange = createSelector(
             result = [Math.min(...valueExtent), Math.max(...valueExtent)];
 
             // Add padding to the extent and handle empty data sets.
-            result = extendDomain(result, SYMLOG_PARMS.indexOf(parameter.parameterCode) !== -1);
+            result = extendDomain(result, useSymlog(parameter));
         }
         return result;
     }
@@ -216,14 +220,12 @@ export const getYTickDetails = createSelector(
     getPrimaryValueRange,
     getPrimaryParameter,
     (yDomain, parameter) => {
-        const isSymlog = SYMLOG_PARMS.indexOf(parameter.parameterCode) > -1;
-
         let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 
         // When there are too many log scale ticks they will overlap--reduce the number in proportion to the number of ticks
         // For example, if there are 37 tick marks, every 4 ticks will be used... if there are 31 tick marks, every 3 ticks
         // will be used. Screens smaller than the USWDS defined medium screen will use fewer tick marks than larger screens.
-        if (isSymlog) {
+        if (useSymlog(parameter)) {
             // add additional ticks and labels to log scales as needed
             tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
             // remove ticks if there are too many of them

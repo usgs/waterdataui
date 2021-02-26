@@ -301,7 +301,7 @@ export const retrieveHydrographData = function(siteno, {parameterCode, period, s
             fetchPromises.push(dispatch(
                 retrieveGroundwaterLevels(siteno, {parameterCode, period, startTime, endTime})));
         }
-        if (hasIVData && loadCompare) {
+        if (hasIVData && loadCompare && config.ALLOW_COMPARE_DATA_FOR_PERIODS.includes(period)) {
             fetchPromises.push(dispatch(
                 retrievePriorYearIVData(siteno, {
                     parameterCode: parameterCode,

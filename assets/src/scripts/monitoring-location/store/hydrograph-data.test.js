@@ -207,6 +207,57 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 });
                 expect(mockStatsCalls).toHaveLength(0);
             });
+
+            it('Loads compare data if requested and period is not a custom period', () => {
+                config.ivPeriodOfRecord = {
+                    '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+                config.gwPeriodOfRecord = {};
+                store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00060',
+                    period: 'P7D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: true,
+                    loadMedian: true
+                }));
+
+                expect(ivDataService.fetchTimeSeries.mock.calls).toHaveLength(2);
+            });
+
+            it('Does not load compare data if requested and period is a custom period', () => {
+                config.ivPeriodOfRecord = {
+                    '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+                config.gwPeriodOfRecord = {};
+                store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00060',
+                    period: 'P10D',
+                    startTime: null,
+                    endTime: null,
+                    loadCompare: true,
+                    loadMedian: true
+                }));
+
+                expect(ivDataService.fetchTimeSeries.mock.calls).toHaveLength(1);
+            });
+
+            it('Does not load compare data if requested and using custom start and end time', () => {
+                config.ivPeriodOfRecord = {
+                    '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+                };
+                config.gwPeriodOfRecord = {};
+                store.dispatch(retrieveHydrographData('11112222', {
+                    parameterCode: '00060',
+                    period: null,
+                    startTime: '2020-01-01',
+                    endTime: '2020-01-31',
+                    loadCompare: true,
+                    loadMedian: true
+                }));
+
+                expect(ivDataService.fetchTimeSeries.mock.calls).toHaveLength(1);
+            });
         });
 
         describe('data is loaded into the Redux store', () => {
