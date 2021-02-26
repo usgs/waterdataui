@@ -3,10 +3,10 @@ import sinon from 'sinon';
 
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
+import {setSelectedDateRange} from 'ml/store/hydrograph-state';
 
 import {drawGraphControls} from './graph-controls';
 import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
-import {setSelectedDateRange} from "../../store/hydrograph-state";
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/hydrograph/graph-controls', () => {
