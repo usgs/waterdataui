@@ -47,7 +47,7 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
 
 
         it('Should have 6 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(6);
+            expect(selectAll('.legend g').size()).toBe(9);
         });
     });
 });

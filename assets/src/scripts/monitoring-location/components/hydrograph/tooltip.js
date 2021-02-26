@@ -38,7 +38,7 @@ const getGWLevelTextInfo = function(point, unitCode) {
     const timeLabel = DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
     return {
         label: `${valueLabel} - ${timeLabel}`,
-        classes: ['gwlevel-tooltip-text']
+        classes: point.classes
     };
 };
 
@@ -71,7 +71,6 @@ const createTooltipTextGroup = function(elem, {
     if (gwLevelPoint) {
         tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode));
     }
-
     const texts = textGroup
         .selectAll('div')
         .data(tooltipTextData);
@@ -87,7 +86,9 @@ const createTooltipTextGroup = function(elem, {
     // Update the text and backgrounds of all tooltip labels
     const allTexts = texts.merge(newTexts);
     allTexts
-        .text(textData => textData.label)
+        .text(textData => {
+            return textData.label;
+        })
         .attr('class', textData => textData.classes.join(' '));
 
     return textGroup;

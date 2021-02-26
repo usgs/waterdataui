@@ -78,13 +78,18 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
 
         it('Should return markers for primary IV Data', () => {
             const markerRows = getLegendMarkerRows(TEST_STATE);
-            expect(markerRows).toHaveLength(1);
+            expect(markerRows).toHaveLength(2);
             const currentRow = markerRows[0];
-            expect(currentRow).toHaveLength(4);
+            expect(currentRow).toHaveLength(3);
             expect(currentRow[0].type).toEqual(textOnlyMarker);
             expect(currentRow[1].type).toEqual(lineMarker);
             expect(currentRow[2].type).toEqual(rectangleMarker);
-            expect(currentRow[3].type).toEqual(circleMarker);
+
+            const gwRow = markerRows[1];
+            expect(gwRow).toHaveLength(3);
+            expect(gwRow[0].type).toEqual(textOnlyMarker);
+            expect(gwRow[1].type).toEqual(circleMarker);
+            expect(gwRow[2].type).toEqual(circleMarker);
         });
 
         it('Should return markers for primary and compare when compare is visible', () => {
@@ -95,9 +100,8 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
                     showCompareIVData: true
                 }
             });
-            expect(markerRows).toHaveLength(2);
-            expect(markerRows[0]).toHaveLength(4);
-            const compareRow = markerRows[1];
+            expect(markerRows).toHaveLength(3);
+            const compareRow = markerRows[2];
             expect(compareRow).toHaveLength(3);
             expect(compareRow[0].type).toEqual(textOnlyMarker);
             expect(compareRow[1].type).toEqual(lineMarker);

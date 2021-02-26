@@ -53,12 +53,12 @@ describe('monitoring-location/components/hydrograph/tooltip module', () => {
 
             expect(div.select('.compare-tooltip-text').size()).toBe(0);
 
-            value = div.select('.gwlevel-tooltip-text').text().split(' - ')[0];
+            value = div.select('.gw-level-point').text().split(' - ')[0];
             expect(value).toBe('27.2 ft');
         });
     });
     describe('createTooltipFocus', () => {
-        let svg, currentTsData, compareTsData;
+        let svg;
         beforeEach(() => {
             svg = select('body').append('svg');
         });
