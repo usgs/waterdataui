@@ -390,8 +390,10 @@ describe('monitoring-location/store/hydrograph-data', () => {
                         description: 'Temperature, water, degrees Fahrenheit (calculated)',
                         unit: 'deg F'
                     });
+                    const values = hydrographData.primaryIVData.values['157775'].points.map(point => point.value);
+                    expect(values).toHaveLength(3);
+                    expect(values).toEqual([35.60, 32.00, 35.78]);
                 });
-
             });
         });
     });

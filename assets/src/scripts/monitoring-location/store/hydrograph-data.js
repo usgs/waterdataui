@@ -124,7 +124,7 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
                         points: value.value.map(point => {
                             let pointValue = parseFloat(point.value);
                             pointValue = pointValue === noDataValue ? null : pointValue;
-                            if (pointValue && isCalculatedTemperatureCode) {
+                            if (pointValue !== null && isCalculatedTemperatureCode) {
                                 pointValue = parseFloat(convertCelsiusToFahrenheit(pointValue).toFixed(2));
                             }
                             return {
