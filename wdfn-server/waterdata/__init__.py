@@ -105,9 +105,7 @@ def load_lookup_from_backup_file(lookup_name, startup=False):
                           f' could not get the lookup file for {lookup_name}.json,' \
                           ' and could not load an old copy. This will cause the application to fail. ' \
                           'Send help soon!'
-                send_email(message)
-                raise FileNotFoundError(f'Unable to load the lookup file from S3 for {lookup_name}; '
-                                        f'backup file not found-stopping program.')
+                send_email(message)                
 
 
 # Pull lookup files from S3 bucket and load into application context
