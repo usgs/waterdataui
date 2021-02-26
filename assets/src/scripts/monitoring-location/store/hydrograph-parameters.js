@@ -26,61 +26,72 @@ const updateHydrographParameters = function(parameters) {
  */
 export const retrieveHydrographParameters = function(siteno) {
     return function(dispatch) {
-        const fetchIVParameters = fetchTimeSeries({sites: [siteno]})
-            .then(series => {
-                if (series.value && series.value.timeSeries) {
-                    const allParameterCodes = series.value.timeSeries.map(ts => ts.variable.variableCode[0].value);
-                    return series.value.timeSeries.reduce((varsByPCode, ts) => {
-                        const parameterCode = ts.variable.variableCode[0].value;
-                        varsByPCode[parameterCode] = {
-                            parameterCode: parameterCode,
-                            name: ts.variable.variableName,
-                            description: ts.variable.variableDescription,
-                            unit: ts.variable.unit.unitCode,
-                            hasIVData: true
-                        };
-                        // If it is a celsius parameterCode, add a variable for calculated Fahrenheit.
-                        if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode) &&
-                            !hasMeasuredFahrenheitParameter(parameterCode, allParameterCodes)) {
-                            const fahrenheitParameter = getConvertedTemperatureParameter(varsByPCode[parameterCode]);
-                            varsByPCode[fahrenheitParameter.parameterCode] = fahrenheitParameter;
-                        }
-                        return varsByPCode;
-                    }, {});
-                } else {
-                    return null;
-                }
-            })
-            .catch(reason => {
-                console.error(reason);
-                throw reason;
+        let fetchPromises = [];
+        if (config.ivPeriodOfRecord) {
+            const fetchIVParameters = fetchTimeSeries({sites: [siteno]})
+                .then(series => {
+                    if (series.value && series.value.timeSeries) {
+                        const allParameterCodes = series.value.timeSeries.map(ts => ts.variable.variableCode[0].value);
+                        return series.value.timeSeries.reduce((varsByPCode, ts) => {
+                            const parameterCode = ts.variable.variableCode[0].value;
+                            varsByPCode[parameterCode] = {
+                                parameterCode: parameterCode,
+                                name: ts.variable.variableName,
+                                description: ts.variable.variableDescription,
+                                unit: ts.variable.unit.unitCode,
+                                hasIVData: true
+                            };
+                            // If it is a celsius parameterCode, add a variable for calculated Fahrenheit.
+                            if (config.TEMPERATURE_PARAMETERS.celsius.includes(parameterCode) &&
+                                !hasMeasuredFahrenheitParameter(parameterCode, allParameterCodes)) {
+                                const fahrenheitParameter = getConvertedTemperatureParameter(varsByPCode[parameterCode]);
+                                varsByPCode[fahrenheitParameter.parameterCode] = fahrenheitParameter;
+                            }
+                            return varsByPCode;
+                        }, {});
+                    } else {
+                        return null;
+                    }
+                })
+                .catch(reason => {
+                    console.error(reason);
+                    throw reason;
+                });
+            fetchPromises.push(fetchIVParameters);
+        }
+        if (config.gwPeriodOfRecord) {
+            const fetchGWLevelParameters = fetchGroundwaterLevels({site: siteno})
+                .then(series => {
+                    if (series.value && series.value.timeSeries) {
+                        return series.value.timeSeries.reduce((varsByPCode, ts) => {
+                            const parameterCode = ts.variable.variableCode[0].value;
+                            varsByPCode[parameterCode] = {
+                                parameterCode: parameterCode,
+                                name: ts.variable.variableName,
+                                description: ts.variable.variableDescription,
+                                unit: ts.variable.unit.unitCode,
+                                hasGWLevelsData: true
+                            };
+                            return varsByPCode;
+                        }, {});
+                    } else {
+                        return null;
+                    }
+                })
+                .catch(reason => {
+                    console.error(reason);
+                    throw reason;
+                });
+            fetchPromises.push(fetchGWLevelParameters);
+        }
+        if (fetchPromises.length) {
+            return Promise.all(fetchPromises).then(([ivVars, gwVars]) => {
+                const mergedVars = merge({}, gwVars, ivVars);
+                dispatch(updateHydrographParameters(mergedVars));
             });
-        const fetchGWLevelParameters = fetchGroundwaterLevels({site: siteno})
-            .then(series => {
-                if (series.value && series.value.timeSeries) {
-                    return series.value.timeSeries.reduce((varsByPCode, ts) => {
-                        const parameterCode = ts.variable.variableCode[0].value;
-                        varsByPCode[parameterCode] = {
-                            parameterCode: parameterCode,
-                            name: ts.variable.variableName,
-                            description: ts.variable.variableDescription,
-                            unit: ts.variable.unit.unitCode,
-                            hasGWLevelsData: true
-                        };
-                        return varsByPCode;
-                    }, {});
-                } else {
-                    return null;
-                }
-            })
-            .catch(reason => {
-                console.error(reason);
-                throw reason;
-            });
-        return Promise.all([fetchIVParameters, fetchGWLevelParameters]).then(([ivVars, gwVars]) => {
-            const mergedVars = merge({}, gwVars, ivVars);
-            dispatch(updateHydrographParameters(mergedVars));
-        });
+        } else {
+            return Promise.resolve();
+        }
     };
 };
 

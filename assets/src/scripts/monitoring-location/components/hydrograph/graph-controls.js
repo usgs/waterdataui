@@ -1,7 +1,9 @@
+import {createStructuredSelector} from 'reselect';
 
+import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 
-import {getSelectedParameterCode} from 'ml/selectors/hydrograph-state-selector';
+import {getSelectedParameterCode, getSelectedDateRange} from 'ml/selectors/hydrograph-state-selector';
 import {getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 
 import {retrieveMedianStatistics, retrievePriorYearIVData} from 'ml/store/hydrograph-data';
@@ -43,9 +45,15 @@ export const drawGraphControls = function(elem, store, siteno) {
             }
         })
         // Sets the state of the toggle
-        .call(link(store,function(elem, checked) {
-            elem.property('checked', checked);
-        }, isVisible('compare')));
+        .call(link(store,function(elem, {checked, selectedDateRange}) {
+            elem.property('checked', checked)
+                .attr('disabled',
+                selectedDateRange !== 'custom' && config.ALLOW_COMPARE_DATA_FOR_PERIODS.includes(selectedDateRange) ?
+                null : true);
+        }, createStructuredSelector({
+            checked: isVisible('compare'),
+            selectedDateRange: getSelectedDateRange
+        })));
     compareControlDiv.append('label')
         .classed('usa-checkbox__label', true)
         .attr('id', 'last-year-label')

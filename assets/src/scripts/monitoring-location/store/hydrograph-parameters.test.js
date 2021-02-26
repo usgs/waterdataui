@@ -3,13 +3,13 @@ import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 import sinon from 'sinon';
 
+import config from 'ui/config';
 import {MOCK_LATEST_IV_DATA, MOCK_LATEST_GW_DATA} from 'ui/mock-service-data';
 
 import * as ivDataService from 'ui/web-services/instantaneous-values';
 import * as groundwaterLevelService from 'ui/web-services/groundwater-levels';
 
 import {hydrographParametersReducer, retrieveHydrographParameters} from './hydrograph-parameters';
-import {hydrographDataReducer} from "./hydrograph-data";
 
 describe('monitoring-location/store/hydrograph-parameters', () => {
     let store;
@@ -38,6 +38,12 @@ describe('monitoring-location/store/hydrograph-parameters', () => {
     describe('retrieveHydrographParameters', () => {
 
         beforeEach(() => {
+            config.ivPeriodOfRecord = {
+                '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+            };
+            config.gwPeriodOfRecord = {
+                '00060': {begin_date: '2010-01-01', end_date: '2020-01-01'}
+            };
             ivDataService.fetchTimeSeries =
                 jest.fn().mockReturnValue(Promise.resolve(JSON.parse(MOCK_LATEST_IV_DATA)));
             groundwaterLevelService.fetchGroundwaterLevels =
@@ -58,6 +64,28 @@ describe('monitoring-location/store/hydrograph-parameters', () => {
             expect(mockGWCalls[0][0]).toEqual({
                 site: '11112222'
             });
+        });
+
+        it('Expects only IV data to be fetched if no period of record for gw', () => {
+            config.gwPeriodOfRecord = null;
+            store.dispatch(retrieveHydrographParameters('11112222'));
+
+            const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
+            const mockGWCalls = groundwaterLevelService.fetchGroundwaterLevels.mock.calls;
+
+            expect(mockIVCalls).toHaveLength(1);
+            expect(mockGWCalls).toHaveLength(0);
+        });
+
+        it('Expects only Gw data to be fetched if no period of record for iv', () => {
+            config.ivPeriodOfRecord = null;
+            store.dispatch(retrieveHydrographParameters('11112222'));
+
+            const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
+            const mockGWCalls = groundwaterLevelService.fetchGroundwaterLevels.mock.calls;
+
+            expect(mockIVCalls).toHaveLength(0);
+            expect(mockGWCalls).toHaveLength(1);
         });
 
         it('Expects the Redux store to save the parameters from both IV and GW calls', () => {

@@ -3,6 +3,7 @@ import sinon from 'sinon';
 
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
+import {setSelectedDateRange} from 'ml/store/hydrograph-state';
 
 import {drawGraphControls} from './graph-controls';
 import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
@@ -24,6 +25,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
                 },
                 hydrographState: {
                     showCompareIVData: false,
+                    selectedDateRange: 'P7D',
                     showMedianData: false,
                     selectedParameterCode: '72019'
                 }
@@ -41,10 +43,11 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
         });
 
         // last year checkbox tests
-        it('Should render the compare toggle unchecked', () => {
+        it('Should render the compare toggle unchecked and not disabled', () => {
             const checkbox = select('#last-year-checkbox');
             expect(checkbox.size()).toBe(1);
             expect(checkbox.property('checked')).toBe(false);
+            expect(checkbox.attr('disabled')).toBeNull();
         });
 
         it('Should set the compare visibility to true and retrieve the Prior year data', () => {
@@ -69,6 +72,30 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.dispatch('click');
             expect(store.getState().hydrographState.showCompareIVData).toBe(false);
             expect(retrievePriorYearSpy.mock.calls).toHaveLength(1);
+        });
+
+        it('Should change the checkbox to disabled if the selectedDateRange is set to custom', () => {
+            store.dispatch(setSelectedDateRange('custom'));
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const checkbox = select('#last-year-checkbox');
+                    expect(checkbox.attr('disabled')).toBe('true');
+
+                    resolve();
+                });
+            });
+        });
+
+        it('Should change the checkbox to disabled if the selectedDateRange is a custom period', () => {
+            store.dispatch(setSelectedDateRange('P45D'));
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    const checkbox = select('#last-year-checkbox');
+                    expect(checkbox.attr('disabled')).toBe('true');
+
+                    resolve();
+                });
+            });
         });
 
         //median visibility tests
