@@ -107,7 +107,6 @@ describe('monitoring-location/store/hydrograph-parameters', () => {
                 expect(hydrographParameters['72019'].hasGWLevelsData).toBeTruthy();
                 expect(hydrographParameters['62610'].hasGWLevelsData).toBeTruthy();
                 expect(hydrographParameters['62611'].hasGWLevelsData).toBeTruthy();
-
             });
         });
     });
