@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
 // required to make the USWDS component JS available to init after page load
-import components from 'uswds/src/js/components';
+import {datePicker, dateRangePicker} from '../../../../../node_modules/uswds/src/js/components';
 
 import config from 'ui/config';
 
@@ -301,9 +301,9 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
 
     // required to init the USWDS date picker after page load before calling the
     // dateRangePicker on function
-    components.datePicker.init(dateRangePickerContainer.node());
+    datePicker.init(dateRangePickerContainer.node());
     // required to init the USWDS date range picker after page load
-    components.dateRangePicker.on(dateRangePickerContainer.node());
+    dateRangePicker.on(dateRangePickerContainer.node());
 
     // Adds controls for the calendar day submit button
     const calendarDaysSubmitContainer = calendarDaysContainer.append('div')

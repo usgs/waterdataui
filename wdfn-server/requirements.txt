@@ -3,13 +3,13 @@ chardet==4.0.0
 click==7.1.2
 Flask==1.1.2
 itsdangerous==1.1.0
-Markdown==3.3.3
+Markdown==3.3.4
 MarkupSafe==1.1.1
 pendulum==2.1.2
-pyfakefs==4.3.3
+pyfakefs==4.4.0
 pytest==6.2.2
 pytest-mock==3.5.1
-pytest-flask==1.1.0
+pytest-flask==1.2.0
 requests==2.25.1
 requests-mock==1.8.0
 six==1.15.0
