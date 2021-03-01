@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0)
 ### Added
-- A column indicating the approval status of the data shows in the DV Data Table.
+- A column indicating the approval status of the data shows in the Field Visit Data Table.
 - Color coding of provisional and approved data for groundwater on hydrograph
 
 ### Fixed
