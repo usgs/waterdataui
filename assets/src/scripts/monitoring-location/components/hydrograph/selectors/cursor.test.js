@@ -185,7 +185,7 @@ describe('monitoring-location/components/hydrograph/selectors/cursor module', ()
         });
 
         it('Return nearest point when brush offset is null', () => {
-            expect(getGroundwaterLevelCursorPoint({
+            const result = getGroundwaterLevelCursorPoint({
                 ...TEST_STATE,
                 hydrographData: {
                     ...TEST_STATE.hydrographData,
@@ -195,14 +195,13 @@ describe('monitoring-location/components/hydrograph/selectors/cursor module', ()
                     ...TEST_STATE.hydrographState,
                     graphCursorOffset: 7200000
                 }
-            })).toEqual({
-                value: 20.1,
-                dateTime: 1514984400000
             });
+            expect(result.value).toEqual(20.1);
+            expect(result.dateTime).toEqual(1514984400000);
         });
 
         it('Return nearest point brush offset is not null', () => {
-            expect(getGroundwaterLevelCursorPoint({
+            const result = getGroundwaterLevelCursorPoint({
                 ...TEST_STATE,
                 hydrographData: {
                     ...TEST_STATE.hydrographData,
@@ -216,10 +215,9 @@ describe('monitoring-location/components/hydrograph/selectors/cursor module', ()
                         end: 0
                     }
                 }
-            })).toEqual({
-                value: 18.3,
-                dateTime: 1514991600000
             });
+            expect(result.value).toEqual(18.3);
+            expect(result.dateTime).toEqual(1514991600000);
         });
     });
 

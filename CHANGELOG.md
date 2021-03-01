@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.42.0...master)
 ### Added
 - A column indicating the approval status of the data shows in the DV Data Table.
+- Color coding of provisional and approved data for groundwater on hydrograph
 
 ### Fixed
 - The converted Fahrenheit line no longer drops off graph with zero values.
