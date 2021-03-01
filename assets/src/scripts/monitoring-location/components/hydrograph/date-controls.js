@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 // required to make the USWDS component JS available to init after page load
-import components from 'uswds/src/js/components';
+import {datePicker, dateRangePicker} from '../../../../../node_modules/uswds/src/js/components';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
@@ -270,9 +270,9 @@ export const drawDateRangeControls = function(elem, store, siteno) {
 
         // required to init the USWDS date picker after page load before calling the
         // dateRangePicker on function
-        components.datePicker.init(dateRangePicker.node());
+        datePicker.init(dateRangePicker.node());
         // required to init the USWDS date range picker after page load
-        components.dateRangePicker.on(dateRangePicker.node());
+        dateRangePicker.on(dateRangePicker.node());
 
         // Adds controls for the calendar day submit button
         const calendarDaysSubmitContainer = containerCustomCalendarDays.append('div')
