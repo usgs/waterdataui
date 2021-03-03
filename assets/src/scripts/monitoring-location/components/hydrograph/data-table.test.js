@@ -5,13 +5,6 @@ import {configureStore} from 'ml/store';
 import {drawDataTables} from './data-table';
 import {TEST_PRIMARY_IV_DATA, TEST_GW_LEVELS} from './mock-hydrograph-state';
 
-const TEST_STATE = {
-    hydrographData: {
-        primaryIVData: TEST_PRIMARY_IV_DATA,
-        groundwaterLevels: TEST_GW_LEVELS
-    }
-};
-
 describe('monitoring-location/components/hydrograph/data-table', () => {
     let testDiv;
     let store;
@@ -47,7 +40,7 @@ describe('monitoring-location/components/hydrograph/data-table', () => {
     it('Renders single IV table if no GW levels', () => {
         store = configureStore({
             hydrographData: {
-                primaryIVData: TEST_PRIMARY_IV_DATA,
+                primaryIVData: TEST_PRIMARY_IV_DATA
             },
             hydrographState: {
                 selectedIVMethodID: '90649'

@@ -1,5 +1,5 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
-import {tooltip} from '../../../../../node_modules/uswds/src/js/components';
+import {tooltip} from 'uswds-components';
 
 import {select} from 'd3-selection';
 

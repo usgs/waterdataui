@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
 // required to make the USWDS component JS available to init after page load
-import {datePicker, dateRangePicker} from '../../../../../node_modules/uswds/src/js/components';
+import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
 
@@ -233,7 +233,7 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 showDataLoadingIndicator(true);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataLoadingIndicator(false)
+                        showDataLoadingIndicator(false);
                     });
             }
         });

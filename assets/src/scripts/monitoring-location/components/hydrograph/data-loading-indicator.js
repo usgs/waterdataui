@@ -11,6 +11,6 @@ export const showDataLoadingIndicator = function(isVisible, layoutHeight) {
             sizeClass: mediaQuery(config.USWDS_MEDIUM_SCREEN) ? 'fa-4x' : 'fa-2x'
         });
     if (isVisible && layoutHeight) {
-        container.style('transform', `translateY(${layoutHeight / 2}px`);
+        container.style('transform', `translateY(${layoutHeight / 2}px)`);
     }
 };

@@ -9,6 +9,7 @@ import {setSelectedDateRange} from 'ml/store/hydrograph-state';
 
 import {drawGraphControls} from './graph-controls';
 import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
+import * as dataLoadingIndicator from "./data-loading-indicator";
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/hydrograph/graph-controls', () => {
@@ -20,6 +21,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
         let fakeServer;
         let store;
         let retrievePriorYearSpy, retrieveMedianStatisticsSpy;
+        let loadingIndicatorSpy;
 
         beforeEach(() => {
             div = select('body').append('div');
@@ -37,6 +39,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             fakeServer = sinon.createFakeServer();
             retrievePriorYearSpy = jest.spyOn(hydrographData, 'retrievePriorYearIVData');
             retrieveMedianStatisticsSpy = jest.spyOn(hydrographData, 'retrieveMedianStatistics');
+            loadingIndicatorSpy = jest.spyOn(dataLoadingIndicator, 'showDataLoadingIndicator');
 
             drawGraphControls(div, store, '11112222');
         });
@@ -115,6 +118,8 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.dispatch('click');
 
             expect(store.getState().hydrographState.showMedianData).toBe(true);
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveMedianStatisticsSpy).toHaveBeenCalledWith('11112222', '72019');
         });
 
@@ -126,6 +131,8 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.property('checked', false);
             checkbox.dispatch('click');
             expect(store.getState().hydrographState.showMedianData).toBe(false);
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveMedianStatisticsSpy.mock.calls).toHaveLength(1);
         });
     });
