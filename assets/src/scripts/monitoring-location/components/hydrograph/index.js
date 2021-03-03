@@ -115,7 +115,7 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!showOnlyGraph) {
-            nodeElem.select('#hydrograph-date_controls-container')
+            nodeElem.select('#hydrograph-date-controls-container')
                 .call(drawDateRangeControls, store, siteno, initialPeriod, {
                     start: startDT,
                     end: endDT

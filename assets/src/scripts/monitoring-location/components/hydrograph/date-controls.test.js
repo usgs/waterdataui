@@ -2,6 +2,7 @@ import {select} from 'd3-selection';
 import sinon from 'sinon';
 
 import config from 'ui/config';
+import * as utils from 'ui/utils';
 
 import {getSelectedDateRange, getSelectedCustomDateRange} from 'ml/selectors/hydrograph-state-selector';
 
@@ -21,6 +22,8 @@ const TEST_STATE = {
 
 
 describe('monitoring-location/components/hydrograph/date-controls', () => {
+    utils.mediaQuery = jest.fn().mockReturnValue(true);
+
     let div;
     let fakeServer;
     let store;

@@ -45,7 +45,9 @@ export const drawGraphControls = function(elem, store, siteno) {
                     startTime: currentTimeRange.start,
                     endTime: currentTimeRange.end
                 }))
-                    .then(() => showDataLoadingIndicator(false));
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         })
         // Sets the state of the toggle
@@ -80,7 +82,9 @@ export const drawGraphControls = function(elem, store, siteno) {
             if (this.checked) {
                 showDataLoadingIndicator(true);
                 store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())))
-                    .then(() => showDataLoadingIndicator(false));
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         })
         // Sets the state of the toggle

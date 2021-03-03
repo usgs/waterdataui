@@ -10,6 +10,7 @@ import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange} from 'ml/store/hydrograph-state';
 
+import {getMainLayout} from './selectors/layout';
 import {showDataLoadingIndicator} from './data-loading-indicator';
 
 const DATE_RANGE = [{
@@ -96,9 +97,11 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
             if (!isCustom) {
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(selectedValue));
-                showDataLoadingIndicator(true);
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
-                    //.then(showDataLoadingIndicator(false));
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         });
     li.select('#custom-input').attr('aria-expanded', isCustomPeriod(initialDateRange));
@@ -229,7 +232,9 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
                 showDataLoadingIndicator(true);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                    .then(() => showDataLoadingIndicator(false));
+                    .then(() => {
+                        showDataLoadingIndicator(false)
+                    });
             }
         });
 };
@@ -345,7 +350,9 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     store.dispatch(setSelectedDateRange('custom'));
                     showDataLoadingIndicator(true);
                     store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                        .then(() => showDataLoadingIndicator(false));
+                        .then(() => {
+                            showDataLoadingIndicator(false);
+                        });
                 }
             }
         });

@@ -1,6 +1,8 @@
 import {select} from 'd3-selection';
 import sinon from 'sinon';
 
+import * as utils from 'ui/utils';
+
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
 import {setSelectedDateRange} from 'ml/store/hydrograph-state';
@@ -10,6 +12,8 @@ import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/hydrograph/graph-controls', () => {
+    utils.mediaQuery = jest.fn().mockReturnValue(true);
+
     describe('drawGraphControls', () => {
 
         let div;

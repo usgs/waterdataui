@@ -1,6 +1,7 @@
-import {scaleLinear} from 'd3-scale';
 import {select} from 'd3-selection';
 import sinon from 'sinon';
+
+import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
@@ -9,6 +10,8 @@ import {TEST_HYDROGRAPH_PARAMETERS} from './mock-hydrograph-state';
 import {drawSelectionTable} from './parameters';
 
 describe('monitoring-location/components/hydrograph/parameters module', () => {
+    utils.mediaQuery = jest.fn().mockReturnValue(true);
+
    const TEST_STATE = {
        hydrographParameters: TEST_HYDROGRAPH_PARAMETERS,
        hydrographState: {

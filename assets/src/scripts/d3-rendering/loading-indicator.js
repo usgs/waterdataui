@@ -2,6 +2,6 @@ export const drawLoadingIndicator = function(elem, {showLoadingIndicator, sizeCl
     elem.select('.loading-indicator').remove();
     if (showLoadingIndicator) {
         elem.append('i')
-            .attr('class', `loading-indicator fas ${sizeClass} fa-spinner`);
+            .attr('class', `loading-indicator fas ${sizeClass} fa-spin fa-spinner`);
     }
 };

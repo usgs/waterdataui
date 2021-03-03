@@ -71,7 +71,9 @@ export const drawSelectionTable = function(container, store, siteno) {
                 store.dispatch(setSelectedParameterCode(d.parameterCode));
                 showDataLoadingIndicator(true);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                    .then(() => showDataLoadingIndicator(false));
+                    .then(() => {
+                        showDataLoadingIndicator(false)
+                    });
             }
         })
         .call(tr => {
