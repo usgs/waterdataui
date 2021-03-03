@@ -15,6 +15,8 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
 
+import {showDataLoadingIndicator} from './data-loading-indicator';
+
 
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
@@ -67,7 +69,9 @@ export const drawSelectionTable = function(container, store, siteno) {
             const thisClass = select(this).attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(d.parameterCode));
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
+                showDataLoadingIndicator(true);
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                    .then(() => showDataLoadingIndicator(false));
             }
         })
         .call(tr => {

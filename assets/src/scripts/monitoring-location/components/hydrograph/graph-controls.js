@@ -11,6 +11,8 @@ import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrog
 
 import {isVisible} from './selectors/time-series-data';
 
+import {showDataLoadingIndicator} from './data-loading-indicator';
+
 /*
  * Create the last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
@@ -37,11 +39,13 @@ export const drawGraphControls = function(elem, store, siteno) {
             const currentTimeRange = getTimeRange('current')(state);
             store.dispatch(setCompareDataVisibility(this.checked));
             if (this.checked) {
+                showDataLoadingIndicator(true);
                 store.dispatch(retrievePriorYearIVData(siteno, {
                     parameterCode: getSelectedParameterCode(state),
                     startTime: currentTimeRange.start,
                     endTime: currentTimeRange.end
-                }));
+                }))
+                    .then(() => showDataLoadingIndicator(false));
             }
         })
         // Sets the state of the toggle
@@ -74,7 +78,9 @@ export const drawGraphControls = function(elem, store, siteno) {
         .on('click', function() {
             store.dispatch(setMedianDataVisibility(this.checked));
             if (this.checked) {
-                store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())));
+                showDataLoadingIndicator(true);
+                store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())))
+                    .then(() => showDataLoadingIndicator(false));
             }
         })
         // Sets the state of the toggle

@@ -4,9 +4,6 @@
 @import './variables';
 
 #ts-daterange-select-container {
-  .loading-indicator-container {
-    display: inline-block;
-  }
   ul {
     display: inline-block;
     li {
@@ -113,27 +110,15 @@
         }
       }
     }
-
-    svg {
-      .spark-line {
-        stroke: $usgs-blue;
-        stroke-width: 1px;
-        fill: none;
-      }
-
-      text {
-        .sparkline-text {
-          font-size: 0.6em;
-        }
-      }
-
-      .spark-point {
-        stroke: $usgs-blue;
-        stroke-width: 1px;
-        fill: $usgs-blue;
-      }
-    }
   }
+}
+
+#hydrograph-loading-indicator-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .hydrograph-container {
@@ -142,7 +127,6 @@
   @include at-media('tablet') {
     min-height: 85px;
   }
-
   // Import the SVG styles for the graph
   @import './graph';
 
@@ -219,7 +203,7 @@
 .loading-indicator-container {
   i {
     text-align: center;
-    vertical: middle;
+    vertical-align: middle;
     width: 100%;
   }
 }
