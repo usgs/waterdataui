@@ -1,7 +1,7 @@
 /**
  *  Module with functions for processing and structuring download link URLs
  */
-/*
+
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
@@ -10,11 +10,14 @@ import{link}  from 'ui/lib/d3-redux';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries,
-    getRequestTimeRange} from 'ml/selectors/time-series-selector';
-import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
+// import {getQueryInfo, getCurrentParmCd, getCurrentDateRange, getShowIVTimeSeries,
+//     getRequestTimeRange} from 'ml/selectors/time-series-selector';
+// import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
 
-import {anyVisibleGroundwaterLevels} from './selectors/discrete-data';
+// import {anyVisibleGroundwaterLevels} from './selectors/discrete-data';
+import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
+import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} from 'ml/selectors/hydrograph-data-selector';
+
 
 /**
  * Uses information from the state to structure a URL that will work with WaterServices
@@ -25,7 +28,7 @@ import {anyVisibleGroundwaterLevels} from './selectors/discrete-data';
  * @param {String} timeSeriesType - one of two options, 'current' or 'compare'
  * @return {String} a URL usable to retrieve station data from WaterServices
  */
-/*
+
 const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation, parameterCode, timeSeriesType) {
     let url = '';
     const key = currentIVDateRange === 'P7D' ? `${timeSeriesType}:${currentIVDateRange}` : `${timeSeriesType}:${currentIVDateRange}:${parameterCode}`;
@@ -53,19 +56,21 @@ const createUrlForDownloadLinks = function(currentIVDateRange, queryInformation,
 * @param {store} store - The Redux store, in the form of a JavaScript object
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
-/*
 export const renderDownloadLinks = function(elem, store, siteno) {
     elem.call(link(store, (elem, {
-        currentIVDateRange,
-        parameterCode,
-        showIVTimeSeries,
-        queryInformation,
-        medianData,
-        anyVisibleGroundwaterLevels,
-        requestTimeRange
+        currentTimeRange,
+        priorYearTimeRange,
+        inputs,
+        medianStatisticsData,
+        groundwaterPoints,
+        primaryIVData,
+        compareIVData
     }) => {
-        const hasIVData = config.ivPeriodOfRecord && parameterCode in config.ivPeriodOfRecord;
-        const hasGWData = config.gwPeriodOfRecord && parameterCode in config.gwPeriodOfRecord;
+        const hasIVData = config.ivPeriodOfRecord && inputs.parameterCode in config.ivPeriodOfRecord;
+        const hasGWData = config.gwPeriodOfRecord && inputs.parameterCode in config.gwPeriodOfRecord;
+console.log('getTimeRange current ', currentTimeRange)
+console.log('getTimeRange prior ', priorYearTimeRange)
+console.log('inputs ', inputs)
 
         elem.select('#iv-data-download-list').remove();
 
@@ -87,43 +92,47 @@ export const renderDownloadLinks = function(elem, store, siteno) {
                 }
         };
 
-        if (hasIVData) {
+
+        if (hasIVData && primaryIVData && Object.keys(primaryIVData.values) > 0) {
+            console.log('has IV data')
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Current IV data',
-                    url: createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'current'),
+                    // url: createUrlForDownloadLinks(currentTimeRange, queryInformation, inputs.parameterCode, 'current'),
+                    url: 'fake-url',
                     gaEventAction: 'downloadLinkCurrent',
                     tooltipText: 'Monitoring location data as shown on graph'
                 });
         }
 
-        if (hasIVData && showIVTimeSeries.compare) {
+        if (inputs.loadCompare && compareIVData && Object.keys(compareIVData.values) > 0) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Compare IV data',
-                    url: createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'),
+                    // url: createUrlForDownloadLinks(currentIVDateRange, queryInformation, parameterCode, 'compare'),
+                    url: 'fake-compare',
                     gaEventAction: 'downloadLinkCompare',
                     tooltipText: 'Data from last year with the same duration as in graph'
                 });
         }
 
-        if (showIVTimeSeries.median && medianData) {
+        if (inputs.loadMedian && medianStatisticsData && Object.keys(medianStatisticsData) > 0) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Median data',
-                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${parameterCode}`,
+                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}`,
                     gaEventAction: 'downloadLinkMedian',
                     tooltipText: 'Median data for timespan shown on graph'
                 });
         }
 
-        if (hasGWData && anyVisibleGroundwaterLevels) {
-            const startDT = DateTime.fromMillis(requestTimeRange.start).toISO();
-            const endDT = DateTime.fromMillis(requestTimeRange.end).toISO();
+        if (hasGWData && groundwaterPoints && groundwaterPoints.values.length > 0) {
+            const startDT = DateTime.fromMillis(currentTimeRange.start).toISO();
+            const endDT = DateTime.fromMillis(currentTimeRange.end).toISO();
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Field visit data',
-                    url: `${config.GROUNDWATER_LEVELS_ENDPOINT}?sites=${siteno}&parameterCd=${parameterCode}&startDT=${startDT}&endDT=${endDT}&format=rdb`,
+                    url: `${config.GROUNDWATER_LEVELS_ENDPOINT}?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${startDT}&endDT=${endDT}&format=rdb`,
                     gaEventAction: 'downloadLinkGroundwaterLevels',
                     tooltipText: 'Field visit data as shown on the graph'
                 });
@@ -147,13 +156,12 @@ export const renderDownloadLinks = function(elem, store, siteno) {
                 tooltipText: 'Information about this monitoring location'
             });
     },  createStructuredSelector({
-        currentIVDateRange: getCurrentDateRange,
-        parameterCode: getCurrentParmCd,
-        showIVTimeSeries: getShowIVTimeSeries,
-        queryInformation: getQueryInfo,
-        medianData: getCurrentVariableMedianStatistics,
-        anyVisibleGroundwaterLevels: anyVisibleGroundwaterLevels,
-        requestTimeRange: getRequestTimeRange('current')
+        currentTimeRange: getTimeRange('current'),
+        priorYearTimeRange: getTimeRange('prioryear'),
+        inputs: getInputsForRetrieval,
+        medianStatisticsData: getMedianStatisticsData,
+        groundwaterPoints: getGroundwaterLevels,
+        primaryIVData: getIVData('primary'),
+        compareIVData: getIVData('compare')
     })));
 };
-*/
