@@ -20,10 +20,6 @@ function getNumberOfDays(period) {
     }
 }
 
-export const createIVDownloadURLS = function({sites, parameterCode=null, startTime=null, endTime=null}) {
-
-};
-
 /**
  * Get a given time series dataset from Water Services.
  * @param  {Array}  sites  Array of site IDs to retrieve.
