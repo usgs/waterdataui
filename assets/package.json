@@ -98,7 +98,6 @@
     "lodash": "4.17.21",
     "luxon": "1.26.0",
     "matchmedia-polyfill": "0.3.2",
-    "normalizr": "3.6.1",
     "raf-throttle": "2.0.5",
     "redux": "4.0.5",
     "redux-thunk": "2.3.0",

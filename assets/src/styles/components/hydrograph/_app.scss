@@ -113,11 +113,21 @@
   }
 }
 
-#hydrograph-loading-indicator-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+#hydrograph-wrapper {
+  position: relative;
+
+  #hydrograph-loading-indicator-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    i {
+      text-align: center;
+      vertical-align: middle;
+      width: 100%;
+    }
+  }
 }
 
 .hydrograph-container {
@@ -196,14 +206,6 @@
     .standard-brush-handle {
       fill: color('black');
     }
-  }
-}
-
-.loading-indicator-container {
-  i {
-    text-align: center;
-    vertical-align: middle;
-    width: 100%;
   }
 }
 
