@@ -1,5 +1,5 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
-import {tooltip} from '../../../../../node_modules/uswds/src/js/components';
+import {tooltip} from 'uswds-components';
 
 import {select} from 'd3-selection';
 
@@ -13,7 +13,10 @@ import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydr
 import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
+import {getMainLayout} from './selectors/layout';
 import {getAvailableParameters} from './selectors/parameter-data';
+
+import {showDataLoadingIndicator} from './data-loading-indicator';
 
 
 /**
@@ -67,7 +70,11 @@ export const drawSelectionTable = function(container, store, siteno) {
             const thisClass = select(this).attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(d.parameterCode));
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         })
         .call(tr => {

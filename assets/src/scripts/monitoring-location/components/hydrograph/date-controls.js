@@ -1,7 +1,7 @@
 import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
 // required to make the USWDS component JS available to init after page load
-import {datePicker, dateRangePicker} from '../../../../../node_modules/uswds/src/js/components';
+import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
 
@@ -9,6 +9,9 @@ import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange} from 'ml/store/hydrograph-state';
+
+import {getMainLayout} from './selectors/layout';
+import {showDataLoadingIndicator} from './data-loading-indicator';
 
 const DATE_RANGE = [{
     name: '7 days',
@@ -94,7 +97,11 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
             if (!isCustom) {
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(selectedValue));
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         });
     li.select('#custom-input').attr('aria-expanded', isCustomPeriod(initialDateRange));
@@ -223,7 +230,11 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 daysBeforeValidationContainer.attr('hidden', true);
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
             }
         });
 };
@@ -337,7 +348,11 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     store.dispatch(setSelectedCustomDateRange(DateTime.fromMillis(startTime, {zone: config.locationTimeZone}).toISODate(),
                         DateTime.fromMillis(endTime, {zone: config.locationTimeZone}).toISODate()));
                     store.dispatch(setSelectedDateRange('custom'));
-                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())));
+                    showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                        .then(() => {
+                            showDataLoadingIndicator(false);
+                        });
                 }
             }
         });
@@ -354,12 +369,12 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
  */
 export const drawDateRangeControls = function(elem, store, siteno, initialDateRange, initialCustomDateRange) {
     // Add a container that holds the custom selection radio buttons and the form fields
-    elem.insert('div', '.graph-container')
+    elem.append('div')
         .attr('id', 'ts-daterange-select-container')
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Time interval select')
         .call(drawSelectRadioButtons, store, siteno, initialDateRange);
-    elem.insert('div', '.graph-container')
+    elem.append('div')
         .attr('id', 'container-radio-group-and-form-buttons')
         .call(drawCustomRadioButtons, initialDateRange)
         .call(drawCustomDaysBeforeForm, store, siteno, initialDateRange)

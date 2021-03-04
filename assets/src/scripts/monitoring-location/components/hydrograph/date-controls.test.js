@@ -2,6 +2,7 @@ import {select} from 'd3-selection';
 import sinon from 'sinon';
 
 import config from 'ui/config';
+import * as utils from 'ui/utils';
 
 import {getSelectedDateRange, getSelectedCustomDateRange} from 'ml/selectors/hydrograph-state-selector';
 
@@ -10,6 +11,7 @@ import * as hydrographData from 'ml/store/hydrograph-data';
 import * as hydrographState from 'ml/store/hydrograph-state';
 
 import {drawDateRangeControls} from './date-controls';
+import * as dataLoadingIndicator from './data-loading-indicator';
 
 const TEST_STATE = {
     hydrographState: {
@@ -21,10 +23,13 @@ const TEST_STATE = {
 
 
 describe('monitoring-location/components/hydrograph/date-controls', () => {
+    utils.mediaQuery = jest.fn().mockReturnValue(true);
+
     let div;
     let fakeServer;
     let store;
     let retrieveSpy;
+    let loadingIndicatorSpy;
     config.locationTimeZone = 'America/Chicago';
 
     beforeEach(() => {
@@ -32,6 +37,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
         store = configureStore(TEST_STATE);
         fakeServer = sinon.createFakeServer();
         retrieveSpy = jest.spyOn(hydrographData, 'retrieveHydrographData');
+        loadingIndicatorSpy = jest.spyOn(dataLoadingIndicator, 'showDataLoadingIndicator');
     });
 
     afterEach(() => {
@@ -102,6 +108,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(div.select('#container-radio-group-and-form-buttons').attr('hidden')).toBe('true');
             expect(getSelectedDateRange(store.getState())).toEqual('P30D');
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveSpy.mock.calls).toHaveLength(1);
             expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
@@ -121,6 +129,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(div.select('#container-radio-group-and-form-buttons').attr('hidden')).toBe('true');
             expect(getSelectedDateRange(store.getState())).toEqual('P365D');
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveSpy.mock.calls).toHaveLength(1);
             expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
@@ -140,6 +150,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(div.select('#container-radio-group-and-form-buttons').attr('hidden')).toBeNull();
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
             expect(clearBrushOffsetSpy).not.toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(0);
             expect(retrieveSpy).not.toHaveBeenCalled();
         });
 
@@ -153,6 +164,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(div.select('#container-radio-group-and-form-buttons').attr('hidden')).toBe('true');
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveSpy.mock.calls).toHaveLength(1);
             expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
@@ -200,6 +213,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
 
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
             expect(getSelectedDateRange(store.getState())).toEqual('P45D');
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
                 parameterCode: '00065',
@@ -219,6 +234,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(div.select('#custom-days-before-today-alert-container').attr('hidden')).toBeNull();
             expect(clearBrushOffsetSpy).not.toHaveBeenCalled();
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(0);
             expect(retrieveSpy).not.toHaveBeenCalled();
         });
 
@@ -237,6 +253,8 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
                 end: '2020-01-16'
             });
             expect(clearBrushOffsetSpy).toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveSpy.mock.calls).toHaveLength(1);
             expect(retrieveSpy.mock.calls[0][0]).toEqual('12345678');
             expect(retrieveSpy.mock.calls[0][1]).toEqual({
@@ -261,6 +279,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
             expect(getSelectedCustomDateRange(store.getState())).toBeNull();
             expect(clearBrushOffsetSpy).not.toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(0);
             expect(retrieveSpy).not.toHaveBeenCalled();
         });
 
@@ -276,6 +295,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
             expect(getSelectedCustomDateRange(store.getState())).toBeNull();
             expect(clearBrushOffsetSpy).not.toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(0);
             expect(retrieveSpy).not.toHaveBeenCalled();
         });
 
@@ -292,6 +312,7 @@ describe('monitoring-location/components/hydrograph/date-controls', () => {
             expect(getSelectedDateRange(store.getState())).toEqual('P7D');
             expect(getSelectedCustomDateRange(store.getState())).toBeNull();
             expect(clearBrushOffsetSpy).not.toHaveBeenCalled();
+            expect(loadingIndicatorSpy.mock.calls).toHaveLength(0);
             expect(retrieveSpy).not.toHaveBeenCalled();
         });
     });

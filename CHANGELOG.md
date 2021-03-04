@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...master)
 
+### Changed
+- The data loading indicator for the hydrograph now appears on top of the graph rather than with the date controls.
+
 ## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0)
 ### Added
 - A column indicating the approval status of the data shows in the Field Visit Data Table.

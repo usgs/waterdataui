@@ -441,6 +441,25 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 expect(hydrographData.compareIVData).toBeDefined();
             });
         });
+
+        it('Expects a second call to retrievePriorYearIVData does not refetch the data', () => {
+            const currentTimeRange = store.getState().hydrographData.currentTimeRange;
+            const firstRetrieve = store.dispatch(retrievePriorYearIVData('11112222', {
+                parameterCode: '00060',
+                startTime: currentTimeRange.start,
+                endTime: currentTimeRange.end
+            }));
+            return firstRetrieve.then(() => {
+                return store.dispatch(retrievePriorYearIVData('11112222', {
+                    parameterCode: '00060',
+                    startTime: currentTimeRange.start,
+                    endTime: currentTimeRange.end
+                })).then(() => {
+                    const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
+                    expect(mockIVCalls).toHaveLength(2);
+                });
+            });
+        });
     });
 
     describe('retrieveMedianStatistics', () => {
@@ -473,6 +492,17 @@ describe('monitoring-location/store/hydrograph-data', () => {
                     params: ['00060']
                 });
                 expect(store.getState().hydrographData.medianStatisticsData).toBeDefined();
+            });
+        });
+
+        it('Expects a second call to median data does not fetch the data again', () => {
+            const firstRetrieve = store.dispatch(retrieveMedianStatistics('11112222', '00060'));
+            return firstRetrieve.then(() => {
+                store.dispatch(retrieveMedianStatistics('11112222', '00060'))
+                    .then(() => {
+                        const mockStatsCalls = statisticsDataService.fetchSiteStatistics.mock.calls;
+                        expect(mockStatsCalls).toHaveLength(1);
+                    });
             });
         });
     });
