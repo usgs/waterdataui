@@ -20,7 +20,17 @@ function getNumberOfDays(period) {
     }
 }
 
-export const getServiceURL = function({monitoringLocations, parameterCode= null, period=null, startTime=null, endTime=null}) {
+/*
+* Get a URL formatted to download data from waterservices.usgs.gov
+* @param  {Array}  sites  Array of site IDs to retrieve.
+* @param  {String}  parameterCodes
+* @param {String} period - ISO 8601 Duration
+* @param {String} startTime - ISO 8601 time
+* @param {String} endTime - ISO 8601 time
+* @param {String} format - the data format returned from waterservices.usgs.gov
+* @return {String} The URL used to contact waterservices.usgs.gov
+ */
+export const getServiceURL = function({monitoringLocations, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -39,9 +49,8 @@ export const getServiceURL = function({monitoringLocations, parameterCode= null,
     }
 
     let parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
-    let url = `${serviceRoot}/iv/?sites=${monitoringLocations.join(',')}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=json`;
 
-    return url;
+    return  `${serviceRoot}/iv/?sites=${monitoringLocations.join(',')}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
 };
 
 /**
@@ -54,8 +63,14 @@ export const getServiceURL = function({monitoringLocations, parameterCode= null,
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
 export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
-    return get(getServiceURL(sites, parameterCode, period, startTime, endTime))
-        .then(response => JSON.parse(response))
+    return get(getServiceURL({
+            monitoringLocations: sites,
+            parameterCode: parameterCode,
+            period:  period,
+            startTime: startTime,
+            endTime: endTime,
+            format: 'json'
+        })).then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
             throw reason;

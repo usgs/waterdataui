@@ -22,7 +22,8 @@ import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} 
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
 export const renderDownloadLinks = function(elem, store, siteno) {
-    const monitoringLocations = [siteno];
+    const monitoringLocations = [siteno]; // The method that processes the service URL expects an array of locations
+
     elem.call(link(store, (elem, {
         currentTimeRange,
         priorYearTimeRange,
@@ -61,12 +62,12 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Current IV data',
-                    // url: `${config.SERVICE_ROOT}/iv/?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${startDT}&endDT=${endDT}&siteStatus=all&format=rdb`,
                     url: getServiceURL({
                         monitoringLocations: monitoringLocations,
                         parameterCode: inputs.parameterCode,
                         startTime: startDT,
-                        endTime: endDT
+                        endTime: endDT,
+                        format: 'rdb'
                     }),
                     gaEventAction: 'downloadLinkCurrent',
                     tooltipText: 'Monitoring location data as shown on graph'
@@ -74,13 +75,16 @@ export const renderDownloadLinks = function(elem, store, siteno) {
         }
 
         if (inputs.loadCompare && compareIVData && Object.keys(compareIVData.values) > 0) {
-            const priorYearStartDT = DateTime.fromMillis(priorYearTimeRange.start).toISO();
-            const priorYearEndDT = DateTime.fromMillis(priorYearTimeRange.end).toISO();
-
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Compare IV data',
-                    url: `${config.SERVICE_ROOT}/iv/?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${priorYearStartDT}&endDT=${priorYearEndDT}&siteStatus=all&format=rdb`,
+                    url: getServiceURL({
+                        monitoringLocations: monitoringLocations,
+                        parameterCode: inputs.parameterCode,
+                        startTime: DateTime.fromMillis(priorYearTimeRange.start).toISO(),
+                        endTime: DateTime.fromMillis(priorYearTimeRange.end).toISO(),
+                        format: 'rdb'
+                    }),
                     gaEventAction: 'downloadLinkCompare',
                     tooltipText: 'Data from last year with the same duration as in graph'
                 });
@@ -90,9 +94,9 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Median data',
-                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&startDT=${startDT.split('T')[0]}&endDT=${endDT.split('T')[0]}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}`,
+                    url: `${config.SERVICE_ROOT}/stat/?sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}&format=rdb`,
                     gaEventAction: 'downloadLinkMedian',
-                    tooltipText: 'Median data for timespan shown on graph'
+                    tooltipText: 'All Median data'
                 });
         }
 
