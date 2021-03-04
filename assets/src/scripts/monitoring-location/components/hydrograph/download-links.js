@@ -7,6 +7,7 @@ import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
 import{link}  from 'ui/lib/d3-redux';
+import  {getServiceURL} from 'ui/web-services/instantaneous-values';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
@@ -21,6 +22,7 @@ import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} 
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
 export const renderDownloadLinks = function(elem, store, siteno) {
+    const monitoringLocations = [siteno];
     elem.call(link(store, (elem, {
         currentTimeRange,
         priorYearTimeRange,
@@ -59,7 +61,13 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Current IV data',
-                    url: `${config.SERVICE_ROOT}/iv/?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${startDT}&endDT=${endDT}&siteStatus=all&format=rdb`,
+                    // url: `${config.SERVICE_ROOT}/iv/?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${startDT}&endDT=${endDT}&siteStatus=all&format=rdb`,
+                    url: getServiceURL({
+                        monitoringLocations: monitoringLocations,
+                        parameterCode: inputs.parameterCode,
+                        startTime: startDT,
+                        endTime: endDT
+                    }),
                     gaEventAction: 'downloadLinkCurrent',
                     tooltipText: 'Monitoring location data as shown on graph'
                 });
@@ -82,7 +90,7 @@ export const renderDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Median data',
-                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&startDT=${startDT.split("T")[0]}&endDT=${endDT.split("T")[0]}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}`,
+                    url: `${config.SERVICE_ROOT}/stat/?format=rdb&sites=${siteno}&startDT=${startDT.split('T')[0]}&endDT=${endDT.split('T')[0]}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}`,
                     gaEventAction: 'downloadLinkMedian',
                     tooltipText: 'Median data for timespan shown on graph'
                 });
