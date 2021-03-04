@@ -20,7 +20,7 @@ import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
 import {showDataLoadingIndicator} from './data-loading-indicator';
 import {drawDataTables} from './data-table';
-import {renderDownloadLinks} from './download-links';
+import {drawDownloadLinks} from './download-links';
 import {drawDateRangeControls} from './date-controls';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
@@ -127,7 +127,7 @@ export const attachToNode = function(store,
             legendControlsContainer.call(drawGraphControls, store, siteno);
 
             nodeElem.select('#iv-graph-list-container')
-                .call(renderDownloadLinks, store, siteno);
+                .call(drawDownloadLinks, store, siteno);
 
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);

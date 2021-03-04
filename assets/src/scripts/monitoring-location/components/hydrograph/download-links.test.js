@@ -2,7 +2,7 @@ import {select} from 'd3-selection';
 
 import config from 'ui/config';
 import {configureStore} from 'ml/store';
-import {renderDownloadLinks} from 'ivhydrograph/download-links';
+import {drawDownloadLinks} from 'ivhydrograph/download-links';
 
 
 describe('monitoring-location/components/hydrograph/download-links', () => {
@@ -26,7 +26,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             end_date: '2020-01-01'
         }
     };
-    describe('renderDownloadLinks', () => {
+    describe('drawDownloadLinks', () => {
         let div;
 
         beforeEach(() => {
@@ -65,7 +65,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -114,7 +114,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -165,7 +165,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -216,7 +216,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -268,7 +268,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -320,7 +320,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -366,7 +366,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -412,7 +412,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             };
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);
@@ -456,7 +456,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
 
             let store = configureStore(TEST_STATE);
             const siteNumber = '05370000';
-            div.call(renderDownloadLinks, store, siteNumber);
+            div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(div.selectAll('ul').size()).toBe(1);

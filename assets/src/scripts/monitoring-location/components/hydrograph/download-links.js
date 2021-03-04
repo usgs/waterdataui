@@ -21,7 +21,7 @@ import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} 
 * @param {store} store - The Redux store, in the form of a JavaScript object
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
-export const renderDownloadLinks = function(elem, store, siteno) {
+export const drawDownloadLinks = function(elem, store, siteno) {
     const monitoringLocations = [siteno]; // The method that processes the service URL expects an array of locations
 
     elem.call(link(store, (elem, {
