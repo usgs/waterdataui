@@ -7,7 +7,9 @@ import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
 import{link}  from 'ui/lib/d3-redux';
-import  {getServiceURL} from 'ui/web-services/instantaneous-values';
+import {getServiceURL} from 'ui/web-services/instantaneous-values';
+import {getServiceURLStatistics} from 'ui/web-services/statistics-data';
+import {getServiceURLSGroundwater} from 'ui/web-services/groundwater-levels';
 
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
@@ -94,7 +96,10 @@ export const drawDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Median data',
-                    url: `${config.SERVICE_ROOT}/stat/?sites=${siteno}&statReportType=daily&statTypeCd=median&parameterCd=${inputs.parameterCode}&format=rdb`,
+                    url: getServiceURLStatistics({
+                        siteno: siteno,
+                        parameterCode: inputs.parameterCode
+                    }),
                     gaEventAction: 'downloadLinkMedian',
                     tooltipText: 'All Median data'
                 });
@@ -104,7 +109,12 @@ export const drawDownloadLinks = function(elem, store, siteno) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Field visit data',
-                    url: `${config.GROUNDWATER_LEVELS_ENDPOINT}?sites=${siteno}&parameterCd=${inputs.parameterCode}&startDT=${startDT}&endDT=${endDT}&format=rdb`,
+                    url: getServiceURLSGroundwater({
+                        siteno: siteno,
+                        parameterCode: inputs.parameterCode,
+                        startDT: startDT,
+                        endDT: endDT
+                    }),
                     gaEventAction: 'downloadLinkGroundwaterLevels',
                     tooltipText: 'Field visit data as shown on the graph'
                 });

@@ -23,7 +23,7 @@ function getNumberOfDays(period) {
 /*
 * Get a URL formatted to download data from waterservices.usgs.gov
 * @param  {Array}  sites  Array of site IDs to retrieve.
-* @param  {String}  parameterCodes
+* @param  {String}  parameterCode - USGS five digit parameter code
 * @param {String} period - ISO 8601 Duration
 * @param {String} startTime - ISO 8601 time
 * @param {String} endTime - ISO 8601 time
