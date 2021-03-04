@@ -58,7 +58,7 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 }
         };
 
-        if (hasIVData && primaryIVData && Object.keys(primaryIVData.values) > 0) {
+        if (hasIVData && primaryIVData && Object.keys(primaryIVData.values).length) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Current IV data',
@@ -74,7 +74,7 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 });
         }
 
-        if (inputs.loadCompare && compareIVData && Object.keys(compareIVData.values) > 0) {
+        if (inputs.loadCompare && compareIVData && Object.keys(compareIVData.values).length) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Compare IV data',
@@ -90,7 +90,7 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 });
         }
 
-        if (inputs.loadMedian && medianStatisticsData && Object.keys(medianStatisticsData) > 0) {
+        if (inputs.loadMedian && medianStatisticsData && Object.keys(medianStatisticsData).length) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Median data',
@@ -100,7 +100,7 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 });
         }
 
-        if (hasGWData && groundwaterPoints && groundwaterPoints.values.length > 0) {
+        if (hasGWData && groundwaterPoints && groundwaterPoints.values.length) {
             listOfDownloadLinks.append('li')
                 .call(createDataDownloadLink, {
                     displayText: 'Field visit data',
