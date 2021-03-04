@@ -9,6 +9,7 @@ import {getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 import {retrieveMedianStatistics, retrievePriorYearIVData} from 'ml/store/hydrograph-data';
 import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrograph-state';
 
+import {getMainLayout} from './selectors/layout';
 import {isVisible} from './selectors/time-series-data';
 
 import {showDataLoadingIndicator} from './data-loading-indicator';
@@ -39,7 +40,7 @@ export const drawGraphControls = function(elem, store, siteno) {
             const currentTimeRange = getTimeRange('current')(state);
             store.dispatch(setCompareDataVisibility(this.checked));
             if (this.checked) {
-                showDataLoadingIndicator(true);
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
                 store.dispatch(retrievePriorYearIVData(siteno, {
                     parameterCode: getSelectedParameterCode(state),
                     startTime: currentTimeRange.start,
@@ -80,7 +81,7 @@ export const drawGraphControls = function(elem, store, siteno) {
         .on('click', function() {
             store.dispatch(setMedianDataVisibility(this.checked));
             if (this.checked) {
-                showDataLoadingIndicator(true);
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
                 store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())))
                     .then(() => {
                         showDataLoadingIndicator(false);

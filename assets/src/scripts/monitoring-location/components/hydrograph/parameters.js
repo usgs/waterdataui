@@ -13,6 +13,7 @@ import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydr
 import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
+import {getMainLayout} from './selectors/layout';
 import {getAvailableParameters} from './selectors/parameter-data';
 
 import {showDataLoadingIndicator} from './data-loading-indicator';
@@ -69,10 +70,10 @@ export const drawSelectionTable = function(container, store, siteno) {
             const thisClass = select(this).attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(d.parameterCode));
-                showDataLoadingIndicator(true);
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataLoadingIndicator(false)
+                        showDataLoadingIndicator(false);
                     });
             }
         })

@@ -230,7 +230,7 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 daysBeforeValidationContainer.attr('hidden', true);
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
-                showDataLoadingIndicator(true);
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
                         showDataLoadingIndicator(false);
@@ -348,7 +348,7 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     store.dispatch(setSelectedCustomDateRange(DateTime.fromMillis(startTime, {zone: config.locationTimeZone}).toISODate(),
                         DateTime.fromMillis(endTime, {zone: config.locationTimeZone}).toISODate()));
                     store.dispatch(setSelectedDateRange('custom'));
-                    showDataLoadingIndicator(true);
+                    showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
                     store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                         .then(() => {
                             showDataLoadingIndicator(false);
