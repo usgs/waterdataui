@@ -7,7 +7,6 @@ import {DateTime} from 'luxon';
 import config from 'ui/config.js';
 
 import {drawInfoAlert} from 'd3render/alerts';
-import {drawLoadingIndicator} from 'd3render/loading-indicator';
 
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
@@ -19,8 +18,9 @@ import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDat
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {drawDateRangeControls} from './date-controls';
+import {showDataLoadingIndicator} from './data-loading-indicator';
 import {drawDataTables} from './data-table';
+import {drawDateRangeControls} from './date-controls';
 //import {renderDownloadLinks} from './download-links';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
@@ -61,10 +61,7 @@ export const attachToNode = function(store,
         return;
     }
 
-    // Show the loading indicator
-    nodeElem
-        .select('.loading-indicator-container')
-        .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
+    showDataLoadingIndicator(true);
 
     const initialPeriod = startDT && endDT ? 'custom' : period || 'P7D';
     const initialStartTime = startDT ?
@@ -103,9 +100,7 @@ export const attachToNode = function(store,
     store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
     fetchDataPromise.then(() => {
-        nodeElem
-            .select('.loading-indicator-container')
-            .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
+        showDataLoadingIndicator(false);
 
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
@@ -120,11 +115,13 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!showOnlyGraph) {
-            nodeElem.call(drawDateRangeControls, store, siteno, initialPeriod, {
-                start: startDT,
-                end: endDT
-            });
-            nodeElem.call(drawMethodPicker, store, timeSeriesId);
+            nodeElem.select('#hydrograph-date-controls-container')
+                .call(drawDateRangeControls, store, siteno, initialPeriod, {
+                    start: startDT,
+                    end: endDT
+                });
+            nodeElem.select('#hydrograph-method-picker-container')
+                .call(drawMethodPicker, store, timeSeriesId);
 
 
             legendControlsContainer.call(drawGraphControls, store, siteno);

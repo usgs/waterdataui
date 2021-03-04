@@ -66,8 +66,13 @@ describe('monitoring-location/components/hydrograph module', () => {
             .attr('href', 'https://fakeserver/link');
         let component = body.append('div')
             .attr('id', 'hydrograph');
-        component.append('div').attr('class', 'loading-indicator-container');
-        component.append('div').attr('class', 'graph-container');
+        component.append('div').attr('id', 'hydrograph-date-controls-container');
+        component.append('div').attr('id', 'hydrograph-method-picker-container');
+        component.append('div').attr('class', 'graph-container')
+            .append('div')
+                .attr('id', 'hydrograph-loading-indicator-container')
+                .attr('class', 'loading-indicator-container');
+
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('id', 'iv-data-table-container');
 

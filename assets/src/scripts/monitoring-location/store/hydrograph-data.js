@@ -160,13 +160,11 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
  */
 export const retrievePriorYearIVData = function(siteno, {parameterCode, startTime, endTime}) {
     return function(dispatch, getState) {
-        const priorYearStartTime = DateTime.fromMillis(startTime).minus({days: 365}).toMillis();
-        const priorYearEndTime = DateTime.fromMillis(endTime).minus({days: 365}).toMillis();
-        const currentPriorYearTimeRange = getState().hydrographData.compareTimeRange || null;
-        if (currentPriorYearTimeRange && priorYearStartTime === currentPriorYearTimeRange.start &&
-            priorYearEndTime === currentPriorYearTimeRange.end) {
+        if ('compareIVData' in getState().hydrographData) {
             return Promise.resolve();
         } else {
+            const priorYearStartTime = DateTime.fromMillis(startTime).minus({days: 365}).toMillis();
+            const priorYearEndTime = DateTime.fromMillis(endTime).minus({days: 365}).toMillis();
             dispatch(setHydrographTimeRange({start: priorYearStartTime, end: priorYearEndTime}, 'prioryear'));
             return dispatch(retrieveIVData(siteno, 'compare', {
                 parameterCode: parameterCode,
@@ -185,7 +183,7 @@ export const retrievePriorYearIVData = function(siteno, {parameterCode, startTim
  */
 export const retrieveMedianStatistics = function(siteno, parameterCode) {
     return function(dispatch, getState) {
-        if ('medianStatistics' in getState().hydrographData) {
+        if ('medianStatisticsData' in getState().hydrographData) {
             return Promise.resolve();
         } else {
             const isCalculatedParameterCode = isCalculatedTemperature(parameterCode);
