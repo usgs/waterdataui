@@ -20,16 +20,26 @@ function getNumberOfDays(period) {
     }
 }
 
-/**
- * Get a given time series dataset from Water Services.
- * @param  {Array}  sites  Array of site IDs to retrieve.
- * @param  {String}  parameterCodes
- * @param {String} period - ISO 8601 Duration
- * @param {String} startTime - ISO 8601 time
- * @param {String} endTime - ISO 8601 time
- * @return {Promise} resolves to an array of time series model object, rejects to an error
+/*
+* Formats a URL for monitoring location details (meta data)
+* @param {String} siteno - the unique identifier for the monitoring location
+* @param {Boolean} isExpanded - if the meta data has additional information
+*/
+export const getServiceURLMetaData = function({siteno,  isExpanded}) {
+    return `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}${isExpanded ? '&siteOutput=expanded' : ''}&siteStatus=all`;
+};
+
+/*
+* Get a URL formatted to download data from waterservices.usgs.gov
+* @param  {Array}  sites  Array of site IDs to retrieve.
+* @param  {String}  parameterCode - USGS five digit parameter code
+* @param {String} period - ISO 8601 Duration
+* @param {String} startTime - ISO 8601 time
+* @param {String} endTime - ISO 8601 time
+* @param {String} format - the data format returned from waterservices.usgs.gov
+* @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
+export const getServiceURL = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -48,10 +58,28 @@ export const fetchTimeSeries = function({sites, parameterCode= null, period=null
     }
 
     let parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
-    let url = `${serviceRoot}/iv/?sites=${sites.join(',')}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=json`;
 
-    return get(url)
-        .then(response => JSON.parse(response))
+    return  `${serviceRoot}/iv/?sites=${siteno}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
+};
+
+/**
+ * Get a given time series dataset from Water Services.
+ * @param  {Array}  sites  Array of site IDs to retrieve.
+ * @param  {String}  parameterCodes
+ * @param {String} period - ISO 8601 Duration
+ * @param {String} startTime - ISO 8601 time
+ * @param {String} endTime - ISO 8601 time
+ * @return {Promise} resolves to an array of time series model object, rejects to an error
+ */
+export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
+    return get(getServiceURL({
+            siteno: sites,
+            parameterCode: parameterCode,
+            period:  period,
+            startTime: startTime,
+            endTime: endTime,
+            format: 'json'
+        })).then(response => JSON.parse(response))
         .catch(reason => {
             console.error(reason);
             throw reason;
