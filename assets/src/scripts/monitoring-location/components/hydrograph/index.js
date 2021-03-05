@@ -55,7 +55,6 @@ export const attachToNode = function(store,
                                          showOnlyGraph = false,
                                          showMLName = false
                                      } = {}) {
-    console.log('Rendering hydrograph');
     const nodeElem = select(node);
     if (!config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
         select(node).select('.graph-container').call(drawInfoAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
@@ -106,7 +105,6 @@ export const attachToNode = function(store,
         fetchDataPromises.push(fetchFloodLevelsPromise);
     }
     Promise.all(fetchDataPromises).then(() => {
-        console.log('Done fetching data');
         showDataLoadingIndicator(false);
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);

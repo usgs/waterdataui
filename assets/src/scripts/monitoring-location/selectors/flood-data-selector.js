@@ -35,7 +35,7 @@ export const hasWaterwatchData = createSelector(
 export const isWaterwatchVisible = createSelector(
     hasWaterwatchData,
     getPrimaryParameter,
-    (hasFloodLevels, parameter) => hasFloodLevels && parameter.parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE
+    (hasFloodLevels, parameter) => hasFloodLevels && parameter && parameter.parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE
 );
 
 /*
