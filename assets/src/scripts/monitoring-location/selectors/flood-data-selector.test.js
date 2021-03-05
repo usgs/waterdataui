@@ -122,6 +122,21 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
     });
 
     describe('isWaterwatchVisible', () => {
+        it('Return false if waterwatch flood levels exist but no primary parameter exists', () => {
+            expect(isWaterwatchVisible({
+                floodData: {
+                    floodLevels: {
+                        site_no: '07144100',
+                        action_stage: '20',
+                        flood_stage: '22',
+                        moderate_flood_stage: '25',
+                        major_flood_stage: '26'
+                    }
+                },
+                hydrographData: {}
+            })).toBeFalsy();
+        });
+
         it('Return false if waterwatch flood levels should not be visible due to parameter code', () => {
             expect(isWaterwatchVisible({
                 floodData: {
