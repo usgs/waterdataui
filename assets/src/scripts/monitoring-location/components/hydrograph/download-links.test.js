@@ -6,7 +6,6 @@ import {drawDownloadLinks} from 'ivhydrograph/download-links';
 
 
 describe('monitoring-location/components/hydrograph/download-links', () => {
-
     config.SERVICE_ROOT = 'https://fakeserviceroot.com';
     config.PAST_SERVICE_ROOT = 'https://fakeserviceroot-more-than-120-days.com';
     config.GROUNDWATER_LEVELS_ENDPOINT = 'https://fakegroundwater.org/gw/';
@@ -26,6 +25,32 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             end_date: '2020-01-01'
         }
     };
+    const TEST_STATE_BASE = {
+        'hydrographData': {
+            'currentTimeRange': {
+                'start': 1614272067139,
+                'end': 1614876867139
+            },
+            'prioryearTimeRange': {
+                'start': 1582736067139,
+                'end':  1583340867139
+            },
+            'medianStatisticsData': {
+            },
+            'primaryIVData': {
+                'parameter': {},
+                'values':{'69928': {'points': [{},{}]}}
+            },
+            'compareIVData': {}
+        },
+        'hydrographState': {
+            'showCompareIVData': false,
+            'showMedianData': false,
+            'selectedDateRange': 'P7D',
+            'selectedParameterCode': '00060'
+        }
+    };
+
     describe('drawDownloadLinks', () => {
         let div;
 
@@ -38,32 +63,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         });
 
         it('creates an unordered list and the correct number of list items and hyperlinks when only current time series is showing', () => {
-            const TEST_STATE = {
-                'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
-                    'prioryearTimeRange': {
-                        'start': 1582736067139,
-                        'end':  1583340867139
-                    },
-                    'medianStatisticsData': {
-                    },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
-                    },
-                    'compareIVData': {}
-                },
-                'hydrographState': {
-                    'showCompareIVData': false,
-                    'showMedianData': false,
-                    'selectedDateRange': 'P7D',
-                    'selectedParameterCode': '00060'
-                }
-            };
-            let store = configureStore(TEST_STATE);
+            let store = configureStore(TEST_STATE_BASE);
             const siteNumber = '05370000';
             div.call(drawDownloadLinks, store, siteNumber);
             return new Promise(resolve => {
@@ -86,30 +86,15 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         it('creates an unordered list and the correct number of list items and hyperlinks when compare is selected', () => {
             const TEST_STATE = {
                 'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
-                    'prioryearTimeRange': {
-                        'start': 1582736067139,
-                        'end':  1583340867139
-                    },
-                    'medianStatisticsData': {
-                    },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
-                    },
+                    ...TEST_STATE_BASE.hydrographData,
                     'compareIVData': {
                         'parameter': {},
                         'values':{'69928': {'points': [{},{}]}}
                     }
                 },
                 'hydrographState': {
-                    'showCompareIVData': true,
-                    'showMedianData': false,
-                    'selectedDateRange': 'P7D',
-                    'selectedParameterCode': '00060'
+                    ...TEST_STATE_BASE.hydrographState,
+                    'showCompareIVData': true
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -136,20 +121,9 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         it('creates an unordered list and the correct number of list items and hyperlinks when median is selected', () => {
             const TEST_STATE = {
                 'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
-                    'prioryearTimeRange': {
-                        'start': 1582736067139,
-                        'end':  1583340867139
-                    },
+                    ...TEST_STATE_BASE.hydrographData,
                     'medianStatisticsData': {
                         '69928': [{}]
-                    },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
                     },
                     'compareIVData': {
                         'parameter': {},
@@ -157,10 +131,9 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     }
                 },
                 'hydrographState': {
+                    ...TEST_STATE_BASE.hydrographState,
                     'showCompareIVData': false,
-                    'showMedianData': true,
-                    'selectedDateRange': 'P7D',
-                    'selectedParameterCode': '00060'
+                    'showMedianData': true
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -187,10 +160,7 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         it('creates an unordered list and the correct number of list items and hyperlinks when both median and compare are selected', () => {
             const TEST_STATE = {
                 'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
+                    ...TEST_STATE_BASE.hydrographData,
                     'prioryearTimeRange': {
                         'start': 1582736067139,
                         'end':  1583340867139
@@ -198,20 +168,16 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     'medianStatisticsData': {
                         '69928': [{}]
                     },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
-                    },
+
                     'compareIVData': {
                         'parameter': {},
                         'values':{'69928': {'points': [{},{}]}}
                     }
                 },
                 'hydrographState': {
+                    ...TEST_STATE_BASE.hydrographState,
                     'showCompareIVData': true,
-                    'showMedianData': true,
-                    'selectedDateRange': 'P7D',
-                    'selectedParameterCode': '00060'
+                    'showMedianData': true
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -239,20 +205,9 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         it('creates an unordered list and the correct number of list items and hyperlinks if P30D is selected', () => {
             const TEST_STATE = {
                 'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
-                    'prioryearTimeRange': {
-                        'start': 1582736067139,
-                        'end':  1583340867139
-                    },
+                    ...TEST_STATE_BASE.hydrographData,
                     'medianStatisticsData': {
                         '69928': [{}]
-                    },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
                     },
                     'compareIVData': {
                         'parameter': {},
@@ -291,31 +246,11 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
         it('creates an unordered list and the correct number of list items and hyperlinks when custom days are selected', () => {
             const TEST_STATE = {
                 'hydrographData': {
-                    'currentTimeRange': {
-                        'start': 1614272067139,
-                        'end': 1614876867139
-                    },
-                    'prioryearTimeRange': {
-                        'start': 1582736067139,
-                        'end':  1583340867139
-                    },
-                    'medianStatisticsData': {
-                        '69928': [{}]
-                    },
-                    'primaryIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
-                    },
-                    'compareIVData': {
-                        'parameter': {},
-                        'values':{'69928': {'points': [{},{}]}}
-                    }
+                ...TEST_STATE_BASE.hydrographData
                 },
                 'hydrographState': {
-                    'showCompareIVData': false,
-                    'showMedianData': false,
-                    'selectedDateRange': 'P14D',
-                    'selectedParameterCode': '00060'
+                    ...TEST_STATE_BASE.hydrographState,
+                    'selectedDateRange': 'P14D'
                 }
             };
             let store = configureStore(TEST_STATE);
@@ -345,17 +280,12 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                         'start': 1614574800000,
                         'end': 1614920399999
                     },
-                    'medianStatisticsData': {
-                        '69928': [{}]
-                    },
                     'primaryIVData': {
                         'parameter': {},
                         'values':{'69928': {'points': [{},{}]}}
                     }
                 },
                 'hydrographState': {
-                    'showCompareIVData': false,
-                    'showMedianData': false,
                     'selectedDateRange': 'custom',
                     'selectedCustomDateRange': {
                         'start': '2021-03-01',
@@ -391,17 +321,12 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                         'start': 1614574800000,
                         'end': 1614920399999
                     },
-                    'medianStatisticsData': {
-                        '69928': [{}]
-                    },
                     'primaryIVData': {
                         'parameter': {},
                         'values':{'69928': {'points': [{},{}]}}
                     }
                 },
                 'hydrographState': {
-                    'showCompareIVData': false,
-                    'showMedianData': false,
                     'selectedDateRange': 'custom',
                     'selectedCustomDateRange': {
                         'start': '2021-03-01',
@@ -447,8 +372,6 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
                     }
                 },
                 'hydrographState': {
-                    'showCompareIVData': false,
-                    'showMedianData': false,
                     'selectedDateRange': 'P365D',
                     'selectedParameterCode': '72019'
                 }
