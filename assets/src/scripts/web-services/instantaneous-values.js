@@ -39,7 +39,7 @@ export const getServiceURLMetaData = function({siteno,  isExpanded}) {
 * @param {String} format - the data format returned from waterservices.usgs.gov
 * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getServiceURL = function({monitoringLocations, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
+export const getServiceURL = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -59,7 +59,7 @@ export const getServiceURL = function({monitoringLocations, parameterCode= null,
 
     let parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
 
-    return  `${serviceRoot}/iv/?sites=${monitoringLocations.join(',')}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
+    return  `${serviceRoot}/iv/?sites=${siteno}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
 };
 
 /**
@@ -73,7 +73,7 @@ export const getServiceURL = function({monitoringLocations, parameterCode= null,
  */
 export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
     return get(getServiceURL({
-            monitoringLocations: sites,
+            siteno: sites,
             parameterCode: parameterCode,
             period:  period,
             startTime: startTime,

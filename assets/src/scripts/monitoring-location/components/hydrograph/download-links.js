@@ -24,8 +24,6 @@ import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} 
 * @param {String} siteno- a USGS numerical identifier for a specific monitoring location
 */
 export const drawDownloadLinks = function(elem, store, siteno) {
-    const monitoringLocations = [siteno]; // The method that processes the service URL expects an array of locations
-
     elem.call(link(store, (elem, {
         currentTimeRange,
         priorYearTimeRange,
@@ -65,7 +63,7 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 .call(createDataDownloadLink, {
                     displayText: 'Current IV data',
                     url: getServiceURL({
-                        monitoringLocations: monitoringLocations,
+                        siteno: siteno,
                         parameterCode: inputs.parameterCode,
                         startTime: startDT,
                         endTime: endDT,
@@ -81,8 +79,8 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                 .call(createDataDownloadLink, {
                     displayText: 'Compare IV data',
                     url: getServiceURL({
-                        monitoringLocations: monitoringLocations,
-                        parameterCode: inputs.parameterCode,
+                        siteno: siteno,
+                        parameterCode:  inputs.parameterCode,
                         startTime: DateTime.fromMillis(priorYearTimeRange.start).toISO(),
                         endTime: DateTime.fromMillis(priorYearTimeRange.end).toISO(),
                         format: 'rdb'
@@ -98,7 +96,9 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                     displayText: 'Median data',
                     url: getServiceURLStatistics({
                         siteno: siteno,
-                        parameterCode: inputs.parameterCode
+                        parameterCode: inputs.parameterCode,
+                        statType: 'median',
+                        format: 'rdb'
                     }),
                     gaEventAction: 'downloadLinkMedian',
                     tooltipText: 'All Median data'
@@ -113,7 +113,8 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                         siteno: siteno,
                         parameterCode: inputs.parameterCode,
                         startDT: startDT,
-                        endDT: endDT
+                        endDT: endDT,
+                        format: 'rdb'
                     }),
                     gaEventAction: 'downloadLinkGroundwaterLevels',
                     tooltipText: 'Field visit data as shown on the graph'
