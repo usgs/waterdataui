@@ -12,9 +12,6 @@ import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 
 export const drawMethodPicker = function(elem, store, initialTimeSeriesId) {
-    if (initialTimeSeriesId) {
-        store.dispatch(setSelectedIVMethodID(initialTimeSeriesId));
-    }
     const pickerContainer = elem.append('div')
         .attr('id', 'ts-method-select-container');
 
