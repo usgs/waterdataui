@@ -101,6 +101,7 @@ export const attachToNode = function(store,
     const fetchFloodLevelsPromise = store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
     let fetchDataPromises = [fetchHydrographDataPromise];
+    // If flood levels are to be shown then wait to render the hydrograph until those have been fetched.
     if (parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE) {
         fetchDataPromises.push(fetchFloodLevelsPromise);
     }
