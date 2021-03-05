@@ -4,7 +4,7 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 
-import {getPrimaryMethods, getPrimaryParameter, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
+import {getPrimaryMethods, getPrimaryParameter, getIVData, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
 const formatTime = function(timeInMillis) {
@@ -76,4 +76,29 @@ export const getDescription = createSelector(
 export const getPrimaryParameterUnitCode = createSelector(
     getPrimaryParameter,
     parameter => parameter ? parameter.unit : null
+);
+
+export const getPreferredIVMethodID = createSelector(
+    getIVData('primary'),
+    (ivData) => {
+        if (!ivData) {
+            return null;
+        }
+        const methodMetaData = Object.values(ivData.values)
+            .map(methodValues => {
+                return {
+                    pointCount: methodValues.points.length,
+                    lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
+                    methodID: methodValues.method.methodID
+                };
+            })
+            .sort((a, b) => {
+                if (a.pointCount === b.pointCount) {
+                    return a.pointCount ? a.lastPoint.dateTime - b.lastPoint.dateTime : 0;
+                } else {
+                    return a.pointCount - b.pointCount;
+                }
+            });
+        return methodMetaData[methodMetaData.length - 1].methodID;
+    }
 );

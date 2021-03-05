@@ -125,7 +125,7 @@ export const attachToNode = function(store,
                     end: endDT
                 });
             nodeElem.select('#hydrograph-method-picker-container')
-                .call(drawMethodPicker, store, timeSeriesId);
+                .call(drawMethodPicker, store);
 
 
             legendControlsContainer.call(drawGraphControls, store, siteno);
