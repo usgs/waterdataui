@@ -1,5 +1,7 @@
-import {getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
-    hasWaterwatchData, getWaterwatchFloodLevels, isWaterwatchVisible} from './flood-data-selector';
+import {
+    getFloodStageHeight, hasFloodData, getFloodGageHeightStageIndex,
+    hasWaterwatchData, getWaterwatchFloodLevels, isWaterwatchVisible
+} from './flood-data-selector';
 
 describe('monitoring-location/selectors/flood-data-selector', () => {
 
@@ -62,7 +64,7 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
     });
 
     describe('hasFloodData', () => {
-        it('Return false if no flood stages are available', () =>{
+        it('Return false if no flood stages are available', () => {
             expect(hasFloodData({
                 floodData: {
                     stages: []
@@ -79,8 +81,8 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
     });
 
-       describe('hasWaterwatchData', () => {
-        it('Return false if no waterwatch flood levels are available', () =>{
+    describe('hasWaterwatchData', () => {
+        it('Return false if no waterwatch flood levels are available', () => {
             expect(hasWaterwatchData({
                 floodData: {
                     floodLevels: null
@@ -103,8 +105,8 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
     });
 
-       describe('getWaterwatchData', () => {
-        it('Return true if waterwatch flood levels are returned', () =>{
+    describe('getWaterwatchData', () => {
+        it('Return true if waterwatch flood levels are returned', () => {
             expect(Object.values(getWaterwatchFloodLevels({
                 floodData: {
                     floodLevels: {
@@ -115,12 +117,12 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                         major_flood_stage: '26'
                     }
                 }
-            }))).toEqual([20,22,25,26]);
+            }))).toEqual([20, 22, 25, 26]);
         });
     });
 
-       describe('isWaterwatchVisible', () => {
-        it('Return false if waterwatch flood levels should not be visible due to parameter code', () =>{
+    describe('isWaterwatchVisible', () => {
+        it('Return false if waterwatch flood levels should not be visible due to parameter code', () => {
             expect(isWaterwatchVisible({
                 floodData: {
                     floodLevels: {
@@ -131,36 +133,48 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                         major_flood_stage: '26'
                     }
                 },
-                hydrographState: {
-                    selectedParameterCode: '00060'
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '00060'
+                        }
+                    }
                 }
             })).toBeFalsy();
         });
 
-        it('Return false if waterwatch flood levels should not be visible due to no flood levels', () =>{
+        it('Return false if waterwatch flood levels should not be visible due to no flood levels', () => {
             expect(isWaterwatchVisible({
                 floodData: {
                     floodLevels: null
                 },
-                hydrographState: {
-                    selectedParameterCode: '00065'
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '00065'
+                        }
+                    }
                 }
             })).toBeFalsy();
         });
 
-         it('Return true if waterwatch flood levels should be visible', () =>{
+        it('Return true if waterwatch flood levels should be visible', () => {
             expect(isWaterwatchVisible({
-                 floodData: {
-                     floodLevels: {
-                         site_no: '07144100',
-                         action_stage: '20',
-                         flood_stage: '22',
-                         moderate_flood_stage: '25',
-                         major_flood_stage: '26'
-                     }
-                 },
-                hydrographState: {
-                    selectedParameterCode: '00065'
+                floodData: {
+                    floodLevels: {
+                        site_no: '07144100',
+                        action_stage: '20',
+                        flood_stage: '22',
+                        moderate_flood_stage: '25',
+                        major_flood_stage: '26'
+                    }
+                },
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '00065'
+                        }
+                    }
                 }
             })).toBeTruthy();
         });
