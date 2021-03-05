@@ -61,7 +61,7 @@ export const fetchFloodExtent = function(siteno) {
 };
 
 /*
- * Retrieve waterwach flood levels any for siteno
+ * Retrieve waterwatch flood levels any for siteno
  * @param {String} siteno
  * @return {Promise} resolves to an array of features for the site
  */

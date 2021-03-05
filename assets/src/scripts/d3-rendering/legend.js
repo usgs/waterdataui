@@ -17,12 +17,11 @@ const VERTICAL_ROW_OFFSET = 18;
 export const drawSimpleLegend = function(div, {legendMarkerRows, layout}) {
     div.selectAll('.legend-svg').remove();
 
+    const svg = div.append('svg')
+        .attr('class', 'legend-svg');
     if (!legendMarkerRows.length || !layout) {
         return;
     }
-
-    const svg = div.append('svg')
-        .attr('class', 'legend-svg');
     const legend = svg
         .append('g')
             .attr('class', 'legend')

@@ -68,7 +68,7 @@ export const attachToNode = function(store,
         DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
     const initialEndTime = endDT ?
         DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
-    const fetchDataPromise = store.dispatch(retrieveHydrographData(siteno, {
+    const fetchHydrographDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
         period: initialPeriod === 'custom' ? null : initialPeriod,
         startTime: initialStartTime,
@@ -78,9 +78,9 @@ export const attachToNode = function(store,
     }));
 
     // if showing the controls, fetch the parameters
-    let fetchParameters;
+    let fetchParametersPromise;
     if (!showOnlyGraph) {
-        fetchParameters = store.dispatch(retrieveHydrographParameters(siteno));
+        fetchParametersPromise = store.dispatch(retrieveHydrographParameters(siteno));
 
         // Initialize all hydrograph state variables if showing the control
         store.dispatch(setSelectedParameterCode(parameterCode));
@@ -96,12 +96,16 @@ export const attachToNode = function(store,
         store.dispatch(setSelectedIVMethodID(timeSeriesId));
     }
 
-    // Fetch waterwatch flood levels - TODO: consider only fetching when gage height is requested
-    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
+    // Fetch waterwatch flood levels
+    const fetchFloodLevelsPromise = store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
-    fetchDataPromise.then(() => {
+    let fetchDataPromises = [fetchHydrographDataPromise];
+    // If flood levels are to be shown then wait to render the hydrograph until those have been fetched.
+    if (parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE) {
+        fetchDataPromises.push(fetchFloodLevelsPromise);
+    }
+    Promise.all(fetchDataPromises).then(() => {
         showDataLoadingIndicator(false);
-
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
@@ -132,12 +136,15 @@ export const attachToNode = function(store,
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);
 
-            fetchParameters.then(() => {
+            fetchParametersPromise.then(() => {
                 nodeElem.select('.select-time-series-container')
                     .call(drawSelectionTable, store, siteno);
             });
             renderTimeSeriesUrlParams(store);
         }
+    })
+    .catch(reason => {
+        console.error(reason);
+        throw reason;
     });
-
 };

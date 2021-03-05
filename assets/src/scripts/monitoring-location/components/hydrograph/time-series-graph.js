@@ -75,12 +75,13 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  */
 const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
-    if (!visible || !seriesPoints) {
-        return;
-    }
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+    if (!visible || !seriesPoints) {
+        return;
+    }
+
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -125,13 +126,15 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
  */
 const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#flood-level-points').remove();
-    if (!visible) {
-        return;
-    }
     const container = elem
         .append('g')
         .lower()
             .attr('id', 'flood-level-points');
+
+    if (!visible) {
+        return;
+    }
+
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }

@@ -18,6 +18,8 @@ export default {
     // Indicate a NWIS 'variable' has been modified in the application, such as a conversion from Celsius to Fahrenheit
     CALCULATED_TEMPERATURE_VARIABLE_CODE: 'F',
 
+    GAGE_HEIGHT_PARAMETER_CODE: '00065',
+
     TEMPERATURE_PARAMETERS: {
         celsius: [
             '00010',

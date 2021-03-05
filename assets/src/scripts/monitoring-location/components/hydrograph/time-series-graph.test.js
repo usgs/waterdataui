@@ -91,10 +91,9 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
 
     it('Should render current IV Data and groundwater levels but not median steps', () => {
         drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, false);
-
-        expect(div.selectAll('.ts-primary-group').size()).toBe(1);
-        expect(div.selectAll('.ts-compare-group').size()).toBe(0);
-        expect(div.selectAll('.iv-graph-gw-levels-group').size()).toBe(1);
+        expect(div.selectAll('.ts-primary-group').html()).not.toEqual('');
+        expect(div.selectAll('.ts-compare-group').html()).toEqual('');
+        expect(div.selectAll('.iv-graph-gw-levels-group').html()).not.toEqual('');
         expect(div.selectAll('.median-stats-group').size()).toBe(0);
     });
 
@@ -102,9 +101,9 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
         store.dispatch(setMedianDataVisibility(true));
         drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, false);
 
-        expect(div.selectAll('.ts-primary-group').size()).toBe(1);
-        expect(div.selectAll('.ts-compare-group').size()).toBe(0);
-        expect(div.selectAll('.iv-graph-gw-levels-group').size()).toBe(1);
+        expect(div.selectAll('.ts-primary-group').html()).not.toEqual('');
+        expect(div.selectAll('.ts-compare-group').html()).toEqual('');
+        expect(div.selectAll('.iv-graph-gw-levels-group').html()).not.toEqual('');
         expect(div.selectAll('.median-stats-group').size()).toBe(1);
     });
 });
