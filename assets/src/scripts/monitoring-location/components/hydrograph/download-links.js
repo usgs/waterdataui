@@ -7,7 +7,7 @@ import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
 import{link}  from 'ui/lib/d3-redux';
-import {getServiceURL} from 'ui/web-services/instantaneous-values';
+import {getServiceURL, getServiceURLMetaData} from 'ui/web-services/instantaneous-values';
 import {getServiceURLStatistics} from 'ui/web-services/statistics-data';
 import {getServiceURLSGroundwater} from 'ui/web-services/groundwater-levels';
 
@@ -124,7 +124,10 @@ export const drawDownloadLinks = function(elem, store, siteno) {
             .text('Metadata - ')
             .call(createDataDownloadLink, {
                 displayText: 'standard',
-                url: `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteStatus=all`,
+                url: getServiceURLMetaData({
+                    siteno: siteno,
+                    isExpanded: false
+                }),
                 gaEventAction: 'downloadLinkMetadataStandard',
                 tooltipText: ''
             });
@@ -133,7 +136,10 @@ export const drawDownloadLinks = function(elem, store, siteno) {
         metadataDownloadLink
             .call(createDataDownloadLink, {
                 displayText: 'expanded',
-                url: `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}&siteOutput=expanded&siteStatus=all`,
+                url: getServiceURLMetaData({
+                    siteno: siteno,
+                    isExpanded: true
+                }),
                 gaEventAction: 'downloadLinkMetadataExpanded',
                 tooltipText: 'Information about this monitoring location'
             });

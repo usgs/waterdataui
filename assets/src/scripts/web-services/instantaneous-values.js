@@ -21,6 +21,15 @@ function getNumberOfDays(period) {
 }
 
 /*
+* Formats a URL for monitoring location details (meta data)
+* @param {String} siteno - the unique identifier for the monitoring location
+* @param {Boolean} isExpanded - if the meta data has additional information
+*/
+export const getServiceURLMetaData = function({siteno,  isExpanded}) {
+    return `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}${isExpanded ? '&siteOutput=expanded' : ''}&siteStatus=all`;
+};
+
+/*
 * Get a URL formatted to download data from waterservices.usgs.gov
 * @param  {Array}  sites  Array of site IDs to retrieve.
 * @param  {String}  parameterCode - USGS five digit parameter code
