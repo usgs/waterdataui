@@ -1,6 +1,10 @@
 import config from 'ui/config';
 
-import {isVisible, getTitle, getDescription, getPrimaryParameterUnitCode} from './time-series-data';
+import {
+    isVisible, getTitle, getDescription, getPrimaryParameterUnitCode,
+    getPreferredIVMethodID
+}
+    from './time-series-data';
 
 
 const TEST_STATE = {
@@ -128,6 +132,92 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
 
         it('Return unit code if primary IV data', () => {
             expect(getPrimaryParameterUnitCode(TEST_STATE)).toBe('mg/l');
+        });
+    });
+
+    describe('getPreferredIVMethodID', () => {
+        it('Return null if no hydrographData', () => {
+            expect(getPreferredIVMethodID({
+                hydrographData: {}
+            })).toBeNull();
+        });
+
+        it('If all methods have no points return either methodID', () => {
+            expect(['69937','252055'].includes(getPreferredIVMethodID(TEST_STATE))).toBe(true);
+        });
+
+        it('Return methodID for method that has points', () => {
+            expect(getPreferredIVMethodID({
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    primaryIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData,
+                        values: {
+                            ...TEST_STATE.hydrographData.primaryIVData.values,
+                            '252055': {
+                                ...TEST_STATE.hydrographData.primaryIVData.values['252055'],
+                                points: [
+                                    {value: 2, dateTime: 1583433900000},
+                                    {value: 2.2, dateTime: 1583434800000}
+                                ]
+                            }
+                        }
+                    }
+                }
+            })).toEqual('252055');
+        });
+
+        it('Return methodID for method with the most points', () => {
+            expect(getPreferredIVMethodID({
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    primaryIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData,
+                        values: {
+                            ...TEST_STATE.hydrographData.primaryIVData.values,
+                            '252055': {
+                                ...TEST_STATE.hydrographData.primaryIVData.values['252055'],
+                                points: [
+                                    {value: 2, dateTime: 1583433900000},
+                                    {value: 2.2, dateTime: 1583434800000}
+                                ]
+                            },
+                            '69937': {
+                                ...TEST_STATE.hydrographData.primaryIVData.values['69937'],
+                                points: [{value: 3, dateTime: 1583433900000}]
+                            }
+                        }
+                    }
+                }
+            })).toEqual('252055');
+        });
+
+        it('If the methods have the same number of points return one with later dateTime', () => {
+            expect(getPreferredIVMethodID({
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    primaryIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData,
+                        values: {
+                            ...TEST_STATE.hydrographData.primaryIVData.values,
+                            '252055': {
+                                ...TEST_STATE.hydrographData.primaryIVData.values['252055'],
+                                points: [
+                                    {value: 2, dateTime: 1583433900000},
+                                    {value: 2.2, dateTime: 1583434800000}
+                                ]
+                            },
+                            '69937': {
+                                ...TEST_STATE.hydrographData.primaryIVData.values['69937'],
+                                points: [
+                                    {value: 3, dateTime: 1583433900000},
+                                    {value: 2, dateTime: 1583434900000}
+                                ]
+                            }
+                        }
+                    }
+                }
+            })).toEqual('69937');
         });
     });
 });
