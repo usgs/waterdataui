@@ -44,12 +44,21 @@ export const getIVValueRange = memoize(dataKind => createSelector(
             return null;
         }
 
-        let values = [];
-        Object.values(ivData.values).forEach(byMethodID => {
-            values.push(...byMethodID.points.filter(point => point.value !== null).map(point => point.value));
-        });
-        if (values.length) {
-            return [Math.min(...values), Math.max(...values)];
+        const result = Object.values(ivData.values).reduce((minMaxAccumulator, byMethodID) => {
+            const sortedValues = byMethodID.points
+                .map(point => point.value)
+                .filter(pointValue => pointValue !== null)
+                .sort((a, b) => a - b);
+            if (minMaxAccumulator.length && sortedValues && sortedValues.length) {
+                minMaxAccumulator[0] = Math.min(minMaxAccumulator[0], sortedValues[0]);
+                minMaxAccumulator[1] = Math.max(minMaxAccumulator[1], sortedValues[sortedValues.length - 1]);
+            } else if (sortedValues && sortedValues.length) {
+                minMaxAccumulator = [sortedValues[0], sortedValues[sortedValues.length - 1]];
+            }
+            return minMaxAccumulator;
+        }, []);
+        if (result.length) {
+            return result;
         } else {
             return null;
         }
