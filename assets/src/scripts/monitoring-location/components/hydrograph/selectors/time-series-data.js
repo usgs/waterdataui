@@ -4,7 +4,9 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 
-import {getPrimaryMethods, getPrimaryParameter, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
+import {getIVData, getGroundwaterLevels, getMedianStatisticsData, getPrimaryMethods, getPrimaryParameter,
+    getTimeRange
+} from 'ml/selectors/hydrograph-data-selector';
 import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
 const formatTime = function(timeInMillis) {
@@ -30,6 +32,37 @@ export const isVisible = memoize(dataKind => createSelector(
                 return false;
         }
     })
+);
+
+export const hasVisibleIVData = memoize(dataKind => createSelector(
+    isVisible(dataKind),
+    getIVData(dataKind),
+    getSelectedIVMethodID,
+    (isVisible, ivData, selectedIVMethodID) => {
+        return isVisible && ivData && ivData.values && selectedIVMethodID in ivData.values ?
+            ivData.values[selectedIVMethodID].length > 0 : false;
+    }
+));
+
+export const hasVisibleMedianStatisticisData = createSelector(
+    isVisible('median'),
+    getMedianStatisticsData,
+    (isVisible, medianStats) => isVisible && medianStats ? Object.keys(medianStats).length > 0 : false
+);
+
+export const hasVisibleGroundwaterLevels = createSelector(
+    getGroundwaterLevels,
+    (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
+);
+
+export const hasAnyVisibleData = createSelector(
+    hasVisibleIVData('primary'),
+    hasVisibleIVData('compare'),
+    hasVisibleMedianStatisticisData,
+    hasVisibleGroundwaterLevels,
+    (visiblePrimaryIVData, visibleCompareData, visibleMedianStats, visibleGWLevels) => {
+        return visiblePrimaryIVData && visibleCompareData && visibleMedianStats && visibleGWLevels;
+    }
 );
 
 /**
