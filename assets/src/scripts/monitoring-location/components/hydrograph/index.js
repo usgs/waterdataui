@@ -110,7 +110,8 @@ export const attachToNode = function(store,
         showDataLoadingIndicator(false);
         // selectedIVMethodID should be set regardless of whether we are showing only the graph but the preferred method ID
         // can not be determined until the data is fetched so that is done here.
-        store.dispatch(setSelectedIVMethodID(timeSeriesId) || getPreferredIVMethodID(store.getState()));
+        const initialIVMethodID = timeSeriesId || getPreferredIVMethodID(store.getState());
+        store.dispatch(setSelectedIVMethodID(initialIVMethodID));
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
