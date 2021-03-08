@@ -29,6 +29,7 @@ import {drawMethodPicker} from './method-picker';
 import {drawSelectionTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
+import {getPreferredIVMethodID} from "./selectors/time-series-data";
 
 
 /*

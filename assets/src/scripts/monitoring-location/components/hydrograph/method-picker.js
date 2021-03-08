@@ -20,7 +20,7 @@ const updateAvailableMethods = function(selectElem, methods, store) {
     }
     let selectedMethodID = getSelectedIVMethodID(store.getState());
     const availableMethodIDs = methods.map(data => data.methodID);
-    if (selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
+    if (!selectedMethodID || selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
         selectedMethodID = getPreferredIVMethodID(store.getState());
         store.dispatch(setSelectedIVMethodID(selectedMethodID));
     }
@@ -33,6 +33,13 @@ const updateAvailableMethods = function(selectElem, methods, store) {
         });
 };
 
+/*
+ * Draw the method picker. It will be set initially to the preferred method id if not already
+ * set to a specific, available method id. The picker will be hidden if only one method
+ * is available for the IV data.
+ * @param {D3 selection} elem
+ * @param {Redux store} store
+ */
 export const drawMethodPicker = function(elem, store) {
     const pickerContainer = elem.append('div')
         .attr('id', 'ts-method-select-container')
@@ -48,9 +55,8 @@ export const drawMethodPicker = function(elem, store) {
     pickerContainer.append('select')
         .attr('class', 'usa-select')
         .attr('id', 'method-picker')
+        .call(link(store, updateAvailableMethods, getPrimaryMethods, store))
         .on('change', function() {
             store.dispatch(setSelectedIVMethodID(select(this).property('value')));
-        })
-        .call(link(store, updateAvailableMethods, getPrimaryMethods, store));
+        });
 };
-
