@@ -30,6 +30,9 @@ import {drawSelectionTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
+import {getPreferredIVMethodID} from './selectors/time-series-data';
+
+
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -93,7 +96,6 @@ export const attachToNode = function(store,
         } else {
             store.dispatch(setSelectedDateRange('P7D'));
         }
-        store.dispatch(setSelectedIVMethodID(timeSeriesId));
     }
 
     // Fetch waterwatch flood levels
@@ -106,6 +108,9 @@ export const attachToNode = function(store,
     }
     Promise.all(fetchDataPromises).then(() => {
         showDataLoadingIndicator(false);
+        // selectedIVMethodID should be set regardless of whether we are showing only the graph but the preferred method ID
+        // can not be determined until the data is fetched so that is done here.
+        store.dispatch(setSelectedIVMethodID(timeSeriesId) || getPreferredIVMethodID(store.getState()));
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
