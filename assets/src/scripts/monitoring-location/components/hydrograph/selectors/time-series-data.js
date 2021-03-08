@@ -78,6 +78,11 @@ export const getPrimaryParameterUnitCode = createSelector(
     parameter => parameter ? parameter.unit : null
 );
 
+/*
+ * Returns a Redux select which returns the IV data method id with the most points. If more than
+ * one method has the same point count, then the time series with the most recent point is chosen.
+ * @returns {Function} which returns {String} the preferred method ID.
+ */
 export const getPreferredIVMethodID = createSelector(
     getIVData('primary'),
     (ivData) => {
