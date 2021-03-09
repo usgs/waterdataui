@@ -12,7 +12,6 @@ import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 import {getPrimaryParameter, getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
-import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
@@ -195,23 +194,6 @@ const drawWatermark = function(elem, store) {
         }, getMainLayout));
 };
 
-export const drawNoDataOverlay = function(elem, hasVisibleData) {
-    const noDataOverlay = elem.select('#hydrograph-no-data-overlay');
-    if (hasVisibleData && noDataOverlay.size()) {
-        noDataOverlay.remove();
-    } else if (!hasVisibleData && !noDataOverlay.size()) {
-        const overlayDiv = elem.append('div')
-            .attr('id', '#hydrograph-no-data-overlay')
-        overlayDiv.append('svg')
-            .attr('class', 'usa-icon')
-            .attr('aria-hidden', 'true')
-            .attr('focusable', 'false')
-            .attr('role', 'img')
-            .append('use')
-            .attr('xlink:href', `${config.STATIC_URL}/img/sprite.svg#priority_high`)
-        overlayDiv.append('div').text('No data available during the selected time range');
-    }
-};
 /*
  * Renders the IV time series graph with the D3 elem using the state information in store.
  * @param {D3 selection} elem
@@ -262,8 +244,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         .call(link(store, appendAxes, getAxes('MAIN')))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: () => true,
-            currentMethodID: getSelectedIVMethodID,
-            tsSegmentsMap: getIVDataSegments('primary'),
+            segments: getIVDataSegments('primary'),
             dataKind: () => 'primary',
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
@@ -271,8 +252,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         })))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: isVisible('compare'),
-            currentMethodID: getSelectedIVMethodID,
-            tsSegmentsMap: getIVDataSegments('compare'),
+            segments: getIVDataSegments('compare'),
             dataKind: () => 'compare',
             xScale: getMainXScale('prioryear'),
             yScale: getMainYScale,

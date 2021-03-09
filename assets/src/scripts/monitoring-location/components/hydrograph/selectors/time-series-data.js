@@ -40,7 +40,7 @@ export const hasVisibleIVData = memoize(dataKind => createSelector(
     getSelectedIVMethodID,
     (isVisible, ivData, selectedIVMethodID) => {
         return isVisible && ivData && ivData.values && selectedIVMethodID in ivData.values ?
-            ivData.values[selectedIVMethodID].length > 0 : false;
+            ivData.values[selectedIVMethodID].points.length > 0 : false;
     }
 ));
 
@@ -61,7 +61,7 @@ export const hasAnyVisibleData = createSelector(
     hasVisibleMedianStatisticisData,
     hasVisibleGroundwaterLevels,
     (visiblePrimaryIVData, visibleCompareData, visibleMedianStats, visibleGWLevels) => {
-        return visiblePrimaryIVData && visibleCompareData && visibleMedianStats && visibleGWLevels;
+        return visiblePrimaryIVData || visibleCompareData || visibleMedianStats || visibleGWLevels;
     }
 );
 
@@ -84,7 +84,6 @@ export const getTitle = createSelector(
         return title;
     }
 );
-
 
 /*
  * Returns a Redux selector function which returns the description of the hydrograph

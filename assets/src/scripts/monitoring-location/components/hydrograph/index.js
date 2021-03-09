@@ -18,7 +18,7 @@ import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDat
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {showDataLoadingIndicator} from './data-loading-indicator';
+import {showDataIndicators} from './data-indicator';
 import {drawDataTables} from './data-table';
 import {drawDownloadLinks} from './download-links';
 import {drawDateRangeControls} from './date-controls';
@@ -64,7 +64,7 @@ export const attachToNode = function(store,
         return;
     }
 
-    showDataLoadingIndicator(true);
+    showDataIndicators(true);
 
     const initialPeriod = startDT && endDT ? 'custom' : period || 'P7D';
     const initialStartTime = startDT ?
@@ -107,11 +107,12 @@ export const attachToNode = function(store,
         fetchDataPromises.push(fetchFloodLevelsPromise);
     }
     Promise.all(fetchDataPromises).then(() => {
-        showDataLoadingIndicator(false);
         // selectedIVMethodID should be set regardless of whether we are showing only the graph but the preferred method ID
         // can not be determined until the data is fetched so that is done here.
         const initialIVMethodID = timeSeriesId || getPreferredIVMethodID(store.getState());
         store.dispatch(setSelectedIVMethodID(initialIVMethodID));
+
+        showDataIndicators(false, store);
         let graphContainer = nodeElem.select('.graph-container');
         graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 

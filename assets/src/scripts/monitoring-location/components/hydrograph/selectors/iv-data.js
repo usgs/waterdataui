@@ -64,8 +64,7 @@ const transformToCumulative = function(points) {
 };
 
 /*
- * Returns a selector function that returns an Object with methodIDs as keys, Each property is
- * an Array of Objects that can be used to visualize the
+ * Returns a selector function that returns an Array of Objects that can be used to visualize the
  * IV data.
  * Each object has the following properties:
  *      @prop {Number} value
@@ -80,58 +79,68 @@ const transformToCumulative = function(points) {
  */
 export const getIVDataPoints = memoize(dataKind => createSelector(
     getIVData(dataKind),
-    (ivData) => {
+    getSelectedIVMethodID,
+    (ivData, selectedMethodID) => {
         if (!ivData) {
-            return null;
+            return [];
+        }
+        let selectedIVPoints;
+        if (selectedMethodID && selectedMethodID in ivData.values) {
+            selectedIVPoints = ivData.values[selectedMethodID].points;
+        } else {
+            selectedIVPoints = Object.values(ivData.values)[0].points;
         }
         if (PARM_CODES_TO_ACCUMULATE.includes(ivData.parameter.parameterCode)) {
-            Object.keys(ivData.values).forEach(methodID => {
-                ivData[methodID].points = transformToCumulative(ivData[methodID].points);
-            });
+            selectedIVPoints = transformToCumulative(selectedIVPoints);
         }
-        return Object.values(ivData.values).reduce((byMethodID, methodValues) => {
-            byMethodID[methodValues.method.methodID] = methodValues.points.map(point => {
-                // We will only receive one masked qualifier
-                let label;
-                let pointClass;
-                const pointQualifiers = point.qualifiers.map(qualifier => qualifier.toLowerCase());
-                const maskedQualifier = pointQualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
-                const approvalQualifier = pointQualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
-                if (maskedQualifier) {
-                    label = MASKED_QUALIFIERS[maskedQualifier].label;
-                    pointClass = MASKED_QUALIFIERS[maskedQualifier].class;
-                } else if (approvalQualifier) {
-                    label = APPROVAL_QUALIFIERS[approvalQualifier].label;
-                    pointClass = APPROVAL_QUALIFIERS[approvalQualifier].class;
-                } else { //default to provisional
-                    label = 'Provisional';
-                    pointClass = 'provisional';
-                }
-                return {
-                    value: point.value,
-                    dateTime: point.dateTime,
-                    isMasked: !!maskedQualifier,
-                    maskedQualifier: maskedQualifier,
-                    approvalQualifier: approvalQualifier,
-                    label: label,
-                    class: pointClass
-                };
-            });
-
-            return byMethodID;
-        }, {});
+        return selectedIVPoints.map(point => {
+            // We will only receive one masked qualifier
+            let label;
+            let pointClass;
+            const pointQualifiers = point.qualifiers.map(qualifier => qualifier.toLowerCase());
+            const maskedQualifier = pointQualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
+            const approvalQualifier = pointQualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
+            if (maskedQualifier) {
+                label = MASKED_QUALIFIERS[maskedQualifier].label;
+                pointClass = MASKED_QUALIFIERS[maskedQualifier].class;
+            } else if (approvalQualifier) {
+                label = APPROVAL_QUALIFIERS[approvalQualifier].label;
+                pointClass = APPROVAL_QUALIFIERS[approvalQualifier].class;
+            } else { //default to provisional
+                label = 'Provisional';
+                pointClass = 'provisional';
+            }
+            return {
+                value: point.value,
+                dateTime: point.dateTime,
+                isMasked: !!maskedQualifier,
+                maskedQualifier: maskedQualifier,
+                approvalQualifier: approvalQualifier,
+                label: label,
+                class: pointClass
+            };
+        });
     }
 ));
 
+/*
+ * Returns a selector function which returns an Array of Objects suitable for describing the
+ * IV data in a table.
+ * @return {Function} - The function returns an Array of Objects with the following properies
+ *      @prop {String} parameterName
+ *      @prop {Number} result
+ *      @prop {String} dateTime - in ISO 8601 format using the site's time zone
+ *      @prop {String} approvals - label describing approval status
+ *      @prop {String} masks - label describing the masked value or an empty string.
+ */
 export const getIVTableData = memoize(dataKind => createSelector(
     getIVDataPoints(dataKind),
     getPrimaryParameter,
-    getSelectedIVMethodID,
-    (ivData, parameter, selectedMethodID) => {
-        if (!ivData || !(selectedMethodID in ivData)) {
+    (ivData, parameter) => {
+        if (!ivData) {
             return [];
         }
-        return ivData[selectedMethodID].map(point => {
+        return ivData.map(point => {
             return {
                 parameterName: parameter.name,
                 result: point.value,
@@ -144,7 +153,9 @@ export const getIVTableData = memoize(dataKind => createSelector(
 ));
 
 /*
- * @return Keys are ts Ids, values are  of array of objects. Each object has four properties and
+ * Returns a Redux selector function which returns an Array of Objects where each object represents
+ * a segment that represents a uniquely decorated segment of the IV Data.
+ * @return {Function} which returns array of objects. Each object has four properties and
  * represents a segment
  *      @prop {Boolean} isMasked
  *      @prop {Array of Object} points - Each point has {Number} value and {Number in milliseconds} dateTime
@@ -156,9 +167,9 @@ export const getIVTableData = memoize(dataKind => createSelector(
  */
 export const getIVDataSegments = memoize(dataKind => createSelector(
     getIVDataPoints(dataKind),
-    (pointsByMethodID) => {
-        if (!pointsByMethodID) {
-            return null;
+    (points) => {
+        if (!points.length) {
+            return [];
         }
         const getNewSegment = function(point) {
             return {
@@ -169,54 +180,45 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
             };
         };
 
-        let segmentsByMethodID = {};
-        Object.keys(pointsByMethodID).forEach((methodID) => {
-            const pointsForMethod = pointsByMethodID[methodID];
-            if (!pointsForMethod.length) {
-                segmentsByMethodID[methodID]= [];
-                return;
-            }
-            let segments = [];
-            let previousDate = pointsForMethod[0].dateTime;
-            let newSegment = getNewSegment(pointsForMethod[0]);
+        let segments = [];
+        let previousDate = points[0].dateTime;
+        let newSegment = getNewSegment(points[0]);
 
-            pointsForMethod.forEach(point => {
-                const hasGap = point.dateTime - previousDate >= SEVENTY_TWO_MINUTES;
-                const pointLabelHasChanged = newSegment.label !== point.label;
+        points.forEach(point => {
+            const hasGap = point.dateTime - previousDate >= SEVENTY_TWO_MINUTES;
+            const pointLabelHasChanged = newSegment.label !== point.label;
 
-                if (!newSegment.isMasked && !point.isMasked && hasGap)  {// there is a gap between two line segments so start a new segment
-                    segments.push(newSegment);
-                    newSegment = getNewSegment(point);
+            if (!newSegment.isMasked && !point.isMasked && hasGap)  {// there is a gap between two line segments so start a new segment
+                segments.push(newSegment);
+                newSegment = getNewSegment(point);
 
-                } else if (newSegment.isMasked && pointLabelHasChanged) {
-                    // end previous masked segment where the next segment starts
-                    newSegment.points.push({
-                        value: point.value,
-                        dateTime: point.dateTime
-                    });
-                    segments.push(newSegment);
-
-                    newSegment = getNewSegment(point);
-
-                } else if (!newSegment.isMasked && pointLabelHasChanged) {
-                    // end previous line segment and start the next segment where the previous line ends
-                    const lastPoint = newSegment.points[newSegment.points.length - 1];
-                    segments.push(newSegment);
-
-                    newSegment = getNewSegment(point);
-                    newSegment.points.push(lastPoint);
-                }
-
+            } else if (newSegment.isMasked && pointLabelHasChanged) {
+                // end previous masked segment where the next segment starts
                 newSegment.points.push({
                     value: point.value,
                     dateTime: point.dateTime
                 });
-                previousDate = point.dateTime;
+                segments.push(newSegment);
+
+                newSegment = getNewSegment(point);
+
+            } else if (!newSegment.isMasked && pointLabelHasChanged) {
+                // end previous line segment and start the next segment where the previous line ends
+                const lastPoint = newSegment.points[newSegment.points.length - 1];
+                segments.push(newSegment);
+
+                newSegment = getNewSegment(point);
+                newSegment.points.push(lastPoint);
+            }
+
+            newSegment.points.push({
+                value: point.value,
+                dateTime: point.dateTime
             });
-            segments.push(newSegment);
-            segmentsByMethodID[methodID] = segments;
+            previousDate = point.dateTime;
         });
-        return segmentsByMethodID;
+        segments.push(newSegment);
+        return segments;
     }
 ));
 
@@ -228,18 +230,14 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
  *      @prop {String} label
  *      @prop {String} class
  */
-
 export const getIVUniqueDataKinds = memoize(dataKind => createSelector(
     getIVDataSegments(dataKind),
-    byMethodSegments => {
-        if (!byMethodSegments) {
+    (segments) => {
+        if (!segments.length) {
             return [];
         }
-        let allSegments = [];
-        Object.values(byMethodSegments).forEach(segments => {
-            allSegments.push(...segments);
-        });
-        const mappedSegments = allSegments.map(segment => {
+
+        const mappedSegments = segments.map(segment => {
             return {
                 isMasked: segment.isMasked,
                 label: segment.label,
@@ -247,5 +245,5 @@ export const getIVUniqueDataKinds = memoize(dataKind => createSelector(
             };
         });
         return uniqWith(mappedSegments, isEqual);
-    }
-));
+    })
+);

@@ -128,6 +128,29 @@
       width: 100%;
     }
   }
+
+  #hydrograph-no-data-overlay {
+    color: red;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    >div {
+      text-align: center;
+      vertical-align: middle;
+      height: 100%;
+      width: 100%;
+      @include u-font('body', 'xl');
+      @include u-text('info-dark');
+      svg: {
+        display: inline-block;
+      }
+      div {
+        display: inline-block;
+      }
+    }
+  }
 }
 
 .hydrograph-container {

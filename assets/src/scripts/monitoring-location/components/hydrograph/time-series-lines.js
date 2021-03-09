@@ -7,7 +7,7 @@ export const HASH_ID = {
 
 const CIRCLE_RADIUS_SINGLE_PT = 1;
 
-const drawLineSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
+const drawLineSegment = function(group, {segment, dataKind, xScale, yScale}) {
     let lineElem;
     if (segment.points.length === 1) {
         lineElem = group.append('circle')
@@ -27,11 +27,10 @@ const drawLineSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
     lineElem
         .classed('line-segment', true)
         .classed(segment.class, true)
-        .classed(`ts-${dataKind}`, true)
-        .classed('not-current-method', !isCurrentMethod);
+        .classed(`ts-${dataKind}`, true);
 };
 
-const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
+const drawMaskSegment = function(group, {segment, dataKind, xScale, yScale}) {
     const [yRangeStart, yRangeEnd] = yScale.range();
     const xRangeStart = xScale(segment.points[0].dateTime);
     const xRangeEnd = xScale(segment.points[segment.points.length - 1].dateTime);
@@ -52,7 +51,6 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
         .attr('width', rectWidth)
         .attr('height', rectHeight)
         .classed('mask', true)
-        .classed('not-current-method', !isCurrentMethod)
         .classed(segment.class, true);
     maskGroup.append('rect')
         .attr('x', xRangeStart)
@@ -62,21 +60,18 @@ const drawMaskSegment = function(group, {segment, isCurrentMethod, dataKind, xSc
         .attr('fill', `url(#${HASH_ID[dataKind]}`);
 };
 /*
- * Render lines if visible using the scales. The tsKey string is used for various class names so that this element
- * can be styled by using the class name.
- * @param {Boolean} visible
- * @param {Array of Object} - Each object has two properties: classes which contains meta data for the line segment
- *      and points which is an Array of Object where each object describes a point in the line with properties dateTime
- *      and value.
- * @param {String} tsKey
- * @param {Object} xScale - D3 scale for the x axis
- * @param {Object} yScale - D3 scale for the y axis
+ * Render the segment of dataKind using the scales.
+ * @param {D3 selector} group
+ * @param {Object} segment
+ * @param {String} dataKind - can be 'primary' or 'compare'
+ * @param {D3 scale} xScale
+ * @param {D3 scale} yScale
  */
-export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKind, xScale, yScale}) {
+const drawDataSegment = function(group, {segment, dataKind, xScale, yScale}) {
     if (segment.isMasked) {
-        drawMaskSegment(group, {segment, isCurrentMethod, dataKind, xScale, yScale});
+        drawMaskSegment(group, {segment, dataKind, xScale, yScale});
     } else {
-        drawLineSegment(group, {segment, isCurrentMethod, dataKind, xScale, yScale});
+        drawLineSegment(group, {segment, dataKind, xScale, yScale});
     }
 };
 /*
@@ -90,16 +85,13 @@ export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKi
  * @param {Object} yScale - D3 scale for the y axis
  * @param {Boolean} enableClip - Set if lines should be clipped to the width/height of the container.
  */
-export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegmentsMap, dataKind, xScale, yScale, enableClip}) {
+export const drawDataSegments = function(elem, {visible, segments, dataKind, xScale, yScale, enableClip}) {
     const elemClass = `ts-${dataKind}-group`;
-    const isCurrentMethodID = function(thisMethodID) {
-        return currentMethodID ? currentMethodID === thisMethodID : true;
-    };
 
     elem.selectAll(`.${elemClass}`).remove();
     const lineGroup = elem.append('g')
         .attr('class', elemClass);
-    if (!visible || !tsSegmentsMap) {
+    if (!visible || !segments.length) {
         return;
     }
 
@@ -107,11 +99,7 @@ export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegm
         lineGroup.attr('clip-path', 'url(#graph-clip)');
     }
 
-    Object.keys(tsSegmentsMap).forEach(methodID => {
-        const isCurrentMethod = isCurrentMethodID(methodID);
-        const segments = tsSegmentsMap[methodID];
-        segments.forEach(segment => {
-            drawDataSegment(lineGroup, {segment, isCurrentMethod, dataKind, xScale, yScale});
-        });
+    segments.forEach(segment => {
+        drawDataSegment(lineGroup, {segment, dataKind, xScale, yScale});
     });
 };
