@@ -37,15 +37,15 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
     };
 
     describe('getIVDataPoints', () => {
-        it('Returns null if no data of data kind exists', () => {
-            expect(getIVDataPoints('compare')(TEST_STATE)).toBeNull();
+        it('Returns an empty array if  no data of data kind exists', () => {
+            expect(getIVDataPoints('compare')(TEST_STATE)).toHaveLength(0);
         });
 
         it('Returns the iv data points with the correct properties', () => {
             const points = getIVDataPoints('primary')(TEST_STATE);
-            expect(points['90649']).toBeDefined();
-            expect(points['90649']).toHaveLength(9);
-            expect(points['90649'][0]).toEqual({
+            expect(points).toBeDefined();
+            expect(points).toHaveLength(9);
+            expect(points[0]).toEqual({
                 value: 24.2,
                 dateTime: 1582560900000,
                 isMasked: false,
@@ -54,7 +54,7 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
                 label: 'Approved',
                 class: 'approved'
             });
-            expect(points['90649'][2]).toEqual({
+            expect(points[2]).toEqual({
                 value: null,
                 dateTime: 1582562700000,
                 isMasked: true,
@@ -63,7 +63,7 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
                 label: 'Ice Affected',
                 class: 'ice-affected-mask'
             });
-            expect(points['90649'][4]).toEqual({
+            expect(points[4]).toEqual({
                 value: 25.2,
                 dateTime: 1582570800000,
                 isMasked: false,
@@ -72,7 +72,7 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
                 label: 'Estimated',
                 class: 'estimated'
             });
-            expect(points['90649'][7]).toEqual({
+            expect(points[7]).toEqual({
                 value: 26.5,
                 dateTime: 1600619400000,
                 isMasked: false,
@@ -123,14 +123,12 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
         });
     });
     describe('getIVDataSegments', () => {
-       it('Expects null if no IV of the data kind exists', () => {
-           expect(getIVDataSegments('compare')(TEST_STATE)).toBeNull();
+       it('Expects an empty array if no IV of the data kind exists', () => {
+           expect(getIVDataSegments('compare')(TEST_STATE)).toHaveLength(0);
        });
 
        it('Returns the expected data segments', () => {
-           const segmentsByMethodID = getIVDataSegments('primary')(TEST_STATE);
-           expect(segmentsByMethodID['90649']).toBeDefined();
-           const segments = segmentsByMethodID['90649'];
+           const segments = getIVDataSegments('primary')(TEST_STATE);
            expect(segments).toHaveLength(5);
            expect(segments[0]).toEqual({
                isMasked: false,

@@ -58,7 +58,7 @@ export const getIVDataCursorPoint = memoize((dataKind, timeRangeKind) => createS
     isVisible(dataKind),
     getGraphTimeRange('MAIN', timeRangeKind),
     (ivData, cursorTime, isVisible, timeRange) => {
-        if (!ivData.length || !cursorTime || !isVisible || !timeRange) {
+        if (!ivData || !ivData.length || !cursorTime || !isVisible || !timeRange) {
             return null;
         }
         const visiblePoints = ivData.filter(point => isInTimeRange(point.dateTime, timeRange));

@@ -82,13 +82,15 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
     getSelectedIVMethodID,
     (ivData, selectedMethodID) => {
         if (!ivData) {
-            return [];
+            return null;
         }
         let selectedIVPoints;
         if (selectedMethodID && selectedMethodID in ivData.values) {
             selectedIVPoints = ivData.values[selectedMethodID].points;
-        } else {
+        } else if (Object.keys(ivData.values).length) {
             selectedIVPoints = Object.values(ivData.values)[0].points;
+        } else {
+            selectedIVPoints = [];
         }
         if (PARM_CODES_TO_ACCUMULATE.includes(ivData.parameter.parameterCode)) {
             selectedIVPoints = transformToCumulative(selectedIVPoints);
@@ -168,7 +170,9 @@ export const getIVTableData = memoize(dataKind => createSelector(
 export const getIVDataSegments = memoize(dataKind => createSelector(
     getIVDataPoints(dataKind),
     (points) => {
-        if (!points.length) {
+        if (!points) {
+            return null;
+        } else if (!points.length) {
             return [];
         }
         const getNewSegment = function(point) {
@@ -233,17 +237,19 @@ export const getIVDataSegments = memoize(dataKind => createSelector(
 export const getIVUniqueDataKinds = memoize(dataKind => createSelector(
     getIVDataSegments(dataKind),
     (segments) => {
-        if (!segments.length) {
+        if (!segments) {
+            return null;
+        } else if (!segments.length) {
             return [];
+        } else {
+            const mappedSegments = segments.map(segment => {
+                return {
+                    isMasked: segment.isMasked,
+                    label: segment.label,
+                    class: segment.class
+                };
+            });
+            return uniqWith(mappedSegments, isEqual);
         }
-
-        const mappedSegments = segments.map(segment => {
-            return {
-                isMasked: segment.isMasked,
-                label: segment.label,
-                class: segment.class
-            };
-        });
-        return uniqWith(mappedSegments, isEqual);
     })
 );

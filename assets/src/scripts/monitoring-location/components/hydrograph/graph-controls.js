@@ -13,6 +13,11 @@ import {isVisible} from './selectors/time-series-data';
 
 import {showDataIndicators} from './data-indicator';
 
+const hasIVData = function(parameterCode) {
+    console.log(`${config}`);
+    return config.ivPeriodOfRecord && parameterCode in config.ivPeriodOfRecord;
+};
+
 
 /*
  * Create the last year toggle, and median toggle for the time series graph.
@@ -54,14 +59,16 @@ export const drawGraphControls = function(elem, store, siteno) {
             }
         })
         // Sets the state of the toggle
-        .call(link(store,function(elem, {checked, selectedDateRange}) {
+        .call(link(store,function(elem, {checked, selectedDateRange, parameterCode}) {
             elem.property('checked', checked)
                 .attr('disabled',
+                hasIVData(parameterCode) &&
                 selectedDateRange !== 'custom' && config.ALLOW_COMPARE_DATA_FOR_PERIODS.includes(selectedDateRange) ?
                 null : true);
         }, createStructuredSelector({
             checked: isVisible('compare'),
-            selectedDateRange: getSelectedDateRange
+            selectedDateRange: getSelectedDateRange,
+            parameterCode: getSelectedParameterCode
         })));
     compareControlDiv.append('label')
         .classed('usa-checkbox__label', true)

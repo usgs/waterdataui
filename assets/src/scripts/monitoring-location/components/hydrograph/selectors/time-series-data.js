@@ -34,7 +34,13 @@ export const isVisible = memoize(dataKind => createSelector(
     })
 );
 
-export const hasVisibleIVData = memoize(dataKind => createSelector(
+/*
+ * Returns a Redux selector that returns true if there is non-empty data and it is
+ * selected to be visible.
+ * @param {String} dataKind - 'primary' or 'compare'
+ * @return {Function}
+ */
+const hasVisibleIVData = memoize(dataKind => createSelector(
     isVisible(dataKind),
     getIVData(dataKind),
     getSelectedIVMethodID,
@@ -44,13 +50,13 @@ export const hasVisibleIVData = memoize(dataKind => createSelector(
     }
 ));
 
-export const hasVisibleMedianStatisticisData = createSelector(
+const hasVisibleMedianStatisticsData = createSelector(
     isVisible('median'),
     getMedianStatisticsData,
     (isVisible, medianStats) => isVisible && medianStats ? Object.keys(medianStats).length > 0 : false
 );
 
-export const hasVisibleGroundwaterLevels = createSelector(
+const hasVisibleGroundwaterLevels = createSelector(
     getGroundwaterLevels,
     (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
 );
@@ -58,7 +64,7 @@ export const hasVisibleGroundwaterLevels = createSelector(
 export const hasAnyVisibleData = createSelector(
     hasVisibleIVData('primary'),
     hasVisibleIVData('compare'),
-    hasVisibleMedianStatisticisData,
+    hasVisibleMedianStatisticsData,
     hasVisibleGroundwaterLevels,
     (visiblePrimaryIVData, visibleCompareData, visibleMedianStats, visibleGWLevels) => {
         return visiblePrimaryIVData || visibleCompareData || visibleMedianStats || visibleGWLevels;

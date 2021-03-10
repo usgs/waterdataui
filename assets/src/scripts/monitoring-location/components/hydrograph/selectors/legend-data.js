@@ -1,9 +1,11 @@
 import {createSelector} from 'reselect';
 
+import config from 'ui/config';
+
 import {defineLineMarker, defineRectangleMarker, defineCircleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
-import {getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
+import {getPrimaryMedianStatisticsData, getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 import {isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
 import {getIVUniqueDataKinds, HASH_ID} from './iv-data';
@@ -32,28 +34,39 @@ const getLegendDisplay = createSelector(
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
     getUniqueGWKinds,
-    (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, gwLevelKinds) => {
+    getPrimaryParameter,
+    (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, gwLevelKinds,
+     primaryParameter) => {
+        const parameterCode = primaryParameter ? primaryParameter.parameterCode : null;
+        const hasIVData = config.ivPeriodOfRecord && parameterCode ? parameterCode in config.ivPeriodOfRecord : false;
+        const hasGWLevelsData = config.gwPeriodOfRecord && parameterCode ? parameterCode in config.gwPeriodOfRecord : false;
         return {
-            primaryIV: currentClasses.length ? currentClasses : undefined,
-            compareIV: showCompare && compareClasses.length ? compareClasses : undefined,
+            primaryIV: hasIVData ? currentClasses : undefined,
+            compareIV: hasIVData && showCompare ? compareClasses : undefined,
             median: showMedian ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
-            groundwaterLevels: gwLevelKinds.length ? gwLevelKinds : undefined
+            groundwaterLevels: hasGWLevelsData ? gwLevelKinds : undefined
         };
     }
 );
 
 const getIVMarkers = function(dataKind, uniqueIVKinds) {
-    let maskMarkers = [];
-    let lineMarkers = [];
-    uniqueIVKinds.forEach(ivKind => {
-        if (ivKind.isMasked) {
-            maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
-        } else {
-            return lineMarkers.push(defineLineMarker(null, `line-segment ${ivKind.class} ts-${dataKind}`, ivKind.label));
-        }
-    });
-    return [...lineMarkers, ...maskMarkers];
+    if (!uniqueIVKinds) {
+        return [];
+    } else if (uniqueIVKinds.length) {
+        let maskMarkers = [];
+        let lineMarkers = [];
+        uniqueIVKinds.forEach(ivKind => {
+            if (ivKind.isMasked) {
+                maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
+            } else {
+                return lineMarkers.push(defineLineMarker(null, `line-segment ${ivKind.class} ts-${dataKind}`, ivKind.label));
+            }
+        });
+        return [...lineMarkers, ...maskMarkers];
+    } else {
+        return [defineTextOnlyMarker('No data')];
+    }
 };
 
 /*
@@ -61,32 +74,41 @@ const getIVMarkers = function(dataKind, uniqueIVKinds) {
  * @return {Array of Array} - each subarray represents the markes for a time series median data
  */
 const getMedianMarkers = function(medianMetaData) {
-    if (!Object.keys(medianMetaData).length) {
+    if (!medianMetaData) {
         return [];
+    } else if (!Object.keys(medianMetaData).length) {
+        return [[defineTextOnlyMarker(TS_LABEL.median), defineTextOnlyMarker('No data')]];
+    } else {
+        return Object.values(medianMetaData).map((stats, index) => {
+            // Get the unique non-null years, in chronological order
+            let years = [];
+            if (stats.beginYear) {
+                years.push(stats.beginYear);
+            }
+            if (stats.endYear && stats.beginYear !== stats.endYear) {
+                years.push(stats.endYear);
+            }
+            const dateText = years.join(' - ');
+
+            const descriptionText = stats.description ? `${stats.description} ` : '';
+            const classes = `median-data-series median-step median-step-${index % 6}`;
+            const label = `${descriptionText}${dateText}`;
+
+            return [defineTextOnlyMarker(TS_LABEL.median), defineLineMarker(null, classes, label)];
+        });
     }
-    return Object.values(medianMetaData).map((stats, index) => {
-        // Get the unique non-null years, in chronological order
-        let years = [];
-        if (stats.beginYear) {
-            years.push(stats.beginYear);
-        }
-        if (stats.endYear && stats.beginYear !== stats.endYear) {
-            years.push(stats.endYear);
-        }
-        const dateText = years.join(' - ');
-
-        const descriptionText = stats.description ? `${stats.description} ` : '';
-        const classes = `median-data-series median-step median-step-${index % 6}`;
-        const label = `${descriptionText}${dateText}`;
-
-        return [defineTextOnlyMarker(TS_LABEL.median), defineLineMarker(null, classes, label)];
-    });
 };
 
 const getGWMarkers = function(gwLevelKinds) {
-    return gwLevelKinds.map(kind => {
-        return defineCircleMarker(null, kind.classes.join(' '), kind.radius, kind.label);
-    });
+    if (!gwLevelKinds) {
+        return [];
+    } else if (gwLevelKinds.length) {
+        return gwLevelKinds.map(kind => {
+            return defineCircleMarker(null, kind.classes.join(' '), kind.radius, kind.label);
+        });
+    } else {
+        return [defineTextOnlyMarker('No data')];
+    }
 };
 
 const floodLevelDisplay = function(floodLevels) {

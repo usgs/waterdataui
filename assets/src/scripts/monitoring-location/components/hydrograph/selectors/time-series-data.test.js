@@ -1,7 +1,8 @@
 import config from 'ui/config';
 
 import {
-    isVisible, getTitle, getDescription, getPrimaryParameterUnitCode,
+    isVisible, hasVisibleIVData, hasVisibleMedianStatisticisData, hasVisibleGroundwaterLevels,
+    hasAnyVisibleData, getTitle, getDescription, getPrimaryParameterUnitCode,
     getPreferredIVMethodID
 }
     from './time-series-data';
@@ -29,7 +30,7 @@ const TEST_STATE = {
                     }
                 },
                 '252055': {
-                    points: [],
+                    points: [{value: 24.2, qualifiers: ['A'], dateTime: 1582560900000}],
                     method: {
                         methodDescription: 'From multiparameter sonde',
                         methodID: '252055'
@@ -66,6 +67,61 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                     showMedianData: true
                 }
             })).toBe(true);
+        });
+    });
+
+    describe('hasVisibleIVData', () => {
+        it('Expects to return true when data is available and visible', () => {
+            expect(hasVisibleIVData('primary')(TEST_STATE)).toBe(true);
+            expect(hasVisibleIVData('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData
+                    }
+                },
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    showCompareIVData: true
+                }
+            })).toBe(true);
+        });
+
+        it('Expects to return false if data exists but is not visible', () => {
+            expect(hasVisibleIVData('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData
+                    }
+                }
+            })).toBe(false);
+        });
+
+        it('Expects to return false when no data is available and visible', () => {
+            expect(hasVisibleIVData('primary')({
+                ...TEST_STATE,
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    selectedIVMethodID: '69937'
+                }
+            })).toBe(false);
+            expect(hasVisibleIVData('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData
+                    }
+                },
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    selectedIVMethodID: '69937',
+                    showCompareIVData: true
+                }
+            })).toBe(false);
         });
     });
 

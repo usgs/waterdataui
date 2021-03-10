@@ -71,12 +71,13 @@ export const attachToNode = function(store,
         DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
     const initialEndTime = endDT ?
         DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
+    const initialLoadCompare = compare === 'true' || compare === true ? true : false;
     const fetchHydrographDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
         period: initialPeriod === 'custom' ? null : initialPeriod,
         startTime: initialStartTime,
         endTime: initialEndTime,
-        loadCompare: compare,
+        loadCompare: initialLoadCompare,
         loadMedian: false
     }));
 
@@ -87,7 +88,7 @@ export const attachToNode = function(store,
 
         // Initialize all hydrograph state variables if showing the control
         store.dispatch(setSelectedParameterCode(parameterCode));
-        store.dispatch(setCompareDataVisibility(compare));
+        store.dispatch(setCompareDataVisibility(initialLoadCompare));
         if (period) {
             store.dispatch(setSelectedDateRange(period));
         } else if (startDT && endDT) {

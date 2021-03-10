@@ -91,7 +91,7 @@ export const drawDataSegments = function(elem, {visible, segments, dataKind, xSc
     elem.selectAll(`.${elemClass}`).remove();
     const lineGroup = elem.append('g')
         .attr('class', elemClass);
-    if (!visible || !segments.length) {
+    if (!visible || !segments || !segments.length) {
         return;
     }
 
