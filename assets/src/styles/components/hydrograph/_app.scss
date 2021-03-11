@@ -141,7 +141,15 @@
       vertical-align: middle;
       height: 100%;
       width: 100%;
-      @include u-font('body', 'xl');
+      @include at-media('mobile') {
+        @include u-font('body', 'sm');
+      }
+      @include at-media('tablet') {
+        @include u-font('body', 'xl');
+      }
+      @include at-media('desktop') {
+        @include u-font('body', '3xl');
+      }
       @include u-text('info-dark');
       svg: {
         display: inline-block;

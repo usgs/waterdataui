@@ -19,14 +19,7 @@ const updateNoDataOverlay = function(container, store) {
             .call(link(store, (elem, layout) => {
                 elem.style('transform', `translateY(${layout.height / 2}px)`);
             }, getMainLayout));
-        overlayDiv.append('svg')
-            .attr('class', 'usa-icon')
-            .attr('aria-hidden', 'true')
-            .attr('focusable', 'false')
-            .attr('role', 'img')
-            .append('use')
-            .attr('xlink:href', `${config.STATIC_URL}/img/sprite.svg#priority_high`);
-        overlayDiv.append('div').text('No data available during the selected time range');
+        overlayDiv.append('div').text('No data available');
     }
 };
 
