@@ -14,7 +14,6 @@ import {isVisible} from './selectors/time-series-data';
 import {showDataIndicators} from './data-indicator';
 
 const hasIVData = function(parameterCode) {
-    console.log(`${config}`);
     return config.ivPeriodOfRecord && parameterCode in config.ivPeriodOfRecord;
 };
 

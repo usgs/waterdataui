@@ -65,7 +65,7 @@ const transformToCumulative = function(points) {
 
 /*
  * Returns a selector function that returns an Array of Objects that can be used to visualize the
- * IV data.
+ * IV data. If no data of dataKind has been fetched at all, return null.
  * Each object has the following properties:
  *      @prop {Number} value
  *      @prop {Number} dateTime - in epoch milliseconds

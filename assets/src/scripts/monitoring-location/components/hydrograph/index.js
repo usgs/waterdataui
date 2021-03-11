@@ -47,7 +47,7 @@ export const attachToNode = function(store,
                                      node,
                                      {
                                          siteno,
-                                         agencyCode,
+                                         agencyCd,
                                          sitename,
                                          parameterCode,
                                          compare,
@@ -115,7 +115,7 @@ export const attachToNode = function(store,
 
         showDataIndicators(false, store);
         let graphContainer = nodeElem.select('.graph-container');
-        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
+        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCd, sitename, showMLName, !showOnlyGraph);
 
         if (!showOnlyGraph) {
             graphContainer

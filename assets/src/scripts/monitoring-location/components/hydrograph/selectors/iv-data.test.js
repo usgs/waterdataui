@@ -37,8 +37,23 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
     };
 
     describe('getIVDataPoints', () => {
-        it('Returns an empty array if  no data of data kind exists', () => {
-            expect(getIVDataPoints('compare')(TEST_STATE)).toHaveLength(0);
+        it('Returns null if no data of data kind exists', () => {
+            expect(getIVDataPoints('compare')(TEST_STATE)).toBeNull();
+        });
+
+        it('Returns an empty array if no data points exist for data kind', () => {
+            expect(getIVDataPoints('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
+                    }
+                }
+            })).toHaveLength(0);
         });
 
         it('Returns the iv data points with the correct properties', () => {
@@ -123,8 +138,23 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
         });
     });
     describe('getIVDataSegments', () => {
-       it('Expects an empty array if no IV of the data kind exists', () => {
-           expect(getIVDataSegments('compare')(TEST_STATE)).toHaveLength(0);
+       it('Expects null if no IV of the data kind exists', () => {
+           expect(getIVDataSegments('compare')(TEST_STATE)).toBeNull();
+       });
+
+       it('Expects an empty array if IV of data kind exists but there are no points', () => {
+           expect(getIVDataSegments('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
+                    }
+                }
+            })).toHaveLength(0);
        });
 
        it('Returns the expected data segments', () => {
@@ -179,8 +209,23 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
     });
 
     describe('getIVUniqueDataKinds', () => {
-        it('returns an empty array if no IV data of data kind exists', () => {
-            expect(getIVUniqueDataKinds('compare')(TEST_STATE)).toHaveLength(0);
+        it('returns null if no IV data of data kind exists', () => {
+            expect(getIVUniqueDataKinds('compare')(TEST_STATE)).toBeNull();
+        });
+
+        it('returns an empty array if IV data of dataKind exists but has no points', () => {
+            expect(getIVUniqueDataKinds('compare')({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
+                    }
+                }
+            })).toHaveLength(0);
         });
 
         it('Returns expected unique data kind for the IV data', () => {

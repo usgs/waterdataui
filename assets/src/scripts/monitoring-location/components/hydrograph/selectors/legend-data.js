@@ -154,7 +154,6 @@ export const getLegendMarkerRows = createSelector(
     getLegendDisplay,
     displayItems => {
         const markerRows = [];
-
         const currentTsMarkerRow = displayItems.primaryIV ? getIVMarkers('primary', displayItems.primaryIV) : undefined;
         const compareTsMarkerRow = displayItems.compareIV ? getIVMarkers('compare', displayItems.compareIV) : undefined;
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];

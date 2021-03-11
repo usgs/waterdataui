@@ -1,8 +1,8 @@
 import config from 'ui/config';
 
+import {TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS} from '../mock-hydrograph-state';
 import {
-    isVisible, hasVisibleIVData, hasVisibleMedianStatisticisData, hasVisibleGroundwaterLevels,
-    hasAnyVisibleData, getTitle, getDescription, getPrimaryParameterUnitCode,
+    isVisible, hasAnyVisibleData, getTitle, getDescription, getPrimaryParameterUnitCode,
     getPreferredIVMethodID
 }
     from './time-series-data';
@@ -70,56 +70,97 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('hasVisibleIVData', () => {
+    describe('hasVisibleData', () => {
         it('Expects to return true when data is available and visible', () => {
-            expect(hasVisibleIVData('primary')(TEST_STATE)).toBe(true);
-            expect(hasVisibleIVData('compare')({
-                ...TEST_STATE,
+            expect(hasAnyVisibleData({
                 hydrographData: {
-                    ...TEST_STATE.hydrographData,
-                    compareIVData: {
-                        ...TEST_STATE.hydrographData.primaryIVData
-                    }
+                    primaryIVData: TEST_PRIMARY_IV_DATA
                 },
                 hydrographState: {
-                    ...TEST_STATE.hydrographState,
-                    showCompareIVData: true
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '90649'
+                }
+            })).toBe(true);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    groundwaterLevels: TEST_GW_LEVELS
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
+                }
+            })).toBe(true);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
                 }
             })).toBe(true);
         });
 
-        it('Expects to return false if data exists but is not visible', () => {
-            expect(hasVisibleIVData('compare')({
-                ...TEST_STATE,
+        it('Expects to return false when no data is available', () => {
+            expect(hasAnyVisibleData({
                 hydrographData: {
-                    ...TEST_STATE.hydrographData,
-                    compareIVData: {
-                        ...TEST_STATE.hydrographData.primaryIVData
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
                     }
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
+                }
+            })).toBe(false);
+
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {
+                            '90649': {
+                                points: [],
+                                method: {
+                                    methodID: '90649'
+                                }
+                            }
+                        }
+                    }
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '90649'
+
                 }
             })).toBe(false);
         });
 
-        it('Expects to return false when no data is available and visible', () => {
-            expect(hasVisibleIVData('primary')({
-                ...TEST_STATE,
-                hydrographState: {
-                    ...TEST_STATE.hydrographState,
-                    selectedIVMethodID: '69937'
-                }
-            })).toBe(false);
-            expect(hasVisibleIVData('compare')({
-                ...TEST_STATE,
+        it('Expects to return false if data is available but not available', () => {
+            expect(hasAnyVisibleData({
                 hydrographData: {
-                    ...TEST_STATE.hydrographData,
-                    compareIVData: {
-                        ...TEST_STATE.hydrographData.primaryIVData
-                    }
+                    primaryIVData: TEST_PRIMARY_IV_DATA
                 },
                 hydrographState: {
-                    ...TEST_STATE.hydrographState,
-                    selectedIVMethodID: '69937',
-                    showCompareIVData: true
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '252055'
+                }
+            })).toBe(false);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: false
                 }
             })).toBe(false);
         });

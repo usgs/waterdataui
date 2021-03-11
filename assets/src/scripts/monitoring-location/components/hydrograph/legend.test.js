@@ -1,5 +1,6 @@
 import {select, selectAll} from 'd3-selection';
 
+import config from 'ui/config';
 import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
@@ -9,13 +10,20 @@ import {TEST_PRIMARY_IV_DATA, TEST_GW_LEVELS} from './mock-hydrograph-state';
 
 describe('monitoring-location/components/hydrograph/legend module', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
-
+    config.ivPeriodOfRecord = {
+        '72019': {}
+    };
+    config.gwPeriodOfRecord = {
+        '72019': {}
+    };
     const TEST_STATE = {
         hydrographData: {
             primaryIVData: TEST_PRIMARY_IV_DATA,
             groundwaterLevels: TEST_GW_LEVELS
         },
         hydrographState: {
+            showCompareIVData: false,
+            showMedianData: false,
             selectedIVMethodID: '90649'
         }
     };

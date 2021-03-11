@@ -121,13 +121,13 @@ describe('monitoring-location/components/hydrograph module', () => {
                     period: 'P7D',
                     startTime: null,
                     endTime: null,
-                    loadCompare: undefined,
+                    loadCompare: false,
                     loadMedian: false
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
                     selectedDateRange: 'P7D',
-                    showCompareIVData: undefined,
+                    showCompareIVData: false,
                     selectedIVMethodID: undefined
                 });
             });
@@ -142,13 +142,13 @@ describe('monitoring-location/components/hydrograph module', () => {
                     period: 'P45D',
                     startTime: null,
                     endTime: null,
-                    loadCompare: undefined,
+                    loadCompare: false,
                     loadMedian: false
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
                     selectedDateRange: 'P45D',
-                    showCompareIVData: undefined,
+                    showCompareIVData: false,
                     selectedIVMethodID: undefined
                 });
             });
@@ -164,7 +164,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                     period: null,
                     startTime: '2020-02-01T00:00:00.000-06:00',
                     endTime: '2020-02-15T23:59:59.999-06:00',
-                    loadCompare: undefined,
+                    loadCompare: false,
                     loadMedian: false
                 });
                 expect(store.getState().hydrographState).toEqual({
@@ -174,7 +174,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                         start: '2020-02-01',
                         end: '2020-02-15'
                     },
-                    showCompareIVData: undefined,
+                    showCompareIVData: false,
                     selectedIVMethodID: undefined
                 });
             });
@@ -222,7 +222,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 period: 'P7D',
                 startTime: null,
                 endTime: null,
-                loadCompare: undefined,
+                loadCompare: false,
                 loadMedian: false
             });
             expect(store.getState().hydrographState).toEqual({});

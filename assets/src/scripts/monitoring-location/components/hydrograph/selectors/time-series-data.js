@@ -61,6 +61,11 @@ const hasVisibleGroundwaterLevels = createSelector(
     (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
 );
 
+/*
+ * Returns a selector function which returns true if there is any data that will be visible
+ * on the hydrograph.
+ * @return {Function}
+ */
 export const hasAnyVisibleData = createSelector(
     hasVisibleIVData('primary'),
     hasVisibleIVData('compare'),
