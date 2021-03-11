@@ -70,7 +70,8 @@ table {
     @include u-margin-right(2);
     border-radius: 15px 15px 0 0;
     display: block;
-    float: right;
+    width: 17em;
+    margin: 0 auto;
     @include u-padding-left(2);
     @include u-padding-right(2);
   }
