@@ -23,19 +23,19 @@ const DATE_RANGE = [{
     name: '1 year',
     period: 'P365D'
 }, {
-    name: 'Custom',
+    name: 'Custom dates/days',
     period: 'custom'
 }];
 const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
     {
+        id: 'custom-input-calendar-days',
+        value: 'calendar',
+        text: 'Calendar dates'
+    },
+    {
         id: 'custom-input-days-before-today',
         value: 'days',
         text: 'Days before today'
-    },
-    {
-        id: 'custom-input-calendar-days',
-        value: 'calendar',
-        text: 'Calendar days'
     }
 ];
 

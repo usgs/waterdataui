@@ -75,3 +75,13 @@ table {
     @include u-padding-right(2);
   }
 }
+// Overide the USWDS label width to allow longer custom date label
+#ts-daterange-select-container {
+  ul {
+    li:last-child {
+      .usa-radio__label:last-child {
+        width: 10em;
+      }
+    }
+  }
+}
