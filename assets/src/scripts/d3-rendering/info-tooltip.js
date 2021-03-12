@@ -7,7 +7,7 @@
  */
 
 // Required to initialize USWDS components after page load
-import {tooltip as uswds_tooltip} from '../../../node_modules/uswds/src/js/components';
+import {tooltip as uswds_tooltip} from 'uswds-components';
 
 export const appendInfoTooltip = function(elem, text) {
 	let tooltip = elem.append('div')

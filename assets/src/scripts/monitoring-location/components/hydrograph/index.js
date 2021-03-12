@@ -1,43 +1,38 @@
-/**
+/*
  * Hydrograph charting module.
  */
 import {select} from 'd3-selection';
-import {createStructuredSelector} from 'reselect';
+import {DateTime} from 'luxon';
 
 import config from 'ui/config.js';
-import {link} from 'ui/lib/d3-redux';
 
-import {sortedParameters} from 'ui/utils';
+import {drawInfoAlert} from 'd3render/alerts';
 
-import {drawWarningAlert, drawInfoAlert} from 'd3render/alerts';
-import {drawLoadingIndicator} from 'd3render/loading-indicator';
-
-import {isPeriodWithinAcceptableRange, isPeriodCustom} from 'ml/iv-data-utils';
 import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
-import {hasAnyVariables, getCurrentVariableID, getCurrentParmCd, getVariables} from 'ml/selectors/time-series-selector';
+import {retrieveHydrographData} from 'ml/store/hydrograph-data';
+import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
+import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDateRange, setSelectedDateRange,
+    setSelectedIVMethodID
+} from 'ml/store/hydrograph-state';
 
-import {Actions as ivTimeSeriesDataActions} from 'ml/store/instantaneous-value-time-series-data';
-import {Actions as ivTimeSeriesStateActions} from 'ml/store/instantaneous-value-time-series-state';
-import {Actions as statisticsDataActions} from 'ml/store/statistics-data';
-import {Actions as timeZoneActions} from 'ml/store/time-zone';
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {drawDateRangeControls} from './date-controls';
+import {showDataLoadingIndicator} from './data-loading-indicator';
 import {drawDataTables} from './data-table';
-import {renderDownloadLinks} from './download-links';
+import {drawDownloadLinks} from './download-links';
+import {drawDateRangeControls} from './date-controls';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
-import {plotSeriesSelectTable} from './parameters';
+import {drawSelectionTable} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
-import {getLineSegmentsByParmCd} from './selectors/drawing-data';
-import {SPARK_LINE_DIM}  from './selectors/layout';
-import {getAvailableParameterCodes} from './selectors/parameter-data';
-import {getTimeSeriesScalesByParmCd} from './selectors/scales';
+import {getPreferredIVMethodID} from './selectors/time-series-data';
+
+
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -52,140 +47,110 @@ export const attachToNode = function(store,
                                      node,
                                      {
                                          siteno,
-                                         latitude,
-                                         longitude,
+                                         agencyCode,
+                                         sitename,
                                          parameterCode,
                                          compare,
                                          period,
                                          startDT,
                                          endDT,
-                                         timeSeriesId, // This must be converted to an integer
+                                         timeSeriesId,
                                          showOnlyGraph = false,
                                          showMLName = false
-                                     } = {},
-                                     loadPromise) {
+                                     } = {}) {
     const nodeElem = select(node);
-    if (!siteno) {
-        select(node).call(drawWarningAlert, {title: 'Hydrograph Alert', body: 'No data is available.'});
+    if (!config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
+        select(node).select('.graph-container').call(drawInfoAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
         return;
     }
 
-    // Show the loading indicator
-    nodeElem
-        .select('.loading-indicator-container')
-        .call(drawLoadingIndicator, {showLoadingIndicator: true, sizeClass: 'fa-3x'});
+    showDataLoadingIndicator(true);
 
-    // Fetch time zone
-    const fetchTimeZonePromise = store.dispatch(timeZoneActions.retrieveIanaTimeZone(latitude, longitude));
-    // Fetch waterwatch flood levels
-    store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
-    let fetchDataPromise;
-    if (showOnlyGraph) {
-        // Only fetch what is needed
-        if (parameterCode && period) {
-            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period));
-        } else if (parameterCode && startDT && endDT) {
-            // Don't fetch until time zone is available
-            fetchDataPromise = fetchTimeZonePromise.then(() => {
-                return store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, parameterCode));
-            });
+    const initialPeriod = startDT && endDT ? 'custom' : period || 'P7D';
+    const initialStartTime = startDT ?
+        DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
+    const initialEndTime = endDT ?
+        DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
+    const fetchHydrographDataPromise = store.dispatch(retrieveHydrographData(siteno, {
+        parameterCode: parameterCode,
+        period: initialPeriod === 'custom' ? null : initialPeriod,
+        startTime: initialStartTime,
+        endTime: initialEndTime,
+        loadCompare: compare,
+        loadMedian: false
+    }));
+
+    // if showing the controls, fetch the parameters
+    let fetchParametersPromise;
+    if (!showOnlyGraph) {
+        fetchParametersPromise = store.dispatch(retrieveHydrographParameters(siteno));
+
+        // Initialize all hydrograph state variables if showing the control
+        store.dispatch(setSelectedParameterCode(parameterCode));
+        store.dispatch(setCompareDataVisibility(compare));
+        if (period) {
+            store.dispatch(setSelectedDateRange(period));
+        } else if (startDT && endDT) {
+            store.dispatch(setSelectedDateRange('custom'));
+            store.dispatch(setSelectedCustomDateRange(startDT, endDT));
         } else {
-            fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno, parameterCode ? [parameterCode] : null));
+            store.dispatch(setSelectedDateRange('P7D'));
         }
-    } else {
-        // Retrieve all parameter codes for 7 days and median statistics
-        fetchDataPromise = store.dispatch(ivTimeSeriesDataActions.retrieveIVTimeSeries(siteno))
-            .then(() => {
-                // Fetch any extended data needed to set initial state
-                const currentParamCode = parameterCode ? parameterCode : getCurrentParmCd(store.getState());
-                // If there are query parameters present, use them but restrict them to the form of PxD or P1Y
-                if (isPeriodWithinAcceptableRange(period)) {
-                    isPeriodCustom(period) ?
-                        store.dispatch(ivTimeSeriesDataActions.retrieveCustomTimePeriodIVTimeSeries(siteno, parameterCode, period)) :
-                        store.dispatch(ivTimeSeriesDataActions.retrieveExtendedIVTimeSeries(siteno, period, currentParamCode));
-                } else if (startDT && endDT) {
-                    fetchTimeZonePromise.then(() => {
-                        store.dispatch(ivTimeSeriesDataActions.retrieveUserRequestedIVDataForDateRange(siteno, startDT, endDT, currentParamCode));
-                    });
-                }
-            });
-        store.dispatch(statisticsDataActions.retrieveMedianStatistics(siteno));
     }
 
-    Promise.all([fetchDataPromise, loadPromise]).then(() => {
-        // Hide the loading indicator
-        nodeElem
-            .select('.loading-indicator-container')
-            .call(drawLoadingIndicator, {showLoadingIndicator: false, sizeClass: 'fa-3x'});
-        if (!hasAnyVariables(store.getState())) {
-            drawInfoAlert(nodeElem.select('.graph-container'), {body: 'No time series data or discrete data available for this site'});
-            if (!showOnlyGraph) {
-                document.getElementById('classic-page-link')
-                    .setAttribute('href', `${config.NWIS_INVENTORY_PAGE_URL}?site_no=${siteno}`);
-            }
-        } else {
-            //Update time series state
-            if (parameterCode) {
-                const isThisParamCode = function(variable) {
-                    return variable.variableCode.value === parameterCode;
-                };
-                const thisVariable = Object.values(getVariables(store.getState())).find(isThisParamCode);
-                if (thisVariable) {
-                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(thisVariable.oid));
-                }
-            }
-            if (!getCurrentVariableID(store.getState())) {
-                //Sort variables and use the first one as the current variable
-                const sortedVars = sortedParameters(getVariables(store.getState()));
-                if (sortedVars.length) {
-                    store.dispatch(ivTimeSeriesStateActions.setCurrentIVVariable(sortedVars[0].oid));
-                }
-            }
-            if (compare) {
-                store.dispatch(ivTimeSeriesStateActions.setIVTimeSeriesVisibility('compare', true));
-            }
-            if (timeSeriesId) {
-                store.dispatch(ivTimeSeriesStateActions.setCurrentIVMethodID(parseInt(timeSeriesId)));
-            }
-            // Initial data has been fetched and initial state set. We can render the hydrograph elements
-            // Set up rendering functions for the graph-container
-            let graphContainer = nodeElem.select('.graph-container')
-                .call(drawTimeSeriesGraph, store, siteno, showMLName, !showOnlyGraph);
-            if (!showOnlyGraph) {
-                graphContainer
-                    .call(drawTooltipCursorSlider, store)
-                    .call(drawGraphBrush, store);
-            }
+    // Fetch waterwatch flood levels
+    const fetchFloodLevelsPromise = store.dispatch(floodDataActions.retrieveWaterwatchData(siteno));
 
-            graphContainer.append('div')
-                .classed('ts-legend-controls-container', true)
-                .call(drawTimeSeriesLegend, store);
+    let fetchDataPromises = [fetchHydrographDataPromise];
+    // If flood levels are to be shown then wait to render the hydrograph until those have been fetched.
+    if (parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE) {
+        fetchDataPromises.push(fetchFloodLevelsPromise);
+    }
+    Promise.all(fetchDataPromises).then(() => {
+        showDataLoadingIndicator(false);
+        // selectedIVMethodID should be set regardless of whether we are showing only the graph but the preferred method ID
+        // can not be determined until the data is fetched so that is done here.
+        const initialIVMethodID = timeSeriesId || getPreferredIVMethodID(store.getState());
+        store.dispatch(setSelectedIVMethodID(initialIVMethodID));
+        let graphContainer = nodeElem.select('.graph-container');
+        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
-            // Add UI interactive elements, data table  and the provisional data alert.
-            if (!showOnlyGraph) {
-                nodeElem
-                    .call(drawMethodPicker, store)
-                    .call(drawDateRangeControls, store, siteno);
-
-                nodeElem.select('.ts-legend-controls-container')
-                    .call(drawGraphControls, store);
-
-                nodeElem.select('#iv-graph-list-container')
-                    .call(renderDownloadLinks, store, siteno);
-
-                nodeElem.select('#iv-data-table-container')
-                    .call(drawDataTables, store);
-                //TODO: Find out why putting this before drawDataTable causes the tests to not work correctly
-                nodeElem.select('.select-time-series-container')
-                    .call(link(store, plotSeriesSelectTable, createStructuredSelector({
-                        siteno: () => siteno,
-                        availableParameterCodes: getAvailableParameterCodes,
-                        lineSegmentsByParmCd: getLineSegmentsByParmCd('current', 'P7D'),
-                        timeSeriesScalesByParmCd: getTimeSeriesScalesByParmCd('current', 'P7D', SPARK_LINE_DIM)
-                    }), store));
-
-                renderTimeSeriesUrlParams(store);
-            }
+        if (!showOnlyGraph) {
+            graphContainer
+                .call(drawTooltipCursorSlider, store)
+                .call(drawGraphBrush, store);
         }
+        const legendControlsContainer = graphContainer.append('div')
+            .classed('ts-legend-controls-container', true)
+            .call(drawTimeSeriesLegend, store);
+
+        if (!showOnlyGraph) {
+            nodeElem.select('#hydrograph-date-controls-container')
+                .call(drawDateRangeControls, store, siteno, initialPeriod, {
+                    start: startDT,
+                    end: endDT
+                });
+            nodeElem.select('#hydrograph-method-picker-container')
+                .call(drawMethodPicker, store);
+
+
+            legendControlsContainer.call(drawGraphControls, store, siteno);
+
+            nodeElem.select('#iv-graph-list-container')
+                .call(drawDownloadLinks, store, siteno);
+
+            nodeElem.select('#iv-data-table-container')
+                .call(drawDataTables, store);
+
+            fetchParametersPromise.then(() => {
+                nodeElem.select('.select-time-series-container')
+                    .call(drawSelectionTable, store, siteno);
+            });
+            renderTimeSeriesUrlParams(store);
+        }
+    })
+    .catch(reason => {
+        console.error(reason);
+        throw reason;
     });
 };

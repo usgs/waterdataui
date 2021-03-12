@@ -11,11 +11,12 @@ from markdown import markdown
 
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
-    get_period_of_record_by_parm_cd
+    get_period_of_record_by_parm_cd, get_default_parameter_code
 from .utils import defined_when, parse_rdb, set_cookie_for_banner_message, create_message
 from .services import sifta, ogc
-from .services.nwis import NwisWebServices
 from .services.camera import get_monitoring_location_camera_details
+from .services.nwis import NwisWebServices
+from .services.timezone import get_iana_time_zone
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -109,6 +110,9 @@ def monitoring_location(site_no):
 
         if len(site_data_list) == 1:
             parameter_data = NWIS.get_site_parameters(site_no, agency_cd)
+            iv_period_of_record = get_period_of_record_by_parm_cd(parameter_data)
+            gw_period_of_record = get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
+                'GROUNDWATER_LEVELS_ENABLED'] else {}
             if parameter_data:
                 site_dataseries = [
                     get_disambiguated_values(
@@ -159,6 +163,9 @@ def monitoring_location(site_no):
             else:
                 email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
 
+            # Get the time zone for the location
+            time_zone = get_iana_time_zone(station_record.get('dec_lat_va', ''), station_record.get('dec_long_va', ''))
+
             context = {
                 'status_code': status,
                 'stations': site_data_list,
@@ -166,9 +173,10 @@ def monitoring_location(site_no):
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
                 'available_data_types': available_data_types,
-                'uv_period_of_record': get_period_of_record_by_parm_cd(parameter_data),
-                'gw_period_of_record': get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
-                    'GROUNDWATER_LEVELS_ENABLED'] else None,
+                'time_zone': time_zone if time_zone else 'local',
+                'iv_period_of_record': iv_period_of_record,
+                'gw_period_of_record': gw_period_of_record,
+                'default_parameter_code': get_default_parameter_code(iv_period_of_record, gw_period_of_record),
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
                 'email_for_data_questions': email_for_data_questions,

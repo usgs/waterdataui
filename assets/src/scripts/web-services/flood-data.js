@@ -61,15 +61,18 @@ export const fetchFloodExtent = function(siteno) {
 };
 
 /*
- * Retrieve waterwach flood levels any for siteno
+ * Retrieve waterwatch flood levels any for siteno
  * @param {String} siteno
  * @return {Promise} resolves to an array of features for the site
  */
 const fetchWaterwatchData = function(waterwatchQuery, siteno) {
     return get(waterwatchQuery)
         .then((responseText) => {
-            const responseJson = JSON.parse(responseText).sites[0];
-            return responseJson ? responseJson : null;
+            const response = JSON.parse(responseText);
+            if (!response.sites || !response.sites.length) {
+                return null;
+            }
+            return response.sites[0];
         })
         .catch(reason => {
             console.log(`Unable to get Waterwatch data for ${siteno} with reason: ${reason}`);

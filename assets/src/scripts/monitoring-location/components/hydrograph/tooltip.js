@@ -1,71 +1,52 @@
 import {DateTime} from 'luxon';
 import {createSelector, createStructuredSelector} from 'reselect';
 
+import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 
 import {drawCursorSlider} from 'd3render/cursor-slider';
 import {drawFocusOverlay, drawFocusCircles, drawFocusLine} from 'd3render/graph-tooltip';
 
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
+import {getGraphCursorOffset} from 'ml/selectors/hydrograph-state-selector';
+import {setGraphCursorOffset} from 'ml/store/hydrograph-state';
 
-import {getCursorTime, getTsCursorPoints, getTooltipPoints, getGroundwaterLevelCursorPoint,
-    getGroundwaterLevelTooltipPoint} from './selectors/cursor';
-import {classesForPoint, MASK_DESC} from './selectors/drawing-data';
+import {getCursorTime, getIVDataCursorPoint, getIVDataTooltipPoint, getGroundwaterLevelCursorPoint,
+    getGroundwaterLevelTooltipPoint
+} from './selectors/cursor';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale} from './selectors/scales';
-import {getTsTimeZone, getCurrentVariableUnitCode} from './selectors/time-series-data';
 
-const getTsTooltipTextInfo = function(tsPoint, tsKey, unitCode, ianaTimeZone) {
-    let label = '';
-    if (tsPoint) {
-        let valueStr = tsPoint.value !== null ? `${tsPoint.value} ${unitCode}` : ' ';
-        const maskKeys = new Set(Object.keys(MASK_DESC));
-        const qualifierKeysLower = new Set(tsPoint.qualifiers.map(x => x.toLowerCase()));
-        const maskKeyIntersect = Array.from(qualifierKeysLower.values()).filter(x => maskKeys.has(x));
 
-        if (maskKeyIntersect.length) {
-            // a data point will have at most one masking qualifier
-            valueStr = MASK_DESC[maskKeyIntersect[0]];
-        }
-        const timeLabel = DateTime.fromMillis(
-            tsPoint.dateTime,
-            {zone: ianaTimeZone}
+const getIVDataTooltipTextInfo = function(point, dataKind, unitCode) {
+    const timeLabel = DateTime.fromMillis(
+            point.dateTime,
+            {zone: config.locationTimeZone}
         ).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
-        label = `${valueStr} - ${timeLabel}`;
-    }
-
-    let classes = [`${tsKey}-tooltip-text`];
-    let qualifierClasses = classesForPoint(tsPoint);
-    if (qualifierClasses.approved) {
-        classes.push('approved');
-    }
-    if (qualifierClasses.estimated) {
-        classes.push('estimated');
-    }
+    const valueLabel = point.isMasked ? point.label : `${point.value} ${unitCode}`;
     return {
-        label,
-        classes
+        label: `${valueLabel} - ${timeLabel}`,
+        classes: [`${dataKind}-tooltip-text`, point.class]
     };
 };
 
-const getGWLevelTextInfo = function(point, unitCode, ianaTimeZone) {
+const getGWLevelTextInfo = function(point, unitCode) {
     if (!point) {
         return null;
     }
     const valueLabel = point.value !== null ? `${point.value} ${unitCode}` : ' ';
-    const timeLabel = DateTime.fromMillis(point.dateTime, {zone: ianaTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
+    const timeLabel = DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toFormat('MMM dd, yyyy hh:mm:ss a ZZZZ');
     return {
         label: `${valueLabel} - ${timeLabel}`,
-        classes: ['gwlevel-tooltip-text', `${point.approvals.class}`]
+        classes: point.classes
     };
 };
 
 const createTooltipTextGroup = function(elem, {
-    currentPoints,
-    comparePoints,
+    currentPoint,
+    comparePoint,
     gwLevelPoint,
-    unitCode,
-    ianaTimeZone,
+    parameter,
     layout
 }, textGroup) {
     const adjustMarginOfTooltips = function(elem) {
@@ -78,18 +59,18 @@ const createTooltipTextGroup = function(elem, {
             .attr('class', 'tooltip-text-group')
             .call(adjustMarginOfTooltips);
     }
-    const currentTooltipData = Object.values(currentPoints).map((tsPoint) => {
-        return getTsTooltipTextInfo(tsPoint, 'current', unitCode, ianaTimeZone);
-    });
-    const compareTooltipData = Object.values(comparePoints).map((tsPoint) => {
-        return getTsTooltipTextInfo(tsPoint, 'compare', unitCode, ianaTimeZone);
-    });
+    const unitCode = parameter ? parameter.unit : '';
 
-    let tooltipTextData = currentTooltipData.concat(compareTooltipData);
-    if (gwLevelPoint) {
-        tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode, ianaTimeZone));
+    let tooltipTextData = [];
+    if (currentPoint) {
+        tooltipTextData.push(getIVDataTooltipTextInfo(currentPoint, 'primary', unitCode));
     }
-
+    if(comparePoint) {
+        tooltipTextData.push(getIVDataTooltipTextInfo(comparePoint, 'compare', unitCode));
+    }
+    if (gwLevelPoint) {
+        tooltipTextData.push(getGWLevelTextInfo(gwLevelPoint, unitCode));
+    }
     const texts = textGroup
         .selectAll('div')
         .data(tooltipTextData);
@@ -105,7 +86,9 @@ const createTooltipTextGroup = function(elem, {
     // Update the text and backgrounds of all tooltip labels
     const allTexts = texts.merge(newTexts);
     allTexts
-        .text(textData => textData.label)
+        .text(textData => {
+            return textData.label;
+        })
         .attr('class', textData => textData.classes.join(' '));
 
     return textGroup;
@@ -118,11 +101,10 @@ const createTooltipTextGroup = function(elem, {
  */
 export const drawTooltipText = function(elem, store) {
     elem.call(link(store, createTooltipTextGroup, createStructuredSelector({
-        currentPoints: getTsCursorPoints('current'),
-        comparePoints: getTsCursorPoints('compare'),
+        currentPoint: getIVDataCursorPoint('primary', 'current'),
+        comparePoint: getIVDataCursorPoint('compare', 'prioryear'),
         gwLevelPoint: getGroundwaterLevelCursorPoint,
-        unitCode: getCurrentVariableUnitCode,
-        ianaTimeZone: getTsTimeZone,
+        parameter: getPrimaryParameter,
         layout: getMainLayout
     })));
 };
@@ -141,11 +123,17 @@ export const drawTooltipFocus = function(elem, store) {
     })));
 
     elem.call(link(store, drawFocusCircles, createSelector(
-        getTooltipPoints('current'),
-        getTooltipPoints('compare'),
+        getIVDataTooltipPoint('primary', 'current'),
+        getIVDataTooltipPoint('compare', 'prioryear'),
         getGroundwaterLevelTooltipPoint,
         (current, compare, gwLevel) => {
-            let points = current.concat(compare);
+            let points = [];
+            if (current) {
+                points.push(current);
+            }
+            if (compare) {
+                points.push(compare);
+            }
             if (gwLevel) {
                 points.push(gwLevel);
             }
@@ -161,7 +149,7 @@ export const drawTooltipFocus = function(elem, store) {
             layout: getMainLayout
         }),
         store,
-        Actions.setIVGraphCursorOffset)
+        setGraphCursorOffset)
     );
 };
 
@@ -178,8 +166,8 @@ export const drawTooltipCursorSlider = function(elem, store) {
                 elem.attr('viewBox', `0 0 ${layout.width + layout.margin.left + layout.margin.right} 25`);
             }, getMainLayout))
         .call(link(store, drawCursorSlider, createStructuredSelector({
-            cursorOffset: (state) => state.ivTimeSeriesState.ivGraphCursorOffset,
+            cursorOffset: getGraphCursorOffset,
             xScale: getMainXScale('current'),
             layout: getMainLayout
-        }), store, Actions.setIVGraphCursorOffset));
+        }), store, setGraphCursorOffset));
 };

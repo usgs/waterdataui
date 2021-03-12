@@ -2,7 +2,6 @@ import {DateTime} from 'luxon';
 
 import {fetchGroundwaterLevels} from 'ui/web-services/groundwater-levels';
 
-import {Actions as IVTimeSeriesDataActions} from './instantaneous-value-time-series-data';
 const INITIAL_DATA = {
     groundwaterLevels : null
 };
@@ -71,7 +70,6 @@ export const retrieveGroundwaterLevels = function(monitoringLocationId, paramete
                             variable: variable,
                             values: values
                         }));
-                        dispatch(IVTimeSeriesDataActions.addVariableToIVVariables(variable));
                     }
                 },
                 () => {

@@ -1,7 +1,13 @@
-{% macro TimeSeriesComponent(site_no, latitude, longitude) -%}
-    <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_no }}" data-latitude="{{ latitude }}" data-longitude="{{ longitude }}">
-        <div class="loading-indicator-container"></div>
-        <div class="graph-container"></div>
+{% macro TimeSeriesComponent(site_data, default_parameter_code) -%}
+    <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
+         data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
+         data-parameter-code="{{ default_parameter_code }}">
+        <div id="hydrograph-date-controls-container"></div>
+        <div id="hydrograph-method-picker-container"></div>
+        <div id="hydrograph-wrapper">
+            <div class="graph-container"></div>
+            <div id="hydrograph-loading-indicator-container" class="loading-indicator-container"></div>
+        </div>
         <div class="provisional-data-statement">
             <p>
                 <span class="usa-tag">Important</span>

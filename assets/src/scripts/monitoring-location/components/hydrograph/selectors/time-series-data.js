@@ -2,54 +2,51 @@ import memoize from 'fast-memoize';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {
-    getRequestTimeRange, getCurrentVariable, getCurrentMethodID,
-    getMethods
-} from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import config from 'ui/config';
 
-const formatTime = function(timeInMillis, timeZone) {
-    return DateTime.fromMillis(timeInMillis, {zone: timeZone}).toFormat('L/d/yyyy tt ZZZ');
+import {getPrimaryMethods, getPrimaryParameter, getIVData, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
+
+const formatTime = function(timeInMillis) {
+    return DateTime.fromMillis(timeInMillis, {zone: config.locationTimeZone}).toFormat('L/d/yyyy tt ZZZ');
 };
-
 /**
- * Factory function creates a function that:
- * Returns the current show state of a time series.
- * @param  {Object}  state     Redux store
- * @param  {String}  tsKey Time series key
- * @return {Boolean}           Show state of the time series
+ * Returns a Redux selector function which returns whether the dataKind time series is visible
+ * @param  {String} dataKind - 'primary', 'compare', 'median'
+ * @return {Function}
  */
-export const isVisible = memoize(tsKey => (state) => {
-    return state.ivTimeSeriesState.showIVTimeSeries[tsKey];
-});
-
-/**
- * Returns a Redux selector function which returns the label to be used for the Y axis
- */
-export const getYLabel = createSelector(
-    getCurrentVariable,
-    variable => variable ? variable.variableDescription : ''
+export const isVisible = memoize(dataKind => createSelector(
+    isCompareIVDataVisible,
+    isMedianDataVisible,
+    (compareVisible, medianVisible) => {
+        switch (dataKind) {
+            case 'primary':
+                return true;
+            case 'compare':
+                return compareVisible;
+            case 'median':
+                return medianVisible;
+            default:
+                return false;
+        }
+    })
 );
-
-/*
- * Returns a Redux selector function which returns the label to be used for the secondary y axis
- */
-export const getSecondaryYLabel= function() {
-    return ''; // placeholder for ticket WDFN-370
-};
-
 
 /**
  * Returns a Redux selector function which returns the title to be used for the hydrograph
+ * @return {Function}
  */
 export const getTitle = createSelector(
-    getCurrentVariable,
-    getCurrentMethodID,
-    getMethods,
-    (variable, methodId, methods) => {
-        let title = variable ? variable.variableName : '';
-        if (methodId && methods && methods[methodId].methodDescription) {
-                title = `${title}, ${methods[methodId].methodDescription}`;
+    getPrimaryParameter,
+    getSelectedIVMethodID,
+    getPrimaryMethods,
+    (parameter, methodID, methods) => {
+        let title = parameter ? parameter.name : '';
+        if (methodID && methods.length > 1) {
+            const thisMethod = methods.find(method => method.methodID === methodID);
+            if (thisMethod && thisMethod.methodDescription) {
+                title = `${title}, ${thisMethod.methodDescription}`;
+            }
         }
         return title;
     }
@@ -58,32 +55,55 @@ export const getTitle = createSelector(
 
 /*
  * Returns a Redux selector function which returns the description of the hydrograph
+ * @return {Function}
  */
 export const getDescription = createSelector(
-    getCurrentVariable,
-    getRequestTimeRange('current', 'P7D'),
-    getIanaTimeZone,
-    (variable, requestTimeRange, timeZone) => {
-        const desc = variable ? variable.variableDescription : '';
-        if (requestTimeRange) {
-            return `${desc} from ${formatTime(requestTimeRange.start, timeZone)} to ${formatTime(requestTimeRange.end, timeZone)}`;
-        } else {
-            return desc;
+    getPrimaryParameter,
+    getTimeRange('current'),
+    (parameter, timeRange) => {
+        let result = parameter ? parameter.description : '';
+        if (timeRange) {
+            result = `${result} from ${formatTime(timeRange.start)} to ${formatTime(timeRange.end)}`;
         }
+        return result;
     }
 );
 
-/**
- * Returns a Redux selector function which returns the iana time zone or local if none is set
+/*
+ * Returns a Redux selector function which returns the primary parameter's unit code.
+ * @return {Function}
  */
-export const getTsTimeZone= createSelector(
-    getIanaTimeZone,
-    ianaTimeZone => {
-        return ianaTimeZone !== null ? ianaTimeZone : 'local';
-    }
+export const getPrimaryParameterUnitCode = createSelector(
+    getPrimaryParameter,
+    parameter => parameter ? parameter.unit : null
 );
 
-export const getCurrentVariableUnitCode = createSelector(
-    getCurrentVariable,
-    variable => variable ? variable.unit.unitCode : null
+/*
+ * Returns a Redux select which returns the IV data method id with the most points. If more than
+ * one method has the same point count, then the time series with the most recent point is chosen.
+ * @returns {Function} which returns {String} the preferred method ID.
+ */
+export const getPreferredIVMethodID = createSelector(
+    getIVData('primary'),
+    (ivData) => {
+        if (!ivData) {
+            return null;
+        }
+        const methodMetaData = Object.values(ivData.values)
+            .map(methodValues => {
+                return {
+                    pointCount: methodValues.points.length,
+                    lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
+                    methodID: methodValues.method.methodID
+                };
+            })
+            .sort((a, b) => {
+                if (a.pointCount === b.pointCount) {
+                    return a.pointCount ? a.lastPoint.dateTime - b.lastPoint.dateTime : 0;
+                } else {
+                    return a.pointCount - b.pointCount;
+                }
+            });
+        return methodMetaData[methodMetaData.length - 1].methodID;
+    }
 );

@@ -9,7 +9,7 @@ from pendulum import datetime
 from .. import app
 from ..location_utils import (
     build_linked_data, get_disambiguated_values, get_state_abbreviation, rollup_dataseries,
-    get_period_of_record_by_parm_cd
+    get_period_of_record_by_parm_cd, get_default_parameter_code
 )
 
 
@@ -533,6 +533,7 @@ class TestRollupDataseries(TestCase):
             {'start_date', 'end_date', 'parameter_name', 'data_types', 'parameter_code'}
         )
 
+
 class TestGetPeriodOfRecordByParmCd(TestCase):
 
     def setUp(self):
@@ -603,3 +604,47 @@ class TestGetPeriodOfRecordByParmCd(TestCase):
                 'end_date': '2019-03-01'
             }
         })
+
+
+class TestGetDefaultParameterCode(TestCase):
+
+    def test_both_iv_and_gw(self):
+        self.assertEqual(get_default_parameter_code({
+            '00010': {},
+            '00060': {},
+            '72019': {}
+        }, {
+            '72019': {},
+            '65536': {}
+        }), '00060')
+        self.assertEqual(get_default_parameter_code({
+            '00010',
+            '00011'
+        }, {
+            '72019'
+        }), '72019')
+        self.assertEqual(get_default_parameter_code({
+            '00065',
+            '00010'
+        }, {
+            '72019': {}
+        }), '00065')
+        self.assertIn(get_default_parameter_code({
+            '00010': {},
+            '00011': {}
+        }, {
+            '65536': {}
+        }), ['00010', '00011'])
+
+    def test_iv_only(self):
+        self.assertEqual(get_default_parameter_code({
+            '00060',
+            '72019',
+            '00010'
+        }, {}), '00060')
+
+    def test_gw_only(self):
+        self.assertEqual(get_default_parameter_code({}, {
+            '72019': {},
+            '65536': {}
+        }), '72019')

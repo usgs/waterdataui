@@ -1,46 +1,19 @@
-import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {defineLineMarker, defineRectangleMarker, defineTextOnlyMarker} from 'd3render/markers';
+import {defineLineMarker, defineRectangleMarker, defineCircleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
 import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
-import {getCurrentVariableMedianMetadata} from 'ml/selectors/median-statistics-selector';
+import {getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
+import {isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
-import {getGroundwaterLevelsMarkers} from '../discrete-data';
-
-import {getCurrentVariableLineSegments, HASH_ID, MASK_DESC} from './drawing-data';
-
-import {getVisibleGroundwaterLevelsTableData} from './discrete-data';
-
+import {getIVUniqueDataKinds, HASH_ID} from './iv-data';
+import {getUniqueGWKinds} from './discrete-data';
 
 const TS_LABEL = {
-    'current': 'Current: ',
+    'primary': 'Current: ',
     'compare': 'Last year: ',
     'median': 'Median: '
 };
-
-/*
- * Returns a Redux Selector function which returns an Object that represents the unique
- * classes that are visible for the tsKey
- *      @prop {Boolean} default
- *      @prop {Boolean} approved
- *      @prop {Boolean} estimated
- *      @prop {Set} dataMasks
- */
-const getUniqueClasses = memoize(tsKey => createSelector(
-    getCurrentVariableLineSegments(tsKey),
-    (tsLineSegments) => {
-        let classes = [].concat(...Object.values(tsLineSegments)).map((line) => line.classes);
-        return {
-            default: classes.some((cls) => !cls.approved && !cls.estimated && !cls.dataMask),
-            approved: classes.some((cls) => cls.approved),
-            estimated: classes.some((cls) => cls.estimated),
-            dataMasks: new Set(classes.map((cls) => cls.dataMask).filter((mask) => {
-                return mask;
-            }))
-        };
-    }
-));
 
 /**
  * Returns a Redux selector function that returns an object of attributes to be used
@@ -48,60 +21,49 @@ const getUniqueClasses = memoize(tsKey => createSelector(
  *      @prop current {Object} - see getUniqueClasses
  *      @prop compare {Object} - see getUniqueClasses
  *      @prop median {Object} - median meta data - each property represents a time series for the current parameter code
- *      @prop floodLevels {Object} - The flood level descriptions
- *      @prop groundwaterPoints {Object} - Data describing the groundwater point currently visible on hydrograph
+ *      @prop floodLevels {Object} -
  */
 const getLegendDisplay = createSelector(
-    (state) => state.ivTimeSeriesState.showIVTimeSeries,
-    getCurrentVariableMedianMetadata,
-    getUniqueClasses('current'),
-    getUniqueClasses('compare'),
+    isCompareIVDataVisible,
+    isMedianDataVisible,
+    getPrimaryMedianStatisticsData,
+    getIVUniqueDataKinds('primary'),
+    getIVUniqueDataKinds('compare'),
     isWaterwatchVisible,
     getWaterwatchFloodLevels,
-    getVisibleGroundwaterLevelsTableData,
-    (showSeries, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, groundwaterPoints) => {
+    getUniqueGWKinds,
+    (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, gwLevelKinds) => {
         return {
-            current: showSeries.current ? currentClasses : undefined,
-            compare: showSeries.compare ? compareClasses : undefined,
-            median: showSeries.median ? medianSeries : undefined,
+            primaryIV: currentClasses.length ? currentClasses : undefined,
+            compareIV: showCompare && compareClasses.length ? compareClasses : undefined,
+            median: showMedian ? medianSeries : undefined,
             floodLevels: showWaterWatch ? floodLevels : undefined,
-            groundwaterPoints: groundwaterPoints.length !== 0 ? groundwaterPoints : undefined
+            groundwaterLevels: gwLevelKinds.length ? gwLevelKinds : undefined
         };
     }
 );
 
-
-const getTsMarkers = function(tsKey, uniqueClasses) {
-    let tsMarkers;
-    const maskMarkers = Array.from(uniqueClasses.dataMasks.values()).map((mask) => {
-        const maskName = MASK_DESC[mask];
-        const tsClass = `${maskName.replace(' ', '-').toLowerCase()}-mask`;
-        const fill = `url(#${HASH_ID[tsKey]})`;
-        return defineRectangleMarker(null, `mask ${tsClass}`, maskName, fill);
-    });
-
+const getIVMarkers = function(dataKind, uniqueIVKinds) {
+    let maskMarkers = [];
     let lineMarkers = [];
-    if (uniqueClasses.default) {
-        lineMarkers.push(defineLineMarker(null, `line-segment ts-${tsKey}`, 'Provisional'));
-    }
-    if (uniqueClasses.approved) {
-        lineMarkers.push(defineLineMarker(null, `line-segment approved ts-${tsKey}`, 'Approved'));
-    }
-    if (uniqueClasses.estimated) {
-        lineMarkers.push(defineLineMarker(null, `line-segment estimated ts-${tsKey}`, 'Estimated'));
-    }
-
-    if (lineMarkers.length || maskMarkers.length) {
-        tsMarkers = [defineTextOnlyMarker(TS_LABEL[tsKey]), ...lineMarkers, ...maskMarkers];
-    }
-    return tsMarkers;
+    uniqueIVKinds.forEach(ivKind => {
+        if (ivKind.isMasked) {
+            maskMarkers.push(defineRectangleMarker(null, `mask ${ivKind.class}`, ivKind.label, `url(#${HASH_ID[dataKind]})`));
+        } else {
+            return lineMarkers.push(defineLineMarker(null, `line-segment ${ivKind.class} ts-${dataKind}`, ivKind.label));
+        }
+    });
+    return [...lineMarkers, ...maskMarkers];
 };
 
 /*
- * @param {Object} medianMetData
- * @return {Array of Array} - each subarray rpresents the markes for a time series median data
+ * @param {Object} medianMetaData
+ * @return {Array of Array} - each subarray represents the markes for a time series median data
  */
 const getMedianMarkers = function(medianMetaData) {
+    if (!Object.keys(medianMetaData).length) {
+        return [];
+    }
     return Object.values(medianMetaData).map((stats, index) => {
         // Get the unique non-null years, in chronological order
         let years = [];
@@ -113,7 +75,7 @@ const getMedianMarkers = function(medianMetaData) {
         }
         const dateText = years.join(' - ');
 
-        const descriptionText = stats.methodDescription ? `${stats.methodDescription} ` : '';
+        const descriptionText = stats.description ? `${stats.description} ` : '';
         const classes = `median-data-series median-step median-step-${index % 6}`;
         const label = `${descriptionText}${dateText}`;
 
@@ -121,11 +83,12 @@ const getMedianMarkers = function(medianMetaData) {
     });
 };
 
-/*
-* Helper function that returns the class and description of active flood levels
-* @prop {Object} floodLevels - The list of all possible flood levels
-* @return {Object} A grouping of only the active flood levels for that location
-*/
+const getGWMarkers = function(gwLevelKinds) {
+    return gwLevelKinds.map(kind => {
+        return defineCircleMarker(null, kind.classes.join(' '), kind.radius, kind.label);
+    });
+};
+
 const floodLevelDisplay = function(floodLevels) {
     let floodLevelsForDisplay = {};
     Object.keys(floodLevels).forEach(key => {
@@ -146,11 +109,6 @@ const floodLevelDisplay = function(floodLevels) {
     return floodLevelsForDisplay;
 };
 
-/*
-* Function that returns a group of flood levels for display on the legend
-* @prop {Object} floodLevels - The list of all possible flood levels
-* @return {Object} The text label and information on the class so the line in the legend will have the correct styles
-*/
 const getFloodLevelMarkers = function(floodLevels) {
     const floodLevelsForDisplay = floodLevelDisplay(floodLevels);
 
@@ -165,33 +123,6 @@ const getFloodLevelMarkers = function(floodLevels) {
     });
 };
 
-
-/*
-* Function that finds out if the points visible on the graph contain 'approved' data.
-* @prop {Object} groundwaterPoints - data about the points currently visible on hydrograph
-* @ return {Object} Grouping of Boolean values indicating whether or not the data is approved/provisional
- */
-const getGroundwaterApprovals = function(groundwaterPoints) {
-    const groundwaterApprovals = {
-        provisional: false,
-        approved: false,
-        revised: false
-    };
-
-    Object.keys(groundwaterPoints).forEach(key => {
-        if (Object.values(groundwaterPoints[key]).includes('Approved')) {
-            groundwaterApprovals.approved = true;
-        } else if (Object.values(groundwaterPoints[key]).includes('Revised')) {
-            groundwaterApprovals.revised = true;
-        } else {
-            groundwaterApprovals.provisional = true;
-        }
-    });
-
-    return groundwaterApprovals;
-};
-
-
 /*
  * Factory function  that returns an array of array of markers to be used for the
  * time series graph legend
@@ -199,25 +130,25 @@ const getGroundwaterApprovals = function(groundwaterPoints) {
  */
 export const getLegendMarkerRows = createSelector(
     getLegendDisplay,
-    (displayItems) => {
+    displayItems => {
         const markerRows = [];
-        let currentTsMarkerRow = displayItems.current ? getTsMarkers('current', displayItems.current) : undefined;
-        const compareTsMarkerRow = displayItems.compare ? getTsMarkers('compare', displayItems.compare) : undefined;
+
+        const currentTsMarkerRow = displayItems.primaryIV ? getIVMarkers('primary', displayItems.primaryIV) : undefined;
+        const compareTsMarkerRow = displayItems.compareIV ? getIVMarkers('compare', displayItems.compareIV) : undefined;
         const medianMarkerRows = displayItems.median ? getMedianMarkers(displayItems.median) : [];
         const floodMarkerRows = displayItems.floodLevels ? getFloodLevelMarkers(displayItems.floodLevels) : [];
+        const gwLevelMarkerRows = displayItems.groundwaterLevels ? getGWMarkers(displayItems.groundwaterLevels) : undefined;
 
         if (currentTsMarkerRow) {
-            markerRows.push(currentTsMarkerRow);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['primary'])].concat(currentTsMarkerRow));
+        }
+        if (gwLevelMarkerRows) {
+            markerRows.push([defineTextOnlyMarker('Field visit: ')].concat(gwLevelMarkerRows));
         }
         if (compareTsMarkerRow) {
-            markerRows.push(compareTsMarkerRow);
-        }
-        if (displayItems.groundwaterPoints) {
-            const gwLevelMarker = getGroundwaterLevelsMarkers(getGroundwaterApprovals(displayItems.groundwaterPoints));
-            markerRows.push(gwLevelMarker);
+            markerRows.push([defineTextOnlyMarker(TS_LABEL['compare'])].concat(compareTsMarkerRow));
         }
         markerRows.push(...medianMarkerRows, ...floodMarkerRows);
-
         return markerRows;
     }
 );

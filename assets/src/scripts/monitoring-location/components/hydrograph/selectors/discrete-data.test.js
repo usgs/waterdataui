@@ -1,165 +1,124 @@
-import {getVisibleGroundwaterLevelPoints, getVisibleGroundwaterLevelsTableData,
+import config from 'ui/config';
+
+import {getGroundwaterLevelPoints, getUniqueGWKinds, getGroundwaterLevelsTableData,
     anyVisibleGroundwaterLevels} from './discrete-data';
 
 describe('monitoring-location/components/hydrograph/selectors/discrete-data', () => {
+    config.locationTimeZone = 'America/Chicago';
 
+    const TEST_GW_LEVELS = {
+        parameter: {
+            parameterCode: '72019',
+            name: 'Depth to water level'
+        },
+        values: [
+            {value: 27.2, qualifiers: ['P'], dateTime: 1584648660000},
+            {value: 26.9, qualifiers: ['A'], dateTime: 1589388420000},
+            {value: 26.1, qualifiers: ['A'], dateTime: 1595522700000},
+            {value: 26.5, qualifiers: ['R'], dateTime: 1598303040000}
+        ]
+    };
     const TEST_STATE = {
-            ianaTimeZone: 'America/Chicago',
-            ivTimeSeriesData: {
-                queryInfo: {
-                    'current:P7D': {
-                        notes: {
-                            requestDT: 1490936400000,
-                            'filter:timeRange': {
-                                mode: 'PERIOD',
-                                periodDays: 7,
-                                modifiedSince: null
-                            }
-                        }
-                    }
-                },
-                variables: {
-                    '45807042': {
-                        variableCode: {
-                            'value': '72019'
-                        },
-                        variableName: 'Depth to water level'
-                    },
-                    '45807041': {
-                        variableCode: {
-                            'value': '00060'
-                        },
-                        variableName: 'Streamflow'
-                    }
-                }
-            },
-            ivTimeSeriesState: {
-                currentIVDateRange: 'P7D',
-                currentIVVariableID: '45807042'
-            },
-            discreteData: {
-                groundwaterLevels: {
-                    '45807042': {
-                        variable: {
-                            variableCode: {
-                                value: '72019'
-                            },
-                            oid: '45807042'
-                        },
-                        values: [
-                            {value: '12.0', qualifiers: 'P', dateTime: 1489672800000},
-                            {value: '13.0', qualifiers: 'P', dateTime: 1490536800000},
-                            {value: '14.5', qualifiers: 'A', dateTime: 1490882400000},
-                            {value: '14.0', qualifiers: 'E', dateTime: 1491055200000}
-                        ]
-                    }
-                }
-            }
-        };
+        hydrographData: {
+            groundwaterLevels: TEST_GW_LEVELS
+        }
+    };
 
-    describe('getVisibleGroundwaterLevelPoints', () => {
-
+    describe('getGroundwaterLevelPoints', () => {
         it('Return empty array if no groundwater levels are defined', () => {
-            const testData = {
-                ...TEST_STATE,
-                discreteData: {
-                    groundwaterLevels: null
-                }
-            };
-            expect(getVisibleGroundwaterLevelPoints(testData)).toHaveLength(0);
+            expect(getGroundwaterLevelPoints({
+                hydrographData: {}
+            })).toHaveLength(0);
         });
 
-        it('Return an empty array if the current variable does not have ground water data', () => {
-            const testData = {
-                ...TEST_STATE,
-                ivTimeSeriesState: {
-                    ...TEST_STATE.ivTimeSeriesState,
-                    currentIVVariableID: '45807041'
-                }
-            };
-            expect(getVisibleGroundwaterLevelPoints(testData)).toHaveLength(0);
-        });
+        it('Return the ground water points when groundwater levels are defined', () => {
+            const points = getGroundwaterLevelPoints(TEST_STATE);
+            expect(points.length).toBe(4);
+            expect(points[0].value).toEqual(27.2);
+            expect(points[0].dateTime).toEqual(1584648660000);
+            expect(points[0].classes).toContain('provisional');
+            expect(points[0].label).toEqual('Provisional');
+            expect(points[0].radius).toBeDefined();
 
-        it('Return the ground water levels that are in the 7 day period', () => {
-            const result = getVisibleGroundwaterLevelPoints(TEST_STATE);
+            expect(points[1].value).toEqual(26.9);
+            expect(points[1].dateTime).toEqual(1589388420000);
+            expect(points[1].classes).toContain('approved');
+            expect(points[1].label).toEqual('Approved');
+            expect(points[1].radius).toBeDefined();
 
-            expect(result).toHaveLength(2);
-            expect(result[0]).toEqual({
-                'approvals': {
-                    'class': 'provisional',
-                    'label': 'Provisional'
-                },
-                'dateTime': 1490536800000,
-                'qualifiers': 'P',
-                'value': 13
-            });
-            expect(result[1]).toEqual({
-                'approvals': {
-                    'class': 'approved',
-                    'label': 'Approved'
-                },
-                'dateTime': 1490882400000,
-                'qualifiers': 'A',
-                'value': 14.5
-            });
+            expect(points[2].value).toEqual(26.1);
+            expect(points[2].dateTime).toEqual(1595522700000);
+            expect(points[2].classes).toContain('approved');
+            expect(points[2].label).toEqual('Approved');
+            expect(points[2].radius).toBeDefined();
+
+            expect(points[3].value).toEqual(26.5);
+            expect(points[3].dateTime).toEqual(1598303040000);
+            expect(points[3].classes).toContain('revised');
+            expect(points[3].label).toEqual('Revised');
+            expect(points[3].radius).toBeDefined();
         });
     });
 
-    describe('getVisibleGroundwaterLevelsTableData', () => {
-
+    describe('getUniqueGWKinds', () => {
         it('Return empty array if no groundwater levels are defined', () => {
-            const testData = {
-                ...TEST_STATE,
-                discreteData: {
-                    groundwaterLevels: null
-                }
-            };
-            expect(getVisibleGroundwaterLevelsTableData(testData)).toHaveLength(0);
+            expect(getUniqueGWKinds({
+                hydrographData: {}
+            })).toHaveLength(0);
         });
 
-        it('Return an empty array if the current variable does not have ground water data', () => {
-            const testData = {
-                ...TEST_STATE,
-                ivTimeSeriesState: {
-                    ...TEST_STATE.ivTimeSeriesState,
-                    currentIVVariableID: '45807041'
-                }
-            };
-            expect(getVisibleGroundwaterLevelsTableData(testData)).toHaveLength(0);
-        });
+        it('Return the unique kinds when groundwater levels are defined', () => {
+            const points = getUniqueGWKinds(TEST_STATE);
+            expect(points.length).toBe(3);
+            expect(points[0].classes).toContain('provisional');
+            expect(points[0].label).toContain('Provisional');
+            expect(points[0].radius).toBeDefined();
 
-        it('Return the ground water levels that are in the 7 day period', () => {
-            const result = getVisibleGroundwaterLevelsTableData(TEST_STATE);
+            expect(points[1].classes).toContain('approved');
+            expect(points[1].label).toContain('Approved');
+            expect(points[1].radius).toBeDefined();
 
-            expect(result).toHaveLength(2);
-            expect(result[0]).toEqual({
-                approvals: 'Provisional',
-                parameterName: 'Depth to water level',
-                result: '13',
-                dateTime: '2017-03-26T09:00-05:00'
-            });
-            expect(result[1]).toEqual({
-                'approvals': 'Approved',
-                parameterName: 'Depth to water level',
-                result: '14.5',
-                dateTime: '2017-03-30T09:00-05:00'
-            });
+            expect(points[2].classes).toContain('revised');
+            expect(points[2].label).toContain('Revised');
+            expect(points[2].radius).toBeDefined();
         });
     });
 
-    describe('anyVisibleGroundwaterLevels', () => {
-        it('Return false if no visible ground water levels', () => {
-            const testData = {
-                ...TEST_STATE,
-                discreteData: {
-                    groundwaterLevels: null
-                }
-            };
-            expect(anyVisibleGroundwaterLevels(testData)).toBe(false);
+
+    describe('getGroundwaterLevelsTableData', () => {
+        it('Returns an empty array if no groundwater levels', () => {
+            expect(getGroundwaterLevelsTableData({
+                hydrographData: {}
+            })).toHaveLength(0);
         });
 
-        it('Return true if visible ground water levels', () => {
-            expect(anyVisibleGroundwaterLevels(TEST_STATE)).toBe(true);
+        it('Returns the array of groundwater levels table data', () => {
+            const tableData = getGroundwaterLevelsTableData(TEST_STATE);
+            expect(tableData).toHaveLength(4);
+            expect(tableData[0]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '27.2',
+                dateTime: '2020-03-19T15:11-05:00',
+                approvals: 'Provisional'
+            });
+            expect(tableData[1]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '26.9',
+                dateTime: '2020-05-13T11:47-05:00',
+                approvals: 'Approved'
+            });
+            expect(tableData[2]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '26.1',
+                dateTime: '2020-07-23T11:45-05:00',
+                approvals: 'Approved'
+            });
+            expect(tableData[3]).toEqual({
+                parameterName: 'Depth to water level',
+                result: '26.5',
+                dateTime: '2020-08-24T16:04-05:00',
+                approvals: 'Revised'
+            });
         });
     });
 });

@@ -1,10 +1,10 @@
-import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import {listen} from 'ui/lib/d3-redux';
-import {getCurrentMethodID, getAllMethodsForCurrentVariable, getCurrentDateRange, getCustomTimeRange, getCurrentParmCd}
-    from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
+import {isCompareIVDataVisible, getSelectedIVMethodID, getSelectedDateRange, getSelectedCustomDateRange,
+    getSelectedParameterCode
+} from 'ml/selectors/hydrograph-state-selector';
 
 /*
  * Return {String} hash part of url minus the leading '#'.
@@ -17,14 +17,13 @@ export const getParamString = function() {
 export const renderTimeSeriesUrlParams = function(store) {
 // subscribe to selectors for setting url parameter state
     listen(store, createStructuredSelector({
-        parameterCode: getCurrentParmCd,
-        methodId: getCurrentMethodID,
-        methods: getAllMethodsForCurrentVariable,
-        compare: (state) => state.ivTimeSeriesState.showIVTimeSeries.compare,
-        currentDateRange: getCurrentDateRange,
-        customTimeRange: getCustomTimeRange,
-        timeZone: getIanaTimeZone
-    }), ({parameterCode, methodId, methods, compare, currentDateRange, customTimeRange, timeZone}) => {
+        parameterCode: getSelectedParameterCode,
+        methodId: getSelectedIVMethodID,
+        methods: getPrimaryMethods,
+        compare: isCompareIVDataVisible,
+        currentDateRange: getSelectedDateRange,
+        customDateRange: getSelectedCustomDateRange
+    }), ({parameterCode, methodId, methods, compare, currentDateRange, customDateRange}) => {
         let params = new window.URLSearchParams();
 
         /* filter the 'currentDateRange', which comes in one of two forms
@@ -54,12 +53,8 @@ export const renderTimeSeriesUrlParams = function(store) {
                 params.set('period', currentDateRange);
                 break;
             case 'custom':
-                params.set(
-                    'startDT',
-                    DateTime.fromMillis(customTimeRange.start, {zone: timeZone}).toFormat('yyyy-LL-dd'));
-                params.set(
-                    'endDT',
-                    DateTime.fromMillis(customTimeRange.end, {zone: timeZone}).toFormat('yyyy-LL-dd'));
+                params.set('startDT', customDateRange.start);
+                params.set('endDT', customDateRange.end);
         }
         if (compare) {
             params.set('compare', true);

@@ -1,62 +1,22 @@
 import {select, selectAll} from 'd3-selection';
-import sinon from 'sinon';
 
 import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
 
 import {drawTimeSeriesLegend} from './legend';
-
+import {TEST_PRIMARY_IV_DATA, TEST_GW_LEVELS} from './mock-hydrograph-state';
 
 describe('monitoring-location/components/hydrograph/legend module', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
 
-    const TEST_DATA = {
-        ivTimeSeriesData: {
-            timeSeries: {
-                '00060:current': {
-                    tsKey: 'current:P7D',
-                    variable: '45807197',
-                    points: [{
-                        value: 10,
-                        qualifiers: ['P'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: null,
-                        qualifiers: ['P', 'ICE'],
-                        approved: false,
-                        estimated: false
-                    }, {
-                        value: null,
-                        qualifiers: ['P', 'FLD'],
-                        approved: false,
-                        estimated: false
-                    }]
-                }
-            },
-            variables: {
-                '45807197': {
-                    variableCode: {value: '00060'},
-                    oid: '45807197'
-                }
-            }
+    const TEST_STATE = {
+        hydrographData: {
+            primaryIVData: TEST_PRIMARY_IV_DATA,
+            groundwaterLevels: TEST_GW_LEVELS
         },
-        statisticsData: {
-            median: {
-                '00060': {
-                    '1': [{ }]
-                }
-            }
-        },
-        ivTimeSeriesState: {
-            currentIVVariableID: '45807197',
-            currentIVDateRange: 'P7D',
-            showIVTimeSeries: {
-                current: true,
-                median: true
-            }
+        hydrographState: {
+            selectedIVMethodID: '90649'
         }
     };
 
@@ -64,7 +24,6 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
 
         let graphNode;
         let store;
-        let fakeServer;
 
         beforeEach(() => {
             let body = select('body');
@@ -76,32 +35,19 @@ describe('monitoring-location/components/hydrograph/legend module', () => {
 
             graphNode = document.getElementById('hydrograph');
 
-            store = configureStore(TEST_DATA);
+            store = configureStore(TEST_STATE);
             select(graphNode)
                 .call(drawTimeSeriesLegend, store);
 
-            fakeServer = sinon.createFakeServer();
         });
 
         afterEach(() => {
-            fakeServer.restore();
             select('#hydrograph').remove();
         });
 
 
-        it('Should have 6 legend markers', () => {
-            expect(selectAll('.legend g').size()).toBe(6);
-            expect(selectAll('.legend g line.median-step').size()).toBe(1);
-        });
-
-        it('Should have 4 legend marker after the median time series are removed', () => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(selectAll('.legend g').size()).toBe(4);
-                    resolve();
-                });
-            });
+        it('Should have the correct number of legend markers', () => {
+            expect(selectAll('.legend g').size()).toBe(9);
         });
     });
 });

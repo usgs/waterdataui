@@ -61,13 +61,13 @@ describe('Legend module', () => {
             container.remove();
         });
 
-        it('Does not add a legend svg if no markers are provided', () => {
+        it('If no markers are provided legend-svg will contain no groups', () => {
             drawSimpleLegend(container, {
                 legendMarkerRows: [],
                 layout: layout
             });
 
-            expect(container.select('svg').size()).toBe(0);
+            expect(container.select('svg g').size()).toBe(0);
         });
 
         it('Adds a legend when width is provided', () => {

@@ -1,57 +1,79 @@
+import isEqual from 'lodash/isEqual';
+import uniqWith from 'lodash/uniqWith';
 import {DateTime} from 'luxon';
 import {createSelector} from 'reselect';
 
-import {getIVCurrentVariableGroundwaterLevels} from 'ml/selectors/discrete-data-selector';
-import {getRequestTimeRange, getCurrentVariable} from 'ml/selectors/time-series-selector';
-import {getIanaTimeZone} from 'ml/selectors/time-zone-selector';
+import config from 'ui/config';
 
+import {getGroundwaterLevels, getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 
-/*
-* Helper function that takes a raw approval code and matches it to a more detail object
-* @param {Object} approvalCode -  details about a single groundwater data point
-* @return {Object} Details that expand on the meaning of the approval code.
-*/
-export const getDetailsForApprovalCode = function(approvalCode) {
-    const groundwaterLineClass = {
-        'A': {label: 'Approved', class: 'approved'},
-        'P': {label: 'Provisional', class: 'provisional'},
-        'R': {label: 'Revised', class: 'revised'},
-        'default': {label: `code ${approvalCode}`, class: `unknown-code-${approvalCode}`}
-    };
+const GW_LEVEL_RADIUS = 7;
+const GW_LEVEL_CLASS = 'gw-level-point';
 
-    return groundwaterLineClass[approvalCode] || groundwaterLineClass['default'];
+const APPROVAL_QUALIFIERS = {
+    'A': {label: 'Approved', class: 'approved'},
+    'P': {label: 'Provisional', class: 'provisional'},
+    'R': {label: 'Revised', class: 'revised'}
+};
+
+const getDetailsForApprovalCode = function(qualifiers) {
+    const approvalQualifier = qualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
+    if (approvalQualifier) {
+        return APPROVAL_QUALIFIERS[approvalQualifier];
+    } else {
+        return APPROVAL_QUALIFIERS['P'];
+    }
 };
 
 /*
  * Returns a selector function that returns the groundwater levels that will be visible
- * on the hydrograpnh
+ * on the hydrograph
  * @return {Function} which returns an {Array} of groundwater level object with properties:
  *      @prop {Float} value
- *      @prop {Array of String} qualifiers
  *      @prop {Number} dateTime
+ *      @prop {Array of String} classes - a class that can be used to style this point
+ *      @prop {String} label - a human readable label for this kind of point
+ *      @prop {Number} radius - used to draw the circle marker
  */
-export const getVisibleGroundwaterLevelPoints = createSelector(
-    getRequestTimeRange('current'),
-    getIVCurrentVariableGroundwaterLevels,
-    (timeRange, gwLevels) => {
-        if (!timeRange || !gwLevels.values) {
+export const getGroundwaterLevelPoints = createSelector(
+    getGroundwaterLevels,
+    gwLevels => {
+        if (!gwLevels) {
             return [];
         }
-        return gwLevels.values
-            .filter((data) => {
-                return data.dateTime > timeRange.start && data.dateTime < timeRange.end;
-            })
-            .map((data) => {
-                return {
-                    ...data,
-                    value: parseFloat(data.value),
-                    approvals: getDetailsForApprovalCode(data.qualifiers[0])
-                };
-            });
+        return gwLevels.values.map(data => {
+            const approvalDetails = getDetailsForApprovalCode(data.qualifiers);
+            return {
+                value: data.value,
+                dateTime: data.dateTime,
+                classes: [GW_LEVEL_CLASS, approvalDetails.class],
+                label: approvalDetails.label,
+                radius: GW_LEVEL_RADIUS
+            };
+        });
     }
 );
 
-
+/*
+ * Returns a selector function which returns the unique classes/label/radius for the gw level points
+ * @return {Function} which returns an {Array of Object} with the following properties:
+ *      @prop {Array of String} classes
+ *      @prop {String} label
+ *      @prop {Number} radius
+ */
+export const getUniqueGWKinds = createSelector(
+    getGroundwaterLevelPoints,
+    gwPoints => {
+        const allKinds = gwPoints.map(point => {
+            return {
+                classes: point.classes,
+                label: point.label,
+                radius: point.radius
+            };
+        });
+        return uniqWith(allKinds, isEqual);
+    }
+);
 
 /*
  * Selector function which returns a function that returns an array of gw data appropriate
@@ -60,33 +82,25 @@ export const getVisibleGroundwaterLevelPoints = createSelector(
  *      @prop {String} parameterName
  *      @prop {String} result
  *      @prop {String} dateTime in site's time zone.
+ *      @prop {String} approvals
  */
-export const getVisibleGroundwaterLevelsTableData = createSelector(
-    getCurrentVariable,
-    getVisibleGroundwaterLevelPoints,
-    getIanaTimeZone,
-    (currentVariable, gwLevels, timeZone) => {
-
+export const getGroundwaterLevelsTableData = createSelector(
+    getPrimaryParameter,
+    getGroundwaterLevelPoints,
+    (parameter, gwLevels) => {
+        if (!parameter || !gwLevels) {
+            return [];
+        }
         return gwLevels.map((point) => {
             return {
-                parameterName: currentVariable.variableName,
+                parameterName: parameter.name,
                 result: point.value.toString(),
-                dateTime: DateTime.fromMillis(point.dateTime, {zone: timeZone}).toISO({
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toISO({
                     suppressMilliseconds: true,
                     suppressSeconds: true
                 }),
-                approvals: getDetailsForApprovalCode(point.qualifiers[0]).label
+                approvals: point.label
             };
         });
     }
-);
-
-/*
- * Returns a selector function that returns true if any ground water
- * levels are visible.
- * @return {Function} which returns {Boolean}
- */
-export const anyVisibleGroundwaterLevels = createSelector(
-    getVisibleGroundwaterLevelPoints,
-    (gwLevels) => gwLevels.length !== 0
 );

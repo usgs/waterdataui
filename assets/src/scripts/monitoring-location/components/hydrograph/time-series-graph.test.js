@@ -1,194 +1,33 @@
-import {select, selectAll} from 'd3-selection';
+import {select} from 'd3-selection';
 
 import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {setMedianDataVisibility} from 'ml/store/hydrograph-state';
 
+import {TEST_PRIMARY_IV_DATA, TEST_GW_LEVELS, TEST_MEDIAN_DATA,
+    TEST_CURRENT_TIME_RANGE
+} from './mock-hydrograph-state';
 import {drawTimeSeriesGraph} from './time-series-graph';
 
 
 const TEST_STATE = {
-    ianaTimeZone: 'America/Chicago',
-    ivTimeSeriesData: {
-        timeSeries: {
-            '2:00010:current': {
-                points: [{
-                    dateTime: 1514926800000,
-                    value: 4,
-                    qualifiers: ['P']
-                }],
-                method: '2',
-                tsKey: 'current:P7D',
-                variable: '45807190'
-            },
-            '1:00060:current': {
-                points: [{
-                    dateTime: 1514926800000,
-                    value: 10,
-                    qualifiers: ['P']
-                },
-                {
-                    dateTime: 1514928800000,
-                    value: 10,
-                    qualifiers: ['P']
-                }],
-                method: '1',
-                tsKey: 'current:P7D',
-                variable: '45807197'
-            },
-            '1:00060:compare': {
-                points: [{
-                    dateTime: 1514926800000,
-                    value: 10,
-                    qualifiers: ['P']
-                }],
-                method: '1',
-                tsKey: 'compare:P7D',
-                variable: '45807197'
-            }
-        },
-        timeSeriesCollections: {
-            'coll1': {
-                variable: '45807197',
-                timeSeries: ['00060:current']
-            },
-            'coll2': {
-                variable: '45807197',
-                timeSeries: ['00060:compare']
-            },
-            'coll3': {
-                variable: '45807197',
-                timeSeries: ['00060:median']
-            },
-            'coll4': {
-                variable: '45807190',
-                timeSeries: ['00010:current']
-            }
-        },
-        siteCodes: {
-            '12345678': {
-                agencyCode: 'USGS'
-            }
-        },
-        sourceInfo: {
-            '12345678': {
-                siteName: 'Monitoring Location for Test'
-            }
-
-        },
-        queryInfo: {
-            'current:P7D': {
-                notes: {
-                    'filter:timeRange':  {
-                        mode: 'PERIOD',
-                        periodDays: 7
-                    },
-                    requestDT: 1514926800000
-                }
-            }
-        },
-        requests: {
-            'current:P7D': {
-                timeSeriesCollections: ['coll1']
-            },
-            'compare:P7D': {
-                timeSeriesCollections: ['coll2', 'col4']
-            }
-        },
-        variables: {
-            '45807197': {
-                variableCode: {
-                    value: '00060'
-                },
-                oid: '45807197',
-                variableName: 'Test title for 00060',
-                variableDescription: 'Test description for 00060',
-                unit: {
-                    unitCode: 'unitCode'
-                }
-            },
-            '45809999': {
-                variableCode: {
-                    value: '00065'
-                },
-                oid: '45809999',
-                variableName: 'Test title for 00065',
-                variableDescription: 'Test description for 00065',
-                unit: {
-                    unitCode: 'unitCode'
-                }
-            },
-            '45807190': {
-                variableCode: {
-                    value: '00010'
-                },
-                oid: '45807190',
-                unit: {
-                    unitCode: 'unitCode'
-                }
-            }
-        },
-        methods: {
-            '1': {
-                methodDescription: 'method description'
-            }
-        }
+    hydrographData: {
+        primaryIVData: TEST_PRIMARY_IV_DATA,
+        groundwaterLevels: TEST_GW_LEVELS,
+        medianStatisticsData: TEST_MEDIAN_DATA,
+        currentTimeRange: TEST_CURRENT_TIME_RANGE
     },
-    statisticsData : {
-        median: {
-            '00060': {
-                '1234': [
-                    {
-                        month_nu: '2',
-                        day_nu: '20',
-                        p50_va: '40',
-                        begin_yr: '1970',
-                        end_yr: '2017',
-                        loc_web_ds: 'This method'
-                    }, {
-                        month_nu: '2',
-                        day_nu: '21',
-                        p50_va: '41',
-                        begin_yr: '1970',
-                        end_yr: '2017',
-                        loc_web_ds: 'This method'
-                    }, {
-                        month_nu: '2',
-                        day_nu: '22',
-                        p50_va: '42',
-                        begin_yr: '1970',
-                        end_yr: '2017',
-                        loc_web_ds: 'This method'
-                    }
-                ]
-            }
-        }
-    },
-    ivTimeSeriesState: {
-        currentIVVariableID: '45807197',
-        ivGraphCursorOffset: 0,
-        currentIVMethodID: 1,
-        currentIVDateRange: 'P7D',
-        showIVTimeSeries: {
-            current: true,
-            compare: true,
-            median: true
-        },
-        loadingIVTSKeys: []
+    hydrographState: {
+        selectedIVMethodID: '90649',
+        showCompareIVData: false,
+        showMedianData: false,
+        graphCursorOffset: 5000000
     },
     ui: {
         width: 400
     },
-    floodData: {
-        floodLevels: {
-            site_no: '07144100',
-            action_stage: '20',
-            flood_stage: '22',
-            moderate_flood_stage: '25',
-            major_flood_stage: '26'
-        }
-    }
+    floodData: {}
 };
 
 describe('monitoring-location/components/hydrograph/time-series-graph', () => {
@@ -199,8 +38,7 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
     let store;
 
     beforeEach(() => {
-        div = select('body').append('div')
-            .attr('id', 'hydrograph');
+        div = select('body').append('div').attr('id', 'hydrograph');
         store = configureStore(TEST_STATE);
     });
 
@@ -208,164 +46,64 @@ describe('monitoring-location/components/hydrograph/time-series-graph', () => {
         div.remove();
     });
 
-    it('single data point renders', () => {
-        div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-        let svgNodes = selectAll('svg');
+    it('Render graph title with monitoring location name in title and tooltip', () => {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', true, true);
 
-        expect(svgNodes.size()).toBe(1);
-        expect(div.html()).toContain('hydrograph-container');
+        const titleDiv = div.select('.time-series-graph-title');
+        expect(titleDiv.size()).toBe(1);
+        expect(titleDiv.select('.monitoring-location-name-div').size()).toBe(1);
+        expect(titleDiv.select('.usa-tooltip').size()).toBe(1);
     });
 
-    describe('container display', () => {
+    it('Render graph title without monitoring location name in title', () => {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, true);
 
-        it('should not be hidden tag if there is data', () => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-            expect(select('#hydrograph').attr('hidden')).toBeNull();
-        });
+        const titleDiv = div.select('.time-series-graph-title');
+        expect(titleDiv.size()).toBe(1);
+        expect(titleDiv.select('.monitoring-location-name-div').size()).toBe(0);
+        expect(titleDiv.select('.usa-tooltip').size()).toBe(1);
     });
 
-    describe('SVG has been made accessible', () => {
-        let svg;
-        beforeEach(() => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-            svg = select('svg');
-        });
+    it('Render graph title without info toolip', () => {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', true, false);
 
-        it('title and desc attributes are present', function() {
-            const descText = svg.select('desc').html();
-
-            expect(svg.select('title').html()).toEqual('Test title for 00060, method description');
-            expect(descText).toContain('Test description for 00060');
-            expect(descText).toContain('12/26/2017');
-            expect(descText).toContain('1/2/2018');
-            expect(svg.attr('aria-labelledby')).toContain('title');
-            expect(svg.attr('aria-describedby')).toContain('desc');
-        });
-
-        it('svg should be focusable', function() {
-            expect(svg.attr('tabindex')).toBe('0');
-        });
-
-        it('should have a defs node', () => {
-            expect(selectAll('defs').size()).toBe(1);
-            expect(selectAll('defs mask').size()).toBe(1);
-            expect(selectAll('defs pattern').size()).toBe(2);
-        });
-
-        it('should render time series data as a line', () => {
-            // There should be one segment per time-series. Each is a single
-            // point, so should be a circle.
-            expect(selectAll('.hydrograph-svg .line-segment').size()).toBe(2);
-        });
+        const titleDiv = div.select('.time-series-graph-title');
+        expect(titleDiv.size()).toBe(1);
+        expect(titleDiv.select('.monitoring-location-name-div').size()).toBe(1);
+        expect(titleDiv.select('.usa-tooltip').size()).toBe(0);
     });
 
-    //TODO: Consider adding a test which checks that the y axis is rescaled by
-    // examining the contents of the text labels.
+    it('Should render tooltip text and focus circles', () => {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, true);
 
-    describe('compare line', () => {
-
-        beforeEach(() => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#ts-compare-group .line-segment').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the compare time series', () => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', false));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(selectAll('#ts-compare-group .line-segment').size()).toBe(0);
-                    resolve();
-                });
-            });
-        });
+        expect(div.selectAll('.tooltip-text-group').size()).toBe(1);
+        expect(div.selectAll('.focus-line-group').size()).toBe(1);
+        expect(div.selectAll('.focus-circle').size()).toBe(2);
     });
 
-    describe('median lines', () => {
+    it('Should not render tooltip text and focus circles', ()=> {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, false);
 
-        beforeEach(() => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-        });
-
-        it('Should render one lines', () => {
-            expect(selectAll('#median-points .median-data-series').size()).toBe(1);
-        });
-
-        it('Should remove the lines when removing the median statistics data', () => {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('median', false));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(selectAll('#median-points .median-data-series').size()).toBe(0);
-                    resolve();
-                });
-            });
-        });
+        expect(div.selectAll('.tooltip-text-group').size()).toBe(0);
+        expect(div.selectAll('.focus-line-group').size()).toBe(0);
+        expect(div.selectAll('.focus-circle').size()).toBe(0);
     });
 
-    describe('flood level lines', () => {
-
-        beforeEach(() => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-        });
-
-        it('Should render four lines', () => {
-            store.dispatch(Actions.setCurrentIVVariable(45809999));
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-            expect(selectAll('#flood-level-points .action-stage').size()).toBe(1);
-            expect(selectAll('#flood-level-points .flood-stage').size()).toBe(1);
-            expect(selectAll('#flood-level-points .moderate-flood-stage').size()).toBe(1);
-            expect(selectAll('#flood-level-points .major-flood-stage').size()).toBe(1);
-        });
-
-
-        it('Should remove the lines when removing the waterwatch flood levels data', () => {
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(selectAll('#flood-level-points').size()).toBe(0);
-                    resolve();
-                });
-            });
-        });
+    it('Should render current IV Data and groundwater levels but not median steps', () => {
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, false);
+        expect(div.selectAll('.ts-primary-group').html()).not.toEqual('');
+        expect(div.selectAll('.ts-compare-group').html()).toEqual('');
+        expect(div.selectAll('.iv-graph-gw-levels-group').html()).not.toEqual('');
+        expect(div.selectAll('.median-stats-group').size()).toBe(0);
     });
 
-    describe('monitoring location name', () => {
-        it('Should not render the monitoring location name if showMLName is false', () => {
-            div.call(drawTimeSeriesGraph, store, '12345678', false, false);
+    it('Should render median data if visible', () => {
+        store.dispatch(setMedianDataVisibility(true));
+        drawTimeSeriesGraph(div, store, '11112222', 'USGS', 'This site', false, false);
 
-            expect(div.selectAll('.monitoring-location-name-div').size()).toBe(0);
-        });
-
-        it('Should render the monitoring location if showMLName is true', () => {
-            div.call(drawTimeSeriesGraph, store, '12345678', true, false);
-
-            const nameDiv = div.selectAll('.monitoring-location-name-div');
-            const nameContents = nameDiv.html();
-            expect(nameDiv.size()).toBe(1);
-            expect(nameContents).toContain('Monitoring Location for Test');
-            expect(nameContents).toContain('USGS');
-            expect(nameContents).toContain('12345678');
-        });
-    });
-
-    describe('tooltip text and focus elements', () => {
-        it('Should not render the tooltip if showTooltip is false', () => {
-             div.call(drawTimeSeriesGraph, store, '12345678', false, false);
-
-             expect(div.selectAll('.tooltip-text-group').size()).toBe(0);
-             expect(div.selectAll('.focus-overlay').size()).toBe(0);
-             expect(div.selectAll('.focus-circle').size()).toBe(0);
-             expect(div.selectAll('.focus-line').size()).toBe(0);
-        });
-
-        it('Should render the tooltip if showTooltip is true', () => {
-             div.call(drawTimeSeriesGraph, store, '12345678', false, true);
-
-             expect(div.selectAll('.tooltip-text-group').size()).toBe(1);
-             expect(div.selectAll('.focus-overlay').size()).toBe(1);
-             expect(div.selectAll('.focus-circle').size()).toBe(1);
-             expect(div.selectAll('.focus-line').size()).toBe(1);
-        });
+        expect(div.selectAll('.ts-primary-group').html()).not.toEqual('');
+        expect(div.selectAll('.ts-compare-group').html()).toEqual('');
+        expect(div.selectAll('.iv-graph-gw-levels-group').html()).not.toEqual('');
+        expect(div.selectAll('.median-stats-group').size()).toBe(1);
     });
 });

@@ -1,22 +1,21 @@
-import {axisBottom, axisLeft, axisRight} from 'd3-axis';
+import {axisBottom, axisLeft} from 'd3-axis';
 import memoize from 'fast-memoize';
 import {createSelector} from 'reselect';
 
-import {convertCelsiusToFahrenheit, convertFahrenheitToCelsius} from 'ui/utils';
+import config from 'ui/config';
 
 import {generateTimeTicks} from 'd3render/tick-marks';
 
-import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
+import {getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 
 import {getYTickDetails} from './domain';
 import {getLayout} from './layout';
-import {getXScale, getBrushXScale, getYScale, getSecondaryYScale} from './scales';
-import {getCurrentVariableUnitCode, getSecondaryYLabel, getTsTimeZone} from './time-series-data';
+import {getXScale, getBrushXScale, getYScale} from './scales';
 
 
-const createXAxis = function(xScale, ianaTimeZone) {
+const createXAxis = function(xScale) {
     const [startMillis, endMillis] = xScale.domain();
-    const ticks = generateTimeTicks(startMillis, endMillis, ianaTimeZone);
+    const ticks = generateTimeTicks(startMillis, endMillis, config.locationTimeZone);
 
     return axisBottom()
         .scale(xScale)
@@ -29,16 +28,13 @@ const createXAxis = function(xScale, ianaTimeZone) {
  * Create an x and y axis for hydrograph
  * @param {Object} xScale      D3 Scale object for the x-axis
  * @param {Object} yScale      D3 Scale object for the y-axis
- * @param {Object} secondaryYScale - D3 Scale object for the secondary y-axis
- * @param {Object} yTickDetails - Object which has information about tick values and ormat.
+ * @param {Object} yTickDetails - Object which has information about tick values and format.
  * @param {Number} yTickSize   Size of inner ticks for the y-axis
- * @param {String} parmCd - parameter code of time series to be shown on the graph.
- * @param {String} ianaTimeZone - Internet Assigned Numbers Authority designation for a time zone
- * @return {Object} {xAxis, yAxis, secondardYaxis} - D3 Axis
+ * @return {Object} {xAxis, yAxis} - D3 Axis
  */
-const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTickSize, parmCd, ianaTimeZone) {
+const createAxes = function(xScale, yScale, yTickDetails, yTickSize) {
     // Create x-axis
-    const xAxis = createXAxis(xScale, ianaTimeZone);
+    const xAxis = createXAxis(xScale);
 
     // Create y-axis
     const yAxis = axisLeft()
@@ -49,63 +45,36 @@ const createAxes = function(xScale, yScale, secondaryYScale, yTickDetails, yTick
         .tickPadding(3)
         .tickSizeOuter(0);
 
-    let secondaryYAxis = null;
-
-    const createSecondaryYAxis = function(tickValues, scale) {
-        return axisRight()
-            .scale(scale)
-            .tickValues(tickValues)
-            .tickFormat(t => t.toFixed(1))
-            .tickSizeInner(yTickSize)
-            .tickPadding(3)
-            .tickSizeOuter(0);
-    };
-
-    if (secondaryYScale !== null) {
-        let secondaryAxisTicks;
-        const primaryAxisTicks = yTickDetails.tickValues;
-
-        secondaryYAxis = createSecondaryYAxis(secondaryAxisTicks, secondaryYScale);
-    }
-    return {xAxis, yAxis, secondaryYAxis};
+    return {xAxis, yAxis};
 };
 
 /**
  * Returns a Redux selector function that returns the brush x axis
  */
 export const getBrushXAxis = createSelector(
-    getBrushXScale('current'),
-    getTsTimeZone,
-    (xScale, ianaTimeZone) => createXAxis(xScale, ianaTimeZone)
+    getBrushXScale,
+    xScale => createXAxis(xScale)
 );
 
 /**
  * Returns a Redux Selection that returns an object with xAxis, yAxis, and secondaryYAxis properties
  */
-export const getAxes = memoize(kind => createSelector(
-    getXScale(kind, 'current'),
-    getYScale(kind),
-    getSecondaryYScale(kind),
+export const getAxes = memoize(graphKind => createSelector(
+    getXScale(graphKind, 'current'),
+    getYScale(graphKind),
     getYTickDetails,
-    getLayout(kind),
-    getCurrentVariableUnitCode,
-    getTsTimeZone,
-    getCurrentParmCd,
-    getSecondaryYLabel,
-    (xScale, yScale, secondaryYScale, yTickDetails, layout, plotYLabel, ianaTimeZone, parmCd, plotSecondaryYLabel) => {
+    getLayout(graphKind),
+    getPrimaryParameter,
+    (xScale, yScale, yTickDetails, layout, parameter) => {
         return {
             ...createAxes(
                 xScale,
                 yScale,
-                secondaryYScale,
                 yTickDetails,
-                -layout.width + layout.margin.right,
-                parmCd,
-                ianaTimeZone
+                -layout.width + layout.margin.right
             ),
             layout: layout,
-            yTitle: plotYLabel,
-            secondaryYTitle: plotSecondaryYLabel
+            yTitle: parameter ? parameter.unit : ''
         };
     }
 ));

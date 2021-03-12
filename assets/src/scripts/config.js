@@ -2,7 +2,7 @@
  * Export runtime configuration settings stored in the global CONFIG variable.
  */
 export default {
-    ...(window.CONFIG || {}),
+    ...window.CONFIG || {},
 
     // These are the screen size breakpoints in the USWDS style sheet
     USWDS_SMALL_SCREEN: 481,
@@ -13,8 +13,12 @@ export default {
     // Indicates the number digits that we allow users to enter when selecting a custom 'days before today' time span.
     MAX_DIGITS_FOR_DAYS_FROM_TODAY: 5,
 
+    ALLOW_COMPARE_DATA_FOR_PERIODS: ['P7D', 'P30D', 'P365D'],
+
     // Indicate a NWIS 'variable' has been modified in the application, such as a conversion from Celsius to Fahrenheit
     CALCULATED_TEMPERATURE_VARIABLE_CODE: 'F',
+
+    GAGE_HEIGHT_PARAMETER_CODE: '00065',
 
     TEMPERATURE_PARAMETERS: {
         celsius: [
@@ -39,12 +43,6 @@ export default {
             '45590'
         ]
     },
-
-    // Below is a listing of the known temperature codes and counterparts
-    // '00020': '00021' - air temperature C:F
-    // '00010': '00011' - water temperature C:F
-    // '45589': '45590' - Temperature, internal, within equipment shelter C:F
-    CELSIUS_CODES_WITH_FAHRENHEIT_COUNTERPARTS: ['00020', '00010', '45589'],
 
     WATER_ALERT_PARAMETER_CODES: [
         '00060',

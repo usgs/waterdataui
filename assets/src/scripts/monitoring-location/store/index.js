@@ -1,29 +1,27 @@
 import {applyMiddleware, createStore, combineReducers, compose} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
+import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
+import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
 import {
     floodDataReducer as floodData,
     floodStateReducer as floodState} from './flood-inundation';
-import {nldiDataReducer as nldiData} from './nldi-data';
-import {dailyValueTimeSeriesDataReducer as dailyValueTimeSeriesData} from './daily-value-time-series';
-import {dailyValueTimeSeriesStateReducer as dailyValueTimeSeriesState} from './daily-value-time-series';
-import {discreteDataReducer as discreteData} from './discrete-data';
-import {ivTimeSeriesDataReducer as ivTimeSeriesData} from './instantaneous-value-time-series-data';
-import {ivTimeSeriesStateReducer as ivTimeSeriesState} from './instantaneous-value-time-series-state';
+import {hydrographDataReducer as hydrographData} from './hydrograph-data';
+import {hydrographParametersReducer as hydrographParameters} from './hydrograph-parameters';
+import {hydrographStateReducer as hydrographState,
+    INITIAL_STATE as HYDROGRAPH_INITIAL_STATE
+} from './hydrograph-state';
 import {networkDataReducer as networkData} from './network';
-import {statisticsDataReducer as statisticsData} from './statistics-data';
-import {timeZoneReducer as ianaTimeZone} from './time-zone';
+import {nldiDataReducer as nldiData} from './nldi-data';
 import {uiReducer as ui} from './ui-state';
 
 const appReducer = combineReducers({
-    ivTimeSeriesData,
-    ianaTimeZone,
+    hydrographData,
+    hydrographParameters,
+    hydrographState,
     dailyValueTimeSeriesData,
-    statisticsData,
     floodData,
     nldiData,
-    discreteData,
-    ivTimeSeriesState,
     dailyValueTimeSeriesState,
     floodState,
     ui,
@@ -35,10 +33,10 @@ const MIDDLEWARES = [thunk];
 
 export const configureStore = function(initialState) {
     initialState = {
-        ivTimeSeriesData: {},
-        ianaTimeZone: null,
+        hydrographData: {},
+        hydrographParameters: {},
+        hydrographState: HYDROGRAPH_INITIAL_STATE,
         dailyValueTimeSeriesData: {},
-        discreteData: {},
         floodData: {
             stages: [],
             extent: {},
@@ -50,26 +48,6 @@ export const configureStore = function(initialState) {
             upstreamSites: [],
             downstreamSites: [],
             upstreamBasin: []
-        },
-        statisticsData: {},
-        ivTimeSeriesState: {
-            showIVTimeSeries: {
-                current: true,
-                compare: false,
-                median: false
-            },
-            currentIVDateRange: 'P7D',
-            customIVTimeRange: null,
-            currentIVVariableID: null,
-            ivGraphCursorOffset: null,
-            audiblePlayId: null,
-            loadingIVTSKeys: [],
-            ivGraphBrushOffset: null,
-            userInputsForTimeRange: {
-                mainTimeRangeSelectionButton: 'P7D',
-                customTimeRangeSelectionButton: 'days-input',
-                numberOfDaysFieldValue: ''
-            }
         },
         dailyValueTimeSeriesState: {
             cursorOffset: null

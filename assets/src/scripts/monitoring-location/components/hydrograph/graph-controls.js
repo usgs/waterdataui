@@ -1,26 +1,28 @@
+import {createStructuredSelector} from 'reselect';
 
+import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 
-import {getCurrentVariableMedianStatistics} from 'ml/selectors/median-statistics-selector';
-import {getCurrentVariableTimeSeries} from 'ml/selectors/time-series-selector';
-import {Actions} from 'ml/store/instantaneous-value-time-series-state';
+import {getSelectedParameterCode, getSelectedDateRange} from 'ml/selectors/hydrograph-state-selector';
+import {getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 
-import {audibleUI} from './audible';
+import {retrieveMedianStatistics, retrievePriorYearIVData} from 'ml/store/hydrograph-data';
+import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrograph-state';
+
+import {getMainLayout} from './selectors/layout';
 import {isVisible} from './selectors/time-series-data';
 
+import {showDataLoadingIndicator} from './data-loading-indicator';
+
 /*
- * Create the show audible toggle, last year toggle, and median toggle for the time series graph.
+ * Create the last year toggle, and median toggle for the time series graph.
  * @param {Object} elem - D3 selection
  */
-export const drawGraphControls = function(elem, store) {
-
+export const drawGraphControls = function(elem, store, siteno) {
     const graphControlDiv = elem.append('ul')
         .classed('usa-fieldset', true)
         .classed('usa-list--unstyled', true)
         .classed('graph-controls-container', true);
-
-    graphControlDiv.append('li')
-        .call(audibleUI, store);
 
     const compareControlDiv = graphControlDiv.append('li')
         .classed('usa-checkbox', true);
@@ -34,18 +36,31 @@ export const drawGraphControls = function(elem, store) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleCompare')
         .on('click', function() {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('compare', this.checked));
+            const state = store.getState();
+            const currentTimeRange = getTimeRange('current')(state);
+            store.dispatch(setCompareDataVisibility(this.checked));
+            if (this.checked) {
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrievePriorYearIVData(siteno, {
+                    parameterCode: getSelectedParameterCode(state),
+                    startTime: currentTimeRange.start,
+                    endTime: currentTimeRange.end
+                }))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
+            }
         })
-        // Disables the checkbox if no compare time series for the current variable
-        .call(link(store,function(elem, compareTimeSeries) {
-            const exists = Object.keys(compareTimeSeries) ?
-                Object.values(compareTimeSeries).filter(tsValues => tsValues.points.length).length > 0 : false;
-            elem.property('disabled', !exists);
-        }, getCurrentVariableTimeSeries('compare')))
         // Sets the state of the toggle
-        .call(link(store,function(elem, checked) {
-            elem.property('checked', checked);
-        }, isVisible('compare')));
+        .call(link(store,function(elem, {checked, selectedDateRange}) {
+            elem.property('checked', checked)
+                .attr('disabled',
+                selectedDateRange !== 'custom' && config.ALLOW_COMPARE_DATA_FOR_PERIODS.includes(selectedDateRange) ?
+                null : true);
+        }, createStructuredSelector({
+            checked: isVisible('compare'),
+            selectedDateRange: getSelectedDateRange
+        })));
     compareControlDiv.append('label')
         .classed('usa-checkbox__label', true)
         .attr('id', 'last-year-label')
@@ -64,12 +79,15 @@ export const drawGraphControls = function(elem, store) {
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', 'toggleMedian')
         .on('click', function() {
-            store.dispatch(Actions.setIVTimeSeriesVisibility('median', this.checked));
+            store.dispatch(setMedianDataVisibility(this.checked));
+            if (this.checked) {
+                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())))
+                    .then(() => {
+                        showDataLoadingIndicator(false);
+                    });
+            }
         })
-        // Disables the checkbox if no median data for the current variable
-        .call(link(store,function(elem, medianData) {
-            elem.property('disabled', medianData === null);
-        }, getCurrentVariableMedianStatistics))
         // Sets the state of the toggle
         .call(link(store,function(elem, checked) {
             elem.property('checked', checked);

@@ -16,6 +16,7 @@ module.exports = {
     clearMocks: true,
     restoreMocks: true,
     moduleNameMapper: {
+        '^uswds-components(.*)$': '<rootDir>node_modules/uswds/src/js/components$1',
         '^ui/(.*)$': '<rootDir>src/scripts/$1',
         '^ml/(.*)$': '<rootDir>src/scripts/monitoring-location/$1',
         '^d3render/(.*)$': '<rootDir>src/scripts/d3-rendering/$1',

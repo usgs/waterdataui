@@ -4,8 +4,8 @@ import {createStructuredSelector} from 'reselect';
 
 import {link} from 'ui/lib/d3-redux';
 
-import {getVisibleGroundwaterLevelsTableData} from './selectors/discrete-data';
-import {getCurrentPointData} from './selectors/drawing-data';
+import {getGroundwaterLevelsTableData} from './selectors/discrete-data';
+import {getIVTableData} from './selectors/iv-data';
 
 const TABLE_CAPTION = {
     iv: 'Instantaneous value data',
@@ -94,12 +94,12 @@ export const drawDataTables = function(elem, store) {
         .attr('id', 'iv-hydrograph-data-table-container')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'iv',
-            currentData: getCurrentPointData
+            currentData: getIVTableData('primary')
         })));
     elem.append('div')
         .attr('id', 'gw-hydrograph-data-table-container')
         .call(link(store, drawDataTable, createStructuredSelector({
             dataKind: () => 'gw',
-            currentData: getVisibleGroundwaterLevelsTableData
+            currentData: getGroundwaterLevelsTableData
         })));
 };

@@ -3235,37 +3235,37 @@ export const MOCK_GWLEVEL_DATA =
             "value": [
               {
                 "value": "26.07",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-01-23T09:06:00.000"
               },
               {
                 "value": "27.27",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-03-19T15:11:00.000"
               },
               {
                 "value": "27.33",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-05-13T11:47:00.000"
               },
               {
                 "value": "29.19",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-07-23T11:45:00.000"
               },
               {
                 "value": "25.55",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-08-24T16:04:00.000"
               },
               {
                 "value": "25.03",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-10-01T18:10:00.000"
               },
               {
                 "value": "24.54",
-                "qualifiers": [],
+                "qualifiers": ["A", "1"],
                 "dateTime": "2020-11-17T12:57:00.000"
               }
             ],
@@ -3289,4 +3289,894 @@ export const MOCK_GWLEVEL_DATA =
   "nil": false,
   "globalScope": true,
   "typeSubstituted": false
+}`;
+
+export const MOCK_TEMP_C_IV_DATA =
+`{
+	"name": "ns1:timeSeriesResponseType",
+	"declaredType": "org.cuahsi.waterml.TimeSeriesResponseType",
+	"scope": "javax.xml.bind.JAXBElement$GlobalScope",
+	"value": {
+		"queryInfo": {
+			"queryURL": "http://waterservices.usgs.gov/nwis/iv/sites=05370000&parameterCd=00010&period=P1D&siteStatus=all&format=json",
+			"criteria": {
+				"locationParam": "[ALL:05370000]",
+				"variableParam": "[00010]",
+				"parameter": []
+			},
+			"note": [{
+				"value": "[ALL:05370000]",
+				"title": "filter:sites"
+			}, {
+				"value": "[mode=PERIOD, period=P1D, modifiedSince=null]",
+				"title": "filter:timeRange"
+			}, {
+				"value": "methodIds=[ALL]",
+				"title": "filter:methodId"
+			}, {
+				"value": "2021-02-22T15:00:05.479Z",
+				"title": "requestDT"
+			}, {
+				"value": "a5b93860-751e-11eb-af07-2cea7f58f5ca",
+				"title": "requestId"
+			}, {
+				"value": "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+				"title": "disclaimer"
+			}, {
+				"value": "vaas01",
+				"title": "server"
+			}]
+		},
+		"timeSeries": [{
+			"sourceInfo": {
+				"siteName": "EAU GALLE RIVER AT SPRING VALLEY, WI",
+				"siteCode": [{
+					"value": "05370000",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-06:00",
+						"zoneAbbreviation": "CST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "CDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 44.85277778,
+						"longitude": -92.2383333
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "ST",
+					"name": "siteTypeCd"
+				}, {
+					"value": "07050005",
+					"name": "hucCd"
+				}, {
+					"value": "55",
+					"name": "stateCd"
+				}, {
+					"value": "55093",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "00010",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 45807042,
+					"default": true
+				}],
+				"variableName": "Temperature, water, &#176;C",
+				"variableDescription": "Temperature, water, degrees Celsius",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "deg C"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "45807042"
+			},
+			"values": [{
+				"value": [{
+					"value": "2.0",
+					"qualifiers": ["P"],
+					"dateTime": "2021-02-21T09:15:00.000-06:00"
+				}, {
+					"value": "0.0",
+					"qualifiers": ["P"],
+					"dateTime": "2021-02-21T09:30:00.000-06:00"
+				}, {
+					"value": "2.1",
+					"qualifiers": ["P"],
+					"dateTime": "2021-02-21T09:45:00.000-06:00"
+				}],
+				"qualifier": [{
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodDescription": "",
+					"methodID": 157775
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:05370000:00010:00000"
+		}]
+	},
+	"nil": false,
+	"globalScope": true,
+	"typeSubstituted": false
+}`;
+
+export const MOCK_STATISTICS_JSON = {
+    '00010': {
+        '153885': [{
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '1',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '16'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '2',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '16'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '3',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '16'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '4',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '5',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '6',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '7',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '8',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '9',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '10',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '11',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '12',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }, {
+            agency_cd: 'USGS',
+            site_no: '05370000',
+            parameter_cd: '00010',
+            ts_id: '153885',
+            loc_web_ds: '',
+            month_nu: '1',
+            day_nu: '13',
+            begin_yr: '1969',
+            end_yr: '2017',
+            count_nu: '49',
+            p50_va: '15'
+        }]
+    }
+};
+
+export const MOCK_LATEST_IV_DATA = `
+{
+	"name": "ns1:timeSeriesResponseType",
+	"declaredType": "org.cuahsi.waterml.TimeSeriesResponseType",
+	"scope": "javax.xml.bind.JAXBElement$GlobalScope",
+	"value": {
+		"queryInfo": {
+			"queryURL": "http://waterservices.usgs.gov/nwis/iv/sites=354133082042203&&siteStatus=all&format=json",
+			"criteria": {
+				"locationParam": "[ALL:354133082042203]",
+				"variableParam": "ALL",
+				"parameter": []
+			},
+			"note": [{
+				"value": "[ALL:354133082042203]",
+				"title": "filter:sites"
+			}, {
+				"value": "[mode=LATEST, modifiedSince=null]",
+				"title": "filter:timeRange"
+			}, {
+				"value": "methodIds=[ALL]",
+				"title": "filter:methodId"
+			}, {
+				"value": "2021-02-22T16:05:18.032Z",
+				"title": "requestDT"
+			}, {
+				"value": "c1c96df0-7527-11eb-93f2-2cea7f5e5ede",
+				"title": "requestId"
+			}, {
+				"value": "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+				"title": "disclaimer"
+			}, {
+				"value": "sdas01",
+				"title": "server"
+			}]
+		},
+		"timeSeries": [{
+			"sourceInfo": {
+				"siteName": "MC-109 NEAR PLEASANT GARDENS, NC (BEDROCK)",
+				"siteCode": [{
+					"value": "354133082042203",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "EST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-04:00",
+						"zoneAbbreviation": "EDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 35.6926111,
+						"longitude": -82.0729444
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "GW",
+					"name": "siteTypeCd"
+				}, {
+					"value": "03050101",
+					"name": "hucCd"
+				}, {
+					"value": "37",
+					"name": "stateCd"
+				}, {
+					"value": "37111",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "72019",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 52331280,
+					"default": true
+				}],
+				"variableName": "Depth to water level, ft below land surface",
+				"variableDescription": "Depth to water level, feet below land surface",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "ft"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "52331280"
+			},
+			"values": [{
+				"value": [{
+					"value": "26.14",
+					"qualifiers": ["P"],
+					"dateTime": "2021-02-22T10:45:00.000-05:00"
+				}],
+				"qualifier": [{
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodDescription": "",
+					"methodID": 90649
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:354133082042203:72019:00000"
+		}, {
+		    "sourceInfo": {
+				"siteName": "EAU GALLE RIVER AT SPRING VALLEY, WI",
+				"siteCode": [{
+					"value": "05370000",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-06:00",
+						"zoneAbbreviation": "CST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "CDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 44.85277778,
+						"longitude": -92.2383333
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "ST",
+					"name": "siteTypeCd"
+				}, {
+					"value": "07050005",
+					"name": "hucCd"
+				}, {
+					"value": "55",
+					"name": "stateCd"
+				}, {
+					"value": "55093",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "00010",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 45807042,
+					"default": true
+				}],
+				"variableName": "Temperature, water, &#176;C",
+				"variableDescription": "Temperature, water, degrees Celsius",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "deg C"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "45807042"
+			},
+			"values": [{
+				"value": [{
+					"value": "2.3",
+					"qualifiers": ["P"],
+					"dateTime": "2021-02-22T10:00:00.000-06:00"
+				}],
+				"qualifier": [{
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodDescription": "",
+					"methodID": 157775
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:05370000:00010:00000"
+		}]
+	},
+	"nil": false,
+	"globalScope": true,
+	"typeSubstituted": false
+}`;
+
+export const MOCK_LATEST_GW_DATA = `
+{
+	"name": "ns1:timeSeriesResponseType",
+	"declaredType": "org.cuahsi.waterml.TimeSeriesResponseType",
+	"scope": "javax.xml.bind.JAXBElement$GlobalScope",
+	"value": {
+		"queryInfo": {
+			"queryURL": "http://waterservices.usgs.gov/nwis/gwlevels/sites=354133082042203&format=json",
+			"criteria": {
+				"locationParam": "[ALL:354133082042203]",
+				"variableParam": "ALL",
+				"parameter": []
+			},
+			"note": [{
+				"value": "[ALL:354133082042203]",
+				"title": "filter:sites"
+			}, {
+				"value": "[mode=LATEST, modifiedSince=null]",
+				"title": "filter:timeRange"
+			}, {
+				"value": "methodIds=[ALL]",
+				"title": "filter:methodId"
+			}, {
+				"value": "2021-02-22T16:05:17.901Z",
+				"title": "requestDT"
+			}, {
+				"value": "c1b570c0-7527-11eb-9c02-2cea7f5e5ede",
+				"title": "requestId"
+			}, {
+				"value": "Provisional data are subject to revision. Go to http://waterdata.usgs.gov/nwis/help/?provisional for more information.",
+				"title": "disclaimer"
+			}, {
+				"value": "sdas01",
+				"title": "server"
+			}]
+		},
+		"timeSeries": [{
+			"sourceInfo": {
+				"siteName": "MC-109 NEAR PLEASANT GARDENS, NC (BEDROCK)",
+				"siteCode": [{
+					"value": "354133082042203",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "EST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-04:00",
+						"zoneAbbreviation": "EDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 35.6926111,
+						"longitude": -82.0729444
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "GW",
+					"name": "siteTypeCd"
+				}, {
+					"value": "03050101",
+					"name": "hucCd"
+				}, {
+					"value": "37",
+					"name": "stateCd"
+				}, {
+					"value": "37111",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "62610",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 51413516,
+					"default": true
+				}],
+				"variableName": "Groundwater level above NGVD 1929, feet",
+				"variableDescription": "Groundwater level above NGVD 1929, feet",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "ft"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "51413516"
+			},
+			"values": [{
+				"value": [{
+					"value": "27.49",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.11",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.40",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}],
+				"qualifier": [{
+					"qualifierCode": "1",
+					"qualifierDescription": "Static",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}, {
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 1,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodID": 1
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:354133082042203:62610:00000"
+		}, {
+			"sourceInfo": {
+				"siteName": "MC-109 NEAR PLEASANT GARDENS, NC (BEDROCK)",
+				"siteCode": [{
+					"value": "354133082042203",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "EST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-04:00",
+						"zoneAbbreviation": "EDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 35.6926111,
+						"longitude": -82.0729444
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "GW",
+					"name": "siteTypeCd"
+				}, {
+					"value": "03050101",
+					"name": "hucCd"
+				}, {
+					"value": "37",
+					"name": "stateCd"
+				}, {
+					"value": "37111",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "62611",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 51413517,
+					"default": true
+				}],
+				"variableName": "Groundwater level above NAVD 1988, ft",
+				"variableDescription": "Groundwater level above NAVD 1988, feet",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "ft"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "51413517"
+			},
+			"values": [{
+				"value": [{
+					"value": "27.49",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.11",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.40",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}],
+				"qualifier": [{
+					"qualifierCode": "1",
+					"qualifierDescription": "Static",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}, {
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 1,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodID": 2
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:354133082042203:62611:00000"
+		}, {
+			"sourceInfo": {
+				"siteName": "MC-109 NEAR PLEASANT GARDENS, NC (BEDROCK)",
+				"siteCode": [{
+					"value": "354133082042203",
+					"network": "NWIS",
+					"agencyCode": "USGS"
+				}],
+				"timeZoneInfo": {
+					"defaultTimeZone": {
+						"zoneOffset": "-05:00",
+						"zoneAbbreviation": "EST"
+					},
+					"daylightSavingsTimeZone": {
+						"zoneOffset": "-04:00",
+						"zoneAbbreviation": "EDT"
+					},
+					"siteUsesDaylightSavingsTime": true
+				},
+				"geoLocation": {
+					"geogLocation": {
+						"srs": "EPSG:4326",
+						"latitude": 35.6926111,
+						"longitude": -82.0729444
+					},
+					"localSiteXY": []
+				},
+				"note": [],
+				"siteType": [],
+				"siteProperty": [{
+					"value": "GW",
+					"name": "siteTypeCd"
+				}, {
+					"value": "03050101",
+					"name": "hucCd"
+				}, {
+					"value": "37",
+					"name": "stateCd"
+				}, {
+					"value": "37111",
+					"name": "countyCd"
+				}]
+			},
+			"variable": {
+				"variableCode": [{
+					"value": "72019",
+					"network": "NWIS",
+					"vocabulary": "NWIS:UnitValues",
+					"variableID": 52331280,
+					"default": true
+				}],
+				"variableName": "Depth to water level, ft below land surface",
+				"variableDescription": "Depth to water level, feet below land surface",
+				"valueType": "Derived Value",
+				"unit": {
+					"unitCode": "ft"
+				},
+				"options": {
+					"option": [{
+						"name": "Statistic",
+						"optionCode": "00000"
+					}]
+				},
+				"note": [],
+				"noDataValue": -999999.0,
+				"variableProperty": [],
+				"oid": "52331280"
+			},
+			"values": [{
+				"value": [{
+					"value": "27.49",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.11",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}, {
+					"value": "1317.40",
+					"qualifiers": ["P", "1"],
+					"dateTime": "2021-01-21T18:54:00.000"
+				}],
+				"qualifier": [{
+					"qualifierCode": "1",
+					"qualifierDescription": "Static",
+					"qualifierID": 0,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}, {
+					"qualifierCode": "P",
+					"qualifierDescription": "Provisional data subject to revision.",
+					"qualifierID": 1,
+					"network": "NWIS",
+					"vocabulary": "uv_rmk_cd"
+				}],
+				"qualityControlLevel": [],
+				"method": [{
+					"methodID": 3
+				}],
+				"source": [],
+				"offset": [],
+				"sample": [],
+				"censorCode": []
+			}],
+			"name": "USGS:354133082042203:72019:00000"
+		}]
+	},
+	"nil": false,
+	"globalScope": true,
+	"typeSubstituted": false
 }`;

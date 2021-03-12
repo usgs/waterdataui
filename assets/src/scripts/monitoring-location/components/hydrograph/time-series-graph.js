@@ -10,27 +10,24 @@ import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {getAgencyCode, getMonitoringLocationName, getCurrentVariable} from 'ml/selectors/time-series-selector';
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
+import {getPrimaryParameter, getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
+import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getAxes}  from './selectors/axes';
-import {getVisibleGroundwaterLevelPoints} from './selectors/discrete-data';
-import {
-    getCurrentVariableLineSegments,
-    getCurrentVariableMedianStatPoints,
-    HASH_ID
-} from './selectors/drawing-data';
+import {getGroundwaterLevelPoints} from './selectors/discrete-data';
+import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
 import {getMainLayout} from './selectors/layout';
 import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
-import {getDescription, isVisible, getTitle} from './selectors/time-series-data';
+import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 
 import {drawGroundwaterLevels} from './discrete-data';
-import {drawDataLines} from './time-series-lines';
+import {drawDataSegments} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
 const addDefsPatterns = function(elem) {
     const patterns = [{
-        patternId: HASH_ID.current,
+        patternId: HASH_ID.primary,
         patternTransform: 'rotate(45)'
     }, {
         patternId: HASH_ID.compare,
@@ -52,12 +49,13 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
-            return xscale(d.date);
+            return xscale(d.dateTime);
         })
         .y(function(d) {
-            return yscale(d.value);
+            return yscale(d.point);
         });
-    const medianGrp = elem.append('g');
+    const medianGrp = elem.append('g')
+        .attr('class', 'median-stats-group');
     medianGrp.append('path')
         .datum(points)
         .classed('median-data-series', true)
@@ -77,18 +75,19 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  */
 const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
-    if (!visible) {
-        return;
-    }
     const container = elem
         .append('g')
             .attr('id', 'median-points');
+    if (!visible || !seriesPoints) {
+        return;
+    }
+
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
 
-    seriesPoints.forEach((points, index) => {
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: points});
+    Object.values(seriesPoints).forEach((series, index) => {
+        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: series.values});
     });
 };
 
@@ -127,13 +126,15 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
  */
 const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#flood-level-points').remove();
-    if (!visible) {
-        return;
-    }
     const container = elem
         .append('g')
         .lower()
             .attr('id', 'flood-level-points');
+
+    if (!visible) {
+        return;
+    }
+
     if (enableClip) {
         container.attr('clip-path', 'url(#graph-clip');
     }
@@ -150,33 +151,28 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
 };
 
 
-const createTitle = function(elem, store, siteNo, showMLName, showTooltip) {
+const drawTitle = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
         .classed('time-series-graph-title', true);
 
     if (showMLName) {
         titleDiv.append('div')
-            .call(link(store,(elem, {mlName, agencyCode}) => {
-                elem.attr('class', 'monitoring-location-name-div')
-                    .html(`${mlName}, ${agencyCode} ${siteNo}`);
-            }, createStructuredSelector({
-                mlName: getMonitoringLocationName(siteNo),
-                agencyCode: getAgencyCode(siteNo)
-            })));
+            .attr('class', 'monitoring-location-name-div')
+            .html(`${sitename}, ${agencyCode} ${siteNo}`);
     }
     titleDiv.append('div')
-        .call(link(store,(elem, {title, variable}) => {
+        .call(link(store,(elem, {title, parameter}) => {
             elem.html(title);
             if (showTooltip) {
-                elem.call(appendInfoTooltip, variable ? variable.variableDescription : 'No description available');
+                elem.call(appendInfoTooltip, parameter ? parameter.description : 'No description available');
             }
         }, createStructuredSelector({
             title: getTitle,
-            variable: getCurrentVariable
+            parameter: getPrimaryParameter
         })));
 };
 
-const watermark = function(elem, store) {
+const drawWatermark = function(elem, store) {
     // These constants will need to change if the watermark svg is updated
     const watermarkHalfHeight = 87 / 2;
     const watermarkHalfWidth = 235 / 2;
@@ -207,16 +203,15 @@ const watermark = function(elem, store) {
  * @param {Boolean} showMLName - If true add the monitoring location name to the top of the graph
  * @param {Boolean} showTooltip - If true render the tooltip text and add the tooltip focus element
  */
-export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, showTooltip) {
+export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let graphDiv;
-
     graphDiv = elem.append('div')
         .attr('class', 'hydrograph-container')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'hydrograph-interaction')
         .attr('ga-event-action', 'clickOnTimeSeriesGraph')
-        .call(watermark, store)
-        .call(createTitle, store, siteNo, showMLName, showTooltip);
+        .call(drawWatermark, store)
+        .call(drawTitle, store, siteNo, agencyCode, sitename, showMLName, showTooltip);
     if (showTooltip) {
         graphDiv.call(drawTooltipText, store);
     }
@@ -247,39 +242,41 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, showMLName, sho
         .call(link(store, (group, layout) => {
             group.attr('transform', `translate(${layout.margin.left},${layout.margin.top})`);
         }, getMainLayout))
-        .call(link(store, appendAxes, getAxes()))
-        .call(link(store, drawDataLines, createStructuredSelector({
-            visible: isVisible('current'),
-            tsLinesMap: getCurrentVariableLineSegments('current'),
+        .call(link(store, appendAxes, getAxes('MAIN')))
+        .call(link(store, drawDataSegments, createStructuredSelector({
+            visible: () => true,
+            currentMethodID: getSelectedIVMethodID,
+            tsSegmentsMap: getIVDataSegments('primary'),
+            dataKind: () => 'primary',
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
-            tsKey: () => 'current',
             enableClip: () => true
         })))
-        .call(link(store, drawDataLines, createStructuredSelector({
+        .call(link(store, drawDataSegments, createStructuredSelector({
             visible: isVisible('compare'),
-            tsLinesMap: getCurrentVariableLineSegments('compare'),
-            xScale: getMainXScale('compare'),
+            currentMethodID: getSelectedIVMethodID,
+            tsSegmentsMap: getIVDataSegments('compare'),
+            dataKind: () => 'compare',
+            xScale: getMainXScale('prioryear'),
             yScale: getMainYScale,
-            tsKey: () => 'compare',
+            enableClip: () => true
+        })))
+        .call(link(store, drawGroundwaterLevels, createStructuredSelector({
+            levels: getGroundwaterLevelPoints,
+            xScale: getMainXScale('current'),
+            yScale: getMainYScale,
             enableClip: () => true
         })))
         .call(link(store, plotAllMedianPoints, createStructuredSelector({
             visible: isVisible('median'),
             xscale: getMainXScale('current'),
             yscale: getMainYScale,
-            seriesPoints: getCurrentVariableMedianStatPoints,
-            enableClip: () => true
-        })))
-        .call(link(store, drawGroundwaterLevels, createStructuredSelector({
-            points: getVisibleGroundwaterLevelPoints,
-            xScale: getMainXScale('current'),
-            yScale: getMainYScale,
+            seriesPoints: getPrimaryMedianStatisticsData,
             enableClip: () => true
         })))
         .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
-            xscale: getBrushXScale('current'),
+            xscale: getBrushXScale,
             yscale: getMainYScale,
             seriesPoints: getWaterwatchFloodLevels
         })));

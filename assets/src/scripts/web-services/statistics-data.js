@@ -3,8 +3,17 @@ import config from 'ui/config';
 import {parseRDB} from 'ui/utils';
 
 
-
-const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis';
+/**
+ * Formats a URL for the purpose of downloading median statistics in RDB format
+ * @param  {String}  siteno - A code that uniquely identifies a monitoring location
+ * @param  {Array}  parameterCode - USGS five digit parameter code
+ * @param {String} statType - The statistics type requested from the water services API, such as 'median'
+ * @param {String} format - The format of the data returned from the water services API, such as 'json' or 'rdb'
+ * @return {String} The URL used to contact waterservices.usgs.gov
+ */
+export const getServiceURLStatistics = function({siteno, parameterCode, statType, format}) {
+    return `${config.SERVICE_ROOT}/stat/?sites=${siteno}&statReportType=daily&statTypeCd=${statType}&parameterCd=${parameterCode}&format=${format}`;
+};
 
 /*
  * Fetches statistics information in the RDB format for the statType. If params is not specified all parameters for the
@@ -15,9 +24,12 @@ const SERVICE_ROOT = config.SERVICE_ROOT || 'https://waterservices.usgs.gov/nwis
  * @returns {Promise} with response string if successful or rejected with error status
  */
 export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) {
-    let paramCds = params !== null ? `&parameterCd=${params.join(',')}` : '';
-    let url = `${SERVICE_ROOT}/stat/?format=rdb&sites=${sites.join(',')}&statReportType=daily&statTypeCd=${statType}${paramCds}`;
-    return get(url);
+    return get(getServiceURLStatistics({
+        siteno: sites,
+        parameterCode: params,
+        statType: statType,
+        format: 'rdb'
+    }));
 };
 
 /*

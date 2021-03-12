@@ -1,11 +1,17 @@
 import {
+    TEST_PRIMARY_IV_DATA,
+    TEST_GW_LEVELS,
+    TEST_MEDIAN_DATA,
+    TEST_CURRENT_TIME_RANGE
+} from '../mock-hydrograph-state';
+import {
     extendDomain,
-    getYDomain,
     getYTickDetails,
     getFullArrayOfAdditionalTickMarks,
     getLowestAbsoluteValueOfTickValues,
     getRoundedTickValues,
-    generateNegativeTicks
+    generateNegativeTicks,
+    getPrimaryValueRange
 } from './domain';
 
 
@@ -58,64 +64,16 @@ describe('monitoring-location/components/hydrograph/selectors/domain module', ()
         });
     });
 
-    describe('getYDomain', () => {
-        function pts(arr) {
-            return arr.map(val => {
-                return {
-                    value: val
-                };
-            });
-        }
-
-        it('is inclusive to all points with symlog', () => {
-            const domain = getYDomain(
-                [pts([1, 2, 3]), pts([5, 6, 7]), pts([-10, 2])],
-                {variableCode: {value: '00060'}}
-            );
-            expect(domain[0]).toBeLessThanOrEqual(-10);
-            expect(domain[1]).toBeGreaterThanOrEqual(7);
-        });
-
-        it('is inclusive to all points with linear', () => {
-            const domain = getYDomain(
-                [pts([1, 2, 3]), pts([5, 6, 7]), pts([-10, 2])],
-                {variableCode: {value: '00065'}}
-            );
-            expect(domain[0]).toBeLessThanOrEqual(-10);
-            expect(domain[1]).toBeGreaterThanOrEqual(7);
-        });
-
-        it('ignores non-finite values', () => {
-            const domain = getYDomain(
-                [pts([-Infinity, NaN, 1, 2, 3, Infinity])],
-                {variableCode: {value: '00065'}}
-            );
-            const padding = (3 - 1) * .2;
-            expect(domain).toEqual([1 - padding, 3 + padding]);
-        });
-
-        it('handles single point values', () => {
-            const domain = getYDomain(
-                [pts([100])]
-            );
-            expect(domain[0]).toBeLessThanOrEqual(50);
-            expect(domain[1]).toBeGreaterThanOrEqual(150);
-        });
-
-        it('handles single point values of 0', () => {
-            const domainSymlog = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00060'}});
-            expect(domainSymlog[0]).toBeLessThanOrEqual(0);
-            expect(domainSymlog[1]).toBeGreaterThanOrEqual(1);
-
-            const domainLinear = getYDomain([pts([0, 0, 0])], {variableCode: {value: '00045'}});
-            expect(domainLinear[0]).toBeLessThanOrEqual(0);
-            expect(domainLinear[1]).toBeGreaterThanOrEqual(1);
-        });
-    });
-
     describe('getYTickDetails', () => {
+        it('Returns the default tick details if no parameter is defined', () => {
+            const tickDetails = getYTickDetails.resultFunc([0, 1], null);
+            expect(tickDetails.tickValues).toEqual(expect.any(Array));
+            expect(tickDetails.tickFormat).toEqual(expect.any(Function));
+            expect(tickDetails.tickFormat(1)).toEqual(expect.any(String));
+        });
+
         it('returns ticks and a formatting function', () => {
-            const tickDetails = getYTickDetails.resultFunc([0, 1]);
+            const tickDetails = getYTickDetails.resultFunc([0, 1], {parameterCode: '00065'});
             expect(tickDetails.tickValues).toEqual(expect.any(Array));
             expect(tickDetails.tickFormat).toEqual(expect.any(Function));
             expect(tickDetails.tickFormat(1)).toEqual(expect.any(String));
@@ -174,6 +132,35 @@ describe('monitoring-location/components/hydrograph/selectors/domain module', ()
             const expectedReturnedArrayWithNegatives = [-15, -25, -50, 15, 25, 50];
             expect(generateNegativeTicks(testTickValues_1, additionalTickValues)).toEqual(expectedReturnedArrayNoNegatives);
             expect(generateNegativeTicks(testTickValues_2, additionalTickValues)).toEqual(expectedReturnedArrayWithNegatives);
+        });
+    });
+
+    describe('getPrimaryValueRange', () => {
+        it('if no hydrograph data then return a range of [0, 1]', () => {
+            expect(getPrimaryValueRange({
+                hydrographData: {},
+                hydrographState: {
+                    showCompareIVData: true,
+                    showMedianData: true
+                }
+            })).toEqual([0, 1]);
+        });
+
+        it('Show range if hydrograph data exists', () => {
+            const result = getPrimaryValueRange({
+                hydrographData: {
+                    currentTimeRange: TEST_CURRENT_TIME_RANGE,
+                    primaryIVData: TEST_PRIMARY_IV_DATA,
+                    groundwaterLevels: TEST_GW_LEVELS,
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: true,
+                    showMedianData: true
+                }
+            });
+            expect(result[0]).toBeLessThan(15.9);
+            expect(result[1]).toBeGreaterThan(27.2);
         });
     });
 });

@@ -1,22 +1,32 @@
-import {extent, ticks} from 'd3-array';
+import {ticks} from 'd3-array';
 import {format} from 'd3-format';
 import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
-import {getCurrentParmCd} from 'ml/selectors/time-series-selector';
 
-import {getVisiblePoints} from './drawing-data';
+import {
+    getIVValueRange,
+    getGroundwaterLevelsValueRange,
+    getPrimaryMedianStatisticsValueRange,
+    getPrimaryParameter
+} from 'ml/selectors/hydrograph-data-selector';
 
+import {isVisible} from './time-series-data';
+
+const Y_TICK_COUNT = 5;
 
 const PADDING_RATIO = 0.2;
-const Y_TICK_COUNT = 5;
 // array of parameters that should use
 // a symlog scale instead of a linear scale
 export const SYMLOG_PARMS = [
     '00060',
     '72137'
 ];
+
+const useSymlog = function(parameter) {
+    return parameter ? SYMLOG_PARMS.indexOf(parameter.parameterCode) > -1 : false;
+};
 
 /*
  * The helper functions are exported as an aid to testing. Only the selectors are actually imported into other modules
@@ -25,10 +35,10 @@ export const SYMLOG_PARMS = [
  *  Helper function which returns domain padded on both ends by paddingRatio.
  *  For positive domains, a zero-lower bound on the y-axis is enforced.
  *  @param {Array} domain - array of two numbers
- *  @param {Boolean} lowerBoundPOW10 - using log scale
+ *  @param {Boolean} useLogScale - using log scale
  *  @return {Array} - array of two numbers
  */
-export const extendDomain = function(domain, lowerBoundPOW10) {
+export const extendDomain = function(domain, useLogScale) {
     const isPositive = domain[0] > 0 && domain[1] > 0;
     let extendedDomain;
 
@@ -40,7 +50,7 @@ export const extendDomain = function(domain, lowerBoundPOW10) {
     ];
 
     // Log scales lower-bounded based on the order of magnitude of the domain minimum.
-    if (lowerBoundPOW10) {
+    if (useLogScale) {
         const absLog10 = Math.abs(Math.log(domain[0]));
         extendedDomain = [
             isPositive ? domain[0] * absLog10/(absLog10 + 1) : domain[0],
@@ -131,7 +141,7 @@ export const getRoundedTickValues = function(additionalTickValues, yDomain) {
 /**
  *  Helper function that, when negative values are present on the y-axis, adds additional negative values to the set of
  *  tick values used to fill tick mark value gaps on the y-axis on some log scale graphs
- * @param {array} additionalTickValues, a set of tick mark values
+ * @param {array} tickValues, a set of tick mark values
  * @returns {array} additionalTickValues, a set of tick mark values with (when needed) additional negative values
  */
 export const generateNegativeTicks = function(tickValues, additionalTickValues) {
@@ -165,63 +175,40 @@ export const getFullArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
     additionalTickValues = generateNegativeTicks(tickValues, additionalTickValues);
 
     // add the new set of tick values to the original and remove any values that are duplicates
-    let fullArrayOfTickMarks = Array.from(new Set(additionalTickValues.concat(tickValues)));
-
-   return fullArrayOfTickMarks;
+    return Array.from(new Set(additionalTickValues.concat(tickValues)));
 };
 
-/*
- * Helper function that returns the yExtent for the points in pointArrays.
- * @param {Array of Array of point objects} pointArrays
- * @param {String} currentVarParmCd
- * @return {Array of two Number} - represents the extent of the points to be used to graph the data.
- */
-export const getYDomain = function(pointArrays, currentVarParmCd) {
-    let yExtent;
-    let scaleDomains = [];
-
-    // Calculate max and min for data
-    for (const points of pointArrays) {
-        if (points.length === 0) {
-            continue;
+export const getPrimaryValueRange = createSelector(
+    isVisible('compare'),
+    isVisible('median'),
+    getIVValueRange('primary'),
+    getIVValueRange('compare'),
+    getPrimaryMedianStatisticsValueRange,
+    getGroundwaterLevelsValueRange,
+    getPrimaryParameter,
+    (showCompare, showMedian, primaryRange, compareRange, medianRange, gwLevelsRange, parameter) => {
+        const valueExtent = [];
+        let result = [0, 1];
+        if (primaryRange) {
+            valueExtent.push(...primaryRange);
         }
-        const finitePts = points.map(pt => pt.value).filter(val => isFinite(val));
-        let ptExtent = extent(finitePts);
-        if (ptExtent[0] === ptExtent[1]) {
-            // when both the lower and upper values of
-            // extent are the same, the domain of the
-            // extent is from -Infinity to +Infinity;
-            // this isn't useful for creation of data
-            // points, so add this broadens the extent
-            // a bit for single point series
-            if (ptExtent[0]) {
-                ptExtent = [ptExtent[0] - ptExtent[0] / 2, ptExtent[0] + ptExtent[0] / 2];
-            } else { // ptExtent of 0 so just set to a constant
-                ptExtent = [0, 1];
-            }
+        if (gwLevelsRange) {
+            valueExtent.push(...gwLevelsRange);
         }
-        scaleDomains.push(ptExtent);
-    }
-    if (scaleDomains.length > 0) {
-        const flatDomains = [].concat(...scaleDomains).filter(val => isFinite(val));
-        if (flatDomains.length > 0) {
-            yExtent = [Math.min(...flatDomains), Math.max(...flatDomains)];
+        if (showCompare && compareRange) {
+            valueExtent.push(...compareRange);
         }
-    }
+        if (showMedian && medianRange) {
+            valueExtent.push(...medianRange);
+        }
+        if (valueExtent.length) {
+            result = [Math.min(...valueExtent), Math.max(...valueExtent)];
 
-    // Add padding to the extent and handle empty data sets.
-    if (yExtent) {
-        yExtent = extendDomain(yExtent, SYMLOG_PARMS.indexOf(currentVarParmCd) > -1);
-    } else {
-        yExtent = [0, 1];
+            // Add padding to the extent and handle empty data sets.
+            result = extendDomain(result, useSymlog(parameter));
+        }
+        return result;
     }
-    return yExtent;
-};
-
-export const getYDomainForVisiblePoints = createSelector(
-    getVisiblePoints,
-    getCurrentParmCd,
-    getYDomain
 );
 
 /*
@@ -230,17 +217,15 @@ export const getYDomainForVisiblePoints = createSelector(
  *      @prop tickFormat {Array of String} - formatted tickValues
  */
 export const getYTickDetails = createSelector(
-    getYDomainForVisiblePoints,
-    getCurrentParmCd,
-    (yDomain, parmCd) => {
-        const isSymlog = SYMLOG_PARMS.indexOf(parmCd) > -1;
-
+    getPrimaryValueRange,
+    getPrimaryParameter,
+    (yDomain, parameter) => {
         let tickValues = ticks(yDomain[0], yDomain[1], Y_TICK_COUNT);
 
         // When there are too many log scale ticks they will overlap--reduce the number in proportion to the number of ticks
         // For example, if there are 37 tick marks, every 4 ticks will be used... if there are 31 tick marks, every 3 ticks
         // will be used. Screens smaller than the USWDS defined medium screen will use fewer tick marks than larger screens.
-        if (isSymlog) {
+        if (useSymlog(parameter)) {
             // add additional ticks and labels to log scales as needed
             tickValues = getFullArrayOfAdditionalTickMarks(tickValues, yDomain);
             // remove ticks if there are too many of them

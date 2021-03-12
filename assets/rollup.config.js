@@ -18,6 +18,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const getBundleConfig = function(src, dest) {
     const entries = [
+        {find: 'uswds-components', replacement: path.resolve(__dirname, 'node_modules/uswds/src/js/components')},
         {find: 'ui', replacement: path.resolve(__dirname, 'src/scripts/')},
         {find: 'ml', replacement: path.resolve(__dirname, 'src/scripts/monitoring-location')},
         {find:'d3render', replacement: path.resolve(__dirname, 'src/scripts/d3-rendering')},
