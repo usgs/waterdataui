@@ -161,7 +161,7 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
  * @param {D3 selection} container
  * @param {Redux store} store
  * @param {String} siteno
- * @param {String} initialDateRange - Used to set the initial contents of the text field.
+ * @param {String} initialDateRange - Either in the form of P<some number>P(or Y). Used to set the initial contents of the text field.
  */
 const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateRange) {
     const formContainer = container.append('div')
