@@ -130,6 +130,13 @@
                   <li class="usa-nav__secondary-item">
                       <a href="https://dashboard.waterdata.usgs.gov/" rel="noopener">Water Dashboard</a>
                   </li>
+                  <li class="usa-nav__secondary-item">
+                      <a href="{{ url_for('questions_comments', email_for_data_questions=email_for_data_questions) }}"
+                         target="_blank"
+                         ga-on="click" ga-event-category="navigation" ga-event-action="toFeedBackForm_navbar">
+                          Questions or Comments
+                      </a>
+                  </li>
               </ul>
             </div>
         </div>

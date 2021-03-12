@@ -257,8 +257,7 @@ class TestParseRdb(TestCase):
                       }
         expected_2 = {'agency_cd': 'USGS',
                       'site_no': '345671',
-                      'station_nm':
-                      'Some Random Site 1',
+                      'station_nm': 'Some Random Site 1',
                       'site_tp_cd': 'ST',
                       'dec_lat_va': '201.94977778',
                       'dec_long_va': '-101.12763889',

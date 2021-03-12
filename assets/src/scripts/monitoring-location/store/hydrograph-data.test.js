@@ -21,7 +21,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
 
     config.locationTimeZone = 'America/Chicago';
 
-    luxon.DateTime.local = jest.fn().mockReturnValue(luxon.DateTime.fromISO('2021-02-10T12:00'));
+    luxon.DateTime.local = jest.fn().mockReturnValue(luxon.DateTime.fromISO('2021-02-10T12:00', {zone: 'America/Chicago'}));
     beforeEach(() => {
         store = createStore(
             combineReducers({

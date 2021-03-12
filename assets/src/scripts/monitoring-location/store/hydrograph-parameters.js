@@ -9,8 +9,6 @@ import {fetchTimeSeries} from 'ui/web-services/instantaneous-values';
 import {getConvertedTemperatureParameter, hasMeasuredFahrenheitParameter} from 'ml/iv-data-utils';
 import {Actions as floodStateActions} from './flood-inundation';
 
-const GAGE_HEIGHT_PARAMETER_CODE = '00065';
-
 /*
  * Synchronous Redux action - updatethe hydrograph variables
  * @param {Object} variables - keys are parameter codes.
@@ -45,7 +43,7 @@ export const retrieveHydrographParameters = function(siteno) {
                                 hasIVData: true
                             };
                             // If the parameter is for gage height set the initial flood gage height
-                            if (parameterCode === GAGE_HEIGHT_PARAMETER_CODE) {
+                            if (parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE) {
                                 dispatch(floodStateActions.setGageHeight(parseFloat(ts.values[0].value[0].value)));
                             }
 

@@ -606,7 +606,7 @@ class TestGetPeriodOfRecordByParmCd(TestCase):
         })
 
 
-class GetDefaultParameterCode(TestCase):
+class TestGetDefaultParameterCode(TestCase):
 
     def test_both_iv_and_gw(self):
         self.assertEqual(get_default_parameter_code({

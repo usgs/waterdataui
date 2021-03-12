@@ -70,8 +70,8 @@ def test_good_weather_service_response():
 
         timezone = get_iana_time_zone('45.0', '-100.0')
         r_mock.assert_called_once()
-        assert(r_mock.call_args[0][1] == 'points/45.0,-100.0')
-        assert(timezone == 'America/New_York')
+        assert r_mock.call_args[0][1] == 'points/45.0,-100.0'
+        assert timezone == 'America/New_York'
 
 
 def test_bad_weather_service_response():
@@ -82,5 +82,5 @@ def test_bad_weather_service_response():
 
         timezone = get_iana_time_zone('46.0', '-110.0')
         r_mock.assert_called_once()
-        assert (r_mock.call_args[0][1] == 'points/46.0,-110.0')
+        assert r_mock.call_args[0][1] == 'points/46.0,-110.0'
         assert timezone is None

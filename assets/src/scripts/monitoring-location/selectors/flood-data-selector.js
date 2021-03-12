@@ -1,5 +1,8 @@
 import {createSelector} from 'reselect';
-import {getSelectedParameterCode} from './hydrograph-state-selector';
+
+import config from 'ui/config';
+
+import {getPrimaryParameter} from './hydrograph-data-selector';
 
 export const getFloodStages = state => state.floodData.stages || [];
 
@@ -31,9 +34,8 @@ export const hasWaterwatchData = createSelector(
  */
 export const isWaterwatchVisible = createSelector(
     hasWaterwatchData,
-    getSelectedParameterCode,
-    (hasFloodLevels, paramCd) =>
-        hasFloodLevels && paramCd === '00065'
+    getPrimaryParameter,
+    (hasFloodLevels, parameter) => hasFloodLevels && parameter && parameter.parameterCode === config.GAGE_HEIGHT_PARAMETER_CODE
 );
 
 /*
