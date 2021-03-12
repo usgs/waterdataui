@@ -135,7 +135,7 @@ export const getIVTableData = memoize(dataKind => createSelector(
             return {
                 parameterName: parameter.name,
                 result: point.value,
-                dateTime: DateTime.fromMillis(point.dateTime).toISO({zone: config.locationTimeZone}),
+                dateTime: DateTime.fromMillis(point.dateTime, {zone: config.locationTimeZone}).toISO(),
                 approvals: point.approvalQualifier ? APPROVAL_QUALIFIERS[point.approvalQualifier].label : 'Provisional',
                 masks: point.isMasked ? MASKED_QUALIFIERS[point.maskedQualifier].label : ''
             };
