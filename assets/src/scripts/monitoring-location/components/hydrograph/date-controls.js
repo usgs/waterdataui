@@ -45,22 +45,26 @@ const isCustomPeriod = function(dateRange) {
 const isCustomDateRange = function(dateRange) {
     return dateRange === 'custom';
 };
-const showCustomContainer = function(dateRange) {
+
+/*
+* Helper function that
+*/
+function showCustomContainer(dateRange) {
     return isCustomPeriod(dateRange) || isCustomDateRange(dateRange);
-};
+}
 
 /*
  * Set custom form hidden attribute and clear custom container inputs if it is being hidden
  * @param {Boolean} showCustom
  */
-const setCustomFormVisibility = function(showCustom) {
+function setCustomFormVisibility(showCustom) {
     const customContainer = select('#container-radio-group-and-form-buttons');
     customContainer.attr('hidden', showCustom ? null : true);
     // Clear text inputs if form is not visible
     if (!showCustom) {
         customContainer.selectAll('input[type="text"]').property('value', '');
     }
-};
+}
 
 /*
  * Render the time range radio buttons
@@ -113,16 +117,16 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
 };
 
 /*
- * Render the radio buttons that select which kind of custom timespan is desired
+ * Render the radio buttons that select which kind of custom time span is desired
  * @param {D3 selection} container
- * @param {String} initialDateRange - Used to set the initial radio button selection
+ * @param {String} initialDateRange - Is either the word 'custom' or has the form of P<some number>(D or Y), such as 'P7D'.
  */
 const drawCustomRadioButtons = function(container, initialDateRange) {
     const radioButtonContainer = container.append('div')
         .attr('id', 'ts-custom-date-radio-group')
         .attr('role', 'radiogroup')
         .attr('aria-label', 'Custom time interval select');
-    radioButtonContainer.append('p').text('Enter timespan using');
+    radioButtonContainer.append('p').text('Enter time span using');
     const listContainer = radioButtonContainer.append('ul')
             .attr('class', 'usa-fieldset usa-list--unstyled');
     const radioButtonListItem = listContainer.selectAll('li')
@@ -131,6 +135,8 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
         .enter()
         .append('li');
 
+    console.log("initialDateRange === 'custom'",  initialDateRange === 'custom')
+    console.log("initialDateRange !== 'custom'", initialDateRange !== 'custom')
     radioButtonListItem.append('input')
         .attr('type', 'radio')
         .attr('name', 'ts-custom-daterange-input')
