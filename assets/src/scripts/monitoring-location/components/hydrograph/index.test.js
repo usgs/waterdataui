@@ -199,27 +199,6 @@ describe('monitoring-location/components/hydrograph module', () => {
                     selectedIVMethodID: undefined
                 });
             });
-
-            it('With timeSeriesId set', () => {
-                attachToNode(store, graphNode, {
-                    ...INITIAL_PARAMETERS,
-                    timeSeriesId: '90649'
-                });
-                expect(retrieveHydrographDataSpy).toHaveBeenCalledWith('11112222', {
-                    parameterCode: '72019',
-                    period: 'P7D',
-                    startTime: null,
-                    endTime: null,
-                    loadCompare: undefined,
-                    loadMedian: false
-                });
-                expect(store.getState().hydrographState).toEqual({
-                    selectedParameterCode: '72019',
-                    selectedDateRange: 'P7D',
-                    showCompareIVData: undefined,
-                    selectedIVMethodID: '90649'
-                });
-            });
         });
 
         it('Should fetch the hydrograph parameters', () => {

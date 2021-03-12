@@ -90,33 +90,28 @@ export const drawDataSegment = function(group, {segment, isCurrentMethod, dataKi
  * @param {Object} yScale - D3 scale for the y axis
  * @param {Boolean} enableClip - Set if lines should be clipped to the width/height of the container.
  */
-export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegmentsMap, dataKind, xScale, yScale, enableClip}, container) {
-    container = container || elem.append('g');
-
+export const drawDataSegments = function(elem, {visible, currentMethodID, tsSegmentsMap, dataKind, xScale, yScale, enableClip}) {
     const elemClass = `ts-${dataKind}-group`;
     const isCurrentMethodID = function(thisMethodID) {
         return currentMethodID ? currentMethodID === thisMethodID : true;
     };
 
-    container.selectAll(`.${elemClass}`).remove();
+    elem.selectAll(`.${elemClass}`).remove();
+    const lineGroup = elem.append('g')
+        .attr('class', elemClass);
     if (!visible || !tsSegmentsMap) {
         return;
     }
-    const tsLineGroup = container
-        .append('g')
-            .attr('class', elemClass);
 
     if (enableClip) {
-        tsLineGroup.attr('clip-path', 'url(#graph-clip)');
+        lineGroup.attr('clip-path', 'url(#graph-clip)');
     }
 
     Object.keys(tsSegmentsMap).forEach(methodID => {
         const isCurrentMethod = isCurrentMethodID(methodID);
         const segments = tsSegmentsMap[methodID];
         segments.forEach(segment => {
-            drawDataSegment(tsLineGroup, {segment, isCurrentMethod, dataKind, xScale, yScale});
+            drawDataSegment(lineGroup, {segment, isCurrentMethod, dataKind, xScale, yScale});
         });
     });
-
-    return container;
 };

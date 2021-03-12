@@ -13,7 +13,7 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
                 primaryIVData: TEST_PRIMARY_IV_DATA
             },
             hydrographState: {
-                selectedIVMethodID: '90649'
+                selectedIVMethodID: '252055'
             }
         };
         let div;
@@ -25,8 +25,22 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
             div.remove();
         });
 
-        it('Creates a picker and sets the currentMethodID', () => {
+        it('Creates a picker and sets the currentMethodID to the hydrographState\'s selectedIVMethodID', () => {
             let store = configureStore(TEST_STATE);
+            div.call(drawMethodPicker, store);
+
+            expect(div.select('#ts-method-select-container').attr('hidden')).toBeNull();
+            expect(div.select('select').property('value')).toEqual('252055');
+        });
+
+        it('Creates a picker and if selectedIVMethodID not set set to the preferred method id', () => {
+            let store = configureStore({
+                ...TEST_STATE,
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    selectedIVMethodID: null
+                }
+            });
             div.call(drawMethodPicker, store);
 
             expect(div.select('#ts-method-select-container').attr('hidden')).toBeNull();
@@ -37,12 +51,12 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
             let store = configureStore(TEST_STATE);
             div.call(drawMethodPicker, store);
 
-            const newOption = div.select('option[value="252055"]');
+            const newOption = div.select('option[value="90649"]');
             newOption.attr('selected', true);
 
             div.select('select').dispatch('change');
 
-            expect(store.getState().hydrographState.selectedIVMethodID).toBe('252055');
+            expect(store.getState().hydrographState.selectedIVMethodID).toBe('90649');
         });
 
         it('Expects if the data has only one method then the picker will be hidden', () => {
