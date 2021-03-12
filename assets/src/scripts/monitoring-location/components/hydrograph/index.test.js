@@ -211,7 +211,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(retrieveWaterwatchDataSpy).toHaveBeenCalledWith('11112222');
         });
 
-        it('Should fetch the data but not set the hydrograph state or fetch hydrograph parameters when showOnlyGraph is true', () => {
+        it('Should fetch the data and set the hydrograph state but not does not fetch hydrograph parameters when showOnlyGraph is true', () => {
             attachToNode(store, graphNode, {
                 ...INITIAL_PARAMETERS,
                 showOnlyGraph: true
@@ -225,7 +225,11 @@ describe('monitoring-location/components/hydrograph module', () => {
                 loadCompare: false,
                 loadMedian: false
             });
-            expect(store.getState().hydrographState).toEqual({});
+            expect(store.getState().hydrographState).toEqual({
+                selectedParameterCode: '72019',
+                selectedDateRange: 'P7D',
+                showCompareIVData: false
+            });
             expect(retrieveWaterwatchDataSpy).toHaveBeenCalled();
             expect(retrieveHydrographParametersSpy).not.toHaveBeenCalled();
         });
