@@ -39,6 +39,9 @@ const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
     }
 ];
 
+// The standard 'selectedDateRange' options -- the options that are not a custom period, such as P129D or P3D
+const STANDARD_INITIAL_VALUES = ['custom', 'P7D', 'P30D', 'P1Y'];
+
 const isCustomPeriod = function(dateRange) {
     return dateRange !== 'custom' && !DATE_RANGE.find(range => range.period === dateRange);
 };
@@ -135,17 +138,17 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
         .enter()
         .append('li');
 
-    console.log("initialDateRange === 'custom'",  initialDateRange === 'custom')
-    console.log("initialDateRange !== 'custom'", initialDateRange !== 'custom')
     radioButtonListItem.append('input')
         .attr('type', 'radio')
         .attr('name', 'ts-custom-daterange-input')
         .attr('id', d => `${d.value}-input`)
         .attr('class', 'usa-radio__input')
         .property('value', d => d.value)
-        .property('checked', d => d.value === 'calendar' ? initialDateRange === 'custom' : initialDateRange !== 'custom')
+        .property('checked', d => d.value === 'calendar' ?
+            STANDARD_INITIAL_VALUES.includes(initialDateRange) :  !STANDARD_INITIAL_VALUES.includes(initialDateRange))
         .attr('ga-on', 'click')
-        .attr('aria-expanded', d => d.value === 'calendar' ? initialDateRange === 'custom' : initialDateRange !== 'custom')
+        .attr('aria-expanded', d => d.value === 'calendar' ?
+            STANDARD_INITIAL_VALUES.includes(initialDateRange) : !STANDARD_INITIAL_VALUES.includes(initialDateRange))
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
         .on('change', function(_, d) {
@@ -156,6 +159,7 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
             container.select('#ts-customdaterange-select-container')
                 .attr('hidden', d.value === 'calendar' ? null : true);
         });
+
         radioButtonListItem.append('label')
             .attr('class', 'usa-radio__label')
             .attr('for', (d) => `${d.value}-input`)
@@ -174,7 +178,7 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-        .attr('hidden', initialDateRange === 'custom' ? true : null);
+        .attr('hidden', STANDARD_INITIAL_VALUES.includes(initialDateRange) ? true : null);
 
     const daysBeforeContainer = formContainer.append('div')
             .attr('class', 'usa-character-count')
@@ -292,8 +296,8 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .attr('hidden', initialDateRange === 'custom' ? null : true);
-
+        .attr('hidden', STANDARD_INITIAL_VALUES.includes(initialDateRange) ? null : true);
+        
     const dateRangePickerContainer = calendarDaysContainer.append('div')
             .attr('class', 'usa-date-range-picker');
     dateRangePickerContainer.append('div')

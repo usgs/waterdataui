@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Cleaned up hydrograph rendering and made changes to make it possible to determine when rendering of the hydrograph is complete.
 - If no method id is selected, the initial method ID is now determined by picking the IV time series with the most points. If more than one has the most points, the time series with the most
 recent data is chosen. 
-- Floating feedback link is now centered on page and an additional link added in header.
+- Floating feedback link is now centered on page (and networks page) and an additional link added to header.
+- Changed label order and label wording for the 'custom' option in time selection menu.
 
 ## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0)
 ### Added
