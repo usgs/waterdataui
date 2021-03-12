@@ -40,7 +40,7 @@ const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
 ];
 
 // The standard 'selectedDateRange' options -- the options that are not a custom period, such as P129D or P3D
-const STANDARD_INITIAL_VALUES = ['custom', 'P7D', 'P30D', 'P1Y'];
+const STANDARD_INITIAL_VALUES = ['custom', 'P7D', 'P30D', 'P365D'];
 
 const isCustomPeriod = function(dateRange) {
     return dateRange !== 'custom' && !DATE_RANGE.find(range => range.period === dateRange);
@@ -49,12 +49,9 @@ const isCustomDateRange = function(dateRange) {
     return dateRange === 'custom';
 };
 
-/*
-* Helper function that
-*/
-function showCustomContainer(dateRange) {
+const showCustomContainer = function(dateRange) {
     return isCustomPeriod(dateRange) || isCustomDateRange(dateRange);
-}
+};
 
 /*
  * Set custom form hidden attribute and clear custom container inputs if it is being hidden
