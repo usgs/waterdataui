@@ -35,8 +35,8 @@ export const drawDownloadLinks = function(elem, store, siteno) {
     }) => {
         const hasIVData = config.ivPeriodOfRecord && inputs.parameterCode in config.ivPeriodOfRecord;
         const hasGWData = config.gwPeriodOfRecord && inputs.parameterCode in config.gwPeriodOfRecord;
-        const startDT = DateTime.fromMillis(currentTimeRange.start).toISO();
-        const endDT = DateTime.fromMillis(currentTimeRange.end).toISO();
+        const startDT = DateTime.fromMillis(currentTimeRange.start, {zone: config.locationTimeZone}).toISO();
+        const endDT = DateTime.fromMillis(currentTimeRange.end, {zone: config.locationTimeZone}).toISO();
 
         elem.select('#iv-data-download-list').remove();
 
@@ -81,8 +81,8 @@ export const drawDownloadLinks = function(elem, store, siteno) {
                     url: getServiceURL({
                         siteno: siteno,
                         parameterCode:  inputs.parameterCode,
-                        startTime: DateTime.fromMillis(priorYearTimeRange.start).toISO(),
-                        endTime: DateTime.fromMillis(priorYearTimeRange.end).toISO(),
+                        startTime: DateTime.fromMillis(priorYearTimeRange.start, {zone: config.locationTimeZone}).toISO(),
+                        endTime: DateTime.fromMillis(priorYearTimeRange.end, {zone: config.locationTimeZone}).toISO(),
                         format: 'rdb'
                     }),
                     gaEventAction: 'downloadLinkCompare',

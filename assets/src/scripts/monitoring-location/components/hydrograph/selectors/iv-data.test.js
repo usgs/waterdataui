@@ -1,7 +1,9 @@
+import config from 'ui/config';
 
 import {getIVDataPoints, getIVTableData, getIVDataSegments, getIVUniqueDataKinds} from './iv-data';
 
 describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
+    config.locationTimeZone = 'America/Chicago';
     const TEST_IV_DATA = {
         parameter: {
             parameterCode: '72019',

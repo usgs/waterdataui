@@ -174,8 +174,8 @@ export const retrievePriorYearIVData = function(siteno, {parameterCode, startTim
             dispatch(setHydrographTimeRange({start: priorYearStartTime, end: priorYearEndTime}, 'prioryear'));
             return dispatch(retrieveIVData(siteno, 'compare', {
                 parameterCode: parameterCode,
-                startTime: DateTime.fromMillis(priorYearStartTime).toISO(),
-                endTime: DateTime.fromMillis(priorYearEndTime).toISO()
+                startTime: DateTime.fromMillis(priorYearStartTime, {zone: config.locationTimeZone}).toISO(),
+                endTime: DateTime.fromMillis(priorYearEndTime, {zone: config.locationTimeZone}).toISO()
             }));
         }
     };

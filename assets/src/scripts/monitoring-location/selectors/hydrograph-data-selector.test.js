@@ -1,9 +1,12 @@
+import config from 'ui/config';
+
 import {getTimeRange, getIVData, getMedianStatisticsData, getGroundwaterLevels, getIVValueRange,
     getGroundwaterLevelsValueRange, getPrimaryParameter, getPrimaryMethods, getPrimaryMedianStatisticsData,
     getPrimaryMedianStatisticsValueRange
 } from './hydrograph-data-selector';
 
 describe('monitoring-location/selectors/hydrograph-data-selectors', () => {
+    config.locationTimeZone = 'America/Chicago';
 
     const TEST_PRIMARY_IV_DATA = {
         parameter: {

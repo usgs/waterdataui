@@ -334,8 +334,8 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     .text('Both start and end dates must be specified.');
                 calendarDaysValidationContainer.attr('hidden', null);
             } else {
-                const startTime = DateTime.fromFormat(startDateStr, 'LL/dd/yyyy').toMillis();
-                const endTime = DateTime.fromFormat(endDateStr, 'LL/dd/yyyy').toMillis();
+                const startTime = DateTime.fromFormat(startDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone}).toMillis();
+                const endTime = DateTime.fromFormat(endDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone}).toMillis();
                 if (startTime > endTime) {
                     dateAlertBody.selectAll('p').remove();
                     dateAlertBody.append('p')

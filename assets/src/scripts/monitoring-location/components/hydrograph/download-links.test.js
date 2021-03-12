@@ -25,6 +25,8 @@ describe('monitoring-location/components/hydrograph/download-links', () => {
             end_date: '2020-01-01'
         }
     };
+    config.locationTimeZone = 'America/Chicago';
+
     const TEST_STATE_BASE = {
         'hydrographData': {
             'currentTimeRange': {
