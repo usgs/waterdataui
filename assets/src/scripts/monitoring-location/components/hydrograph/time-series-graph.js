@@ -10,17 +10,19 @@ import {appendAxes} from 'd3render/axes';
 import {renderMaskDefs} from 'd3render/data-masks';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
 
-import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
+import {isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getPrimaryParameter, getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
 
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
+import {getFloodLevelData} from './selectors/flood-level-data';
 import {getIVDataSegments, HASH_ID} from './selectors/iv-data';
 import {getMainLayout} from './selectors/layout';
-import {getMainXScale, getMainYScale, getBrushXScale} from './selectors/scales';
+import {getMainXScale, getMainYScale} from './selectors/scales';
 import {getTitle, getDescription, isVisible} from './selectors/time-series-data';
 
 import {drawGroundwaterLevels} from './discrete-data';
+import {drawFloodLevelLines} from './flood-level-lines';
 import {drawDataSegments} from './time-series-lines';
 import {drawTooltipFocus, drawTooltipText}  from './tooltip';
 
@@ -89,66 +91,6 @@ const drawAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
         drawMedianPoints(container, {xscale, yscale, modulo: index % 6, points: series.values});
     });
 };
-
-/**
- * Plots the Waterwatch flood level points for a multiple time series.
- * @param  {Object} elem
- * @param  {Function} xscale
- * @param  {Function} yscale
- * @param  {Number} modulo
- * @param  {Array} points
- */
-const drawFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
-    const stepFunction = d3Line()
-        .x(function(_,i) {
-            return xscale(xscale.domain()[i]);
-        })
-        .y(function(d) {
-            return yscale(d);
-        });
-    const floodLevelGrp = elem.append('g');
-    floodLevelGrp.append('path')
-        .datum(points)
-        .classed(classes[0], true)
-        .classed(classes[1], true)
-        .attr('d', stepFunction);
-};
-
-/**
- * Plots the Waterwatch points for all flood levels for the current variable.
- * @param  {Object} elem
- * @param  {Boolean} visible
- * @param  {Function} xscale
- * @param  {Function} yscale
- * @param  {Array} seriesPoints
- * @param {Boolean} enableClip
- */
-const drawAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
-    elem.select('#flood-level-points').remove();
-    const container = elem
-        .append('g')
-        .lower()
-            .attr('id', 'flood-level-points');
-
-    if (!visible) {
-        return;
-    }
-
-    if (enableClip) {
-        container.attr('clip-path', 'url(#graph-clip');
-    }
-    const keys = ['actionStage', 'floodStage', 'moderateFloodStage', 'majorFloodStage'];
-    const classes = [['waterwatch-data-series','action-stage'],
-        ['waterwatch-data-series','flood-stage'],
-        ['waterwatch-data-series','moderate-flood-stage'],
-        ['waterwatch-data-series','major-flood-stage']];
-
-    keys.forEach((key, index) => {
-        drawFloodLevelPoints(container, {xscale, yscale, points: Array(2).fill(seriesPoints[key]),
-            classes: classes[index]});
-    });
-};
-
 
 const drawTitle = function(elem, store, siteNo, agencyCode, sitename, showMLName, showTooltip) {
     let titleDiv = elem.append('div')
@@ -271,11 +213,11 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
             seriesPoints: getPrimaryMedianStatisticsData,
             enableClip: () => true
         })))
-        .call(link(store, drawAllFloodLevelPoints, createStructuredSelector({
+        .call(link(store, drawFloodLevelLines, createStructuredSelector({
             visible: isWaterwatchVisible,
-            xscale: getBrushXScale,
+            xscale: getMainXScale('current'),
             yscale: getMainYScale,
-            seriesPoints: getWaterwatchFloodLevels
+            floodLevels: getFloodLevelData
         })));
 
     if (showTooltip) {
