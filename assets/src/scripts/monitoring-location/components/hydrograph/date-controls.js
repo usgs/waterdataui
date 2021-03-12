@@ -297,9 +297,9 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
         .attr('hidden', STANDARD_INITIAL_VALUES.includes(initialDateRange) ? null : true);
-        
+    
     const dateRangePickerContainer = calendarDaysContainer.append('div')
-            .attr('class', 'usa-date-range-picker');
+        .attr('class', 'usa-date-range-picker');
     dateRangePickerContainer.append('div')
         .attr('id', 'start-date-form-group')
         .attr('class', 'usa-form-group')
