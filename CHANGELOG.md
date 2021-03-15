@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Cleaned up hydrograph rendering and made changes to make it possible to determine when rendering of the hydrograph is complete.
 - If no method id is selected, the initial method ID is now determined by picking the IV time series with the most points. If more than one has the most points, the time series with the most
 recent data is chosen. 
-- Floating feedback link is now centered on page and an additional link added in header.
+- Floating feedback link is now centered on page (and networks page) and an additional link added to header.
+- Changed label order and label wording for the 'custom' option in time selection menu.
 
 ### Added
 - If the graph shows no data for the selected time range, a message will appear on top of the graph. In addition, if a particular kind of selected data isn't available (for instance if compare to last year is selected and there is no data for that time range)

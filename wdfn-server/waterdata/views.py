@@ -161,7 +161,7 @@ def monitoring_location(site_no):
                 email_for_data_questions = \
                     app.config['EMAIL_TARGET']['contact'].format(state_district_code=site_owner_state.lower())
             else:
-                email_for_data_questions = app.config['EMAIL_TO_REPORT_PROBLEM']
+                email_for_data_questions = app.config['EMAIL_TARGET']['report']
 
             # Get the time zone for the location
             time_zone = get_iana_time_zone(station_record.get('dec_lat_va', ''), station_record.get('dec_long_va', ''))

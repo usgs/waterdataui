@@ -11,3 +11,30 @@ $h1-font-size: 3.25rem !default;
 @import 'wdfnviz';
 
 $usgs-blue: #00264c;
+
+.user-feedback {
+  @include u-bg('blue-60v');
+  position: sticky;
+  bottom: 0;
+  z-index: 2001;
+  @include u-padding-top(1);
+  @include u-padding-bottom(1);
+  a {
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    .usa-prose {
+      @include u-margin-bottom(0);
+      @include u-margin-top(0);
+    }
+  }
+  @include at-media('tablet') {
+    @include u-margin-right(2);
+    border-radius: 15px 15px 0 0;
+    display: block;
+    width: 17em;
+    margin: 0 auto;
+    @include u-padding-left(2);
+    @include u-padding-right(2);
+  }
+}
