@@ -18,7 +18,7 @@ import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDat
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
-import {showDataLoadingIndicator} from './data-loading-indicator';
+import {showDataIndicators} from './data-indicator';
 import {drawDataTables} from './data-table';
 import {drawDownloadLinks} from './download-links';
 import {drawDateRangeControls} from './date-controls';
@@ -47,7 +47,7 @@ export const attachToNode = function(store,
                                      node,
                                      {
                                          siteno,
-                                         agencyCode,
+                                         agencyCd,
                                          sitename,
                                          parameterCode,
                                          compare,
@@ -64,38 +64,41 @@ export const attachToNode = function(store,
         return;
     }
 
-    showDataLoadingIndicator(true);
+    showDataIndicators(true);
 
     const initialPeriod = startDT && endDT ? 'custom' : period || 'P7D';
     const initialStartTime = startDT ?
         DateTime.fromISO(startDT, {zone: config.locationTimeZone}).toISO() : null;
     const initialEndTime = endDT ?
         DateTime.fromISO(endDT, {zone: config.locationTimeZone}).endOf('day').toISO() : null;
+    const initialLoadCompare = compare === 'true' || compare === true ? true : false;
+    const thisShowOnlyGraph = showOnlyGraph === 'true' || showOnlyGraph === true ? true : false;
+    const thisShowMLName = showMLName === 'true' || showMLName === true ? true : false;
     const fetchHydrographDataPromise = store.dispatch(retrieveHydrographData(siteno, {
         parameterCode: parameterCode,
         period: initialPeriod === 'custom' ? null : initialPeriod,
         startTime: initialStartTime,
         endTime: initialEndTime,
-        loadCompare: compare,
+        loadCompare: initialLoadCompare,
         loadMedian: false
     }));
 
     // if showing the controls, fetch the parameters
     let fetchParametersPromise;
-    if (!showOnlyGraph) {
+    if (!thisShowOnlyGraph) {
         fetchParametersPromise = store.dispatch(retrieveHydrographParameters(siteno));
+    }
 
-        // Initialize all hydrograph state variables if showing the control
-        store.dispatch(setSelectedParameterCode(parameterCode));
-        store.dispatch(setCompareDataVisibility(compare));
-        if (period) {
-            store.dispatch(setSelectedDateRange(period));
-        } else if (startDT && endDT) {
-            store.dispatch(setSelectedDateRange('custom'));
-            store.dispatch(setSelectedCustomDateRange(startDT, endDT));
-        } else {
-            store.dispatch(setSelectedDateRange('P7D'));
-        }
+    // Initialize all hydrograph state variables if showing the control
+    store.dispatch(setSelectedParameterCode(parameterCode));
+    store.dispatch(setCompareDataVisibility(initialLoadCompare));
+    if (period) {
+        store.dispatch(setSelectedDateRange(period));
+    } else if (startDT && endDT) {
+        store.dispatch(setSelectedDateRange('custom'));
+        store.dispatch(setSelectedCustomDateRange(startDT, endDT));
+    } else {
+        store.dispatch(setSelectedDateRange('P7D'));
     }
 
     // Fetch waterwatch flood levels
@@ -107,15 +110,16 @@ export const attachToNode = function(store,
         fetchDataPromises.push(fetchFloodLevelsPromise);
     }
     Promise.all(fetchDataPromises).then(() => {
-        showDataLoadingIndicator(false);
         // selectedIVMethodID should be set regardless of whether we are showing only the graph but the preferred method ID
         // can not be determined until the data is fetched so that is done here.
         const initialIVMethodID = timeSeriesId || getPreferredIVMethodID(store.getState());
         store.dispatch(setSelectedIVMethodID(initialIVMethodID));
-        let graphContainer = nodeElem.select('.graph-container');
-        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCode, sitename, showMLName, !showOnlyGraph);
 
-        if (!showOnlyGraph) {
+        showDataIndicators(false, store);
+        let graphContainer = nodeElem.select('.graph-container');
+        graphContainer.call(drawTimeSeriesGraph, store, siteno, agencyCd, sitename, thisShowMLName, !thisShowOnlyGraph);
+
+        if (!thisShowOnlyGraph) {
             graphContainer
                 .call(drawTooltipCursorSlider, store)
                 .call(drawGraphBrush, store);
@@ -124,7 +128,7 @@ export const attachToNode = function(store,
             .classed('ts-legend-controls-container', true)
             .call(drawTimeSeriesLegend, store);
 
-        if (!showOnlyGraph) {
+        if (!thisShowOnlyGraph) {
             nodeElem.select('#hydrograph-date-controls-container')
                 .call(drawDateRangeControls, store, siteno, initialPeriod, {
                     start: startDT,

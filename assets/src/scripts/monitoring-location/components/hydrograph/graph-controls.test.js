@@ -1,19 +1,23 @@
 import {select} from 'd3-selection';
 import sinon from 'sinon';
 
+import config from 'ui/config';
 import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
 import {setSelectedDateRange} from 'ml/store/hydrograph-state';
 
+import * as dataIndicator from './data-indicator';
 import {drawGraphControls} from './graph-controls';
 import {TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
-import * as dataLoadingIndicator from "./data-loading-indicator";
 
 // Tests for the graph-controls module
 describe('monitoring-location/components/hydrograph/graph-controls', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
+    config.ivPeriodOfRecord = {
+        '72019': {}
+    };
 
     describe('drawGraphControls', () => {
 
@@ -21,7 +25,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
         let fakeServer;
         let store;
         let retrievePriorYearSpy, retrieveMedianStatisticsSpy;
-        let loadingIndicatorSpy;
+        let showDataIndicatorSpy;
 
         beforeEach(() => {
             div = select('body').append('div');
@@ -39,7 +43,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             fakeServer = sinon.createFakeServer();
             retrievePriorYearSpy = jest.spyOn(hydrographData, 'retrievePriorYearIVData');
             retrieveMedianStatisticsSpy = jest.spyOn(hydrographData, 'retrieveMedianStatistics');
-            loadingIndicatorSpy = jest.spyOn(dataLoadingIndicator, 'showDataLoadingIndicator');
+            showDataIndicatorSpy = jest.spyOn(dataIndicator, 'showDataIndicators');
 
             drawGraphControls(div, store, '11112222');
         });
@@ -68,9 +72,11 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
                 startTime: TEST_CURRENT_TIME_RANGE.start,
                 endTime: TEST_CURRENT_TIME_RANGE.end
             });
+            expect(showDataIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(showDataIndicatorSpy.mock.calls[0][0]).toBe(true);
         });
 
-        it('Changing the compare visibility back to false should set the visibility but not retrieve the Prior year data', () => {
+        it('Changing the compare visibility back to false should set isLoading to false so that the no data available indicator can be set,  but not retrieve the Prior year data', () => {
             const checkbox = select('#last-year-checkbox');
             checkbox.property('checked', true);
             checkbox.dispatch('click');
@@ -79,6 +85,8 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.dispatch('click');
             expect(store.getState().hydrographState.showCompareIVData).toBe(false);
             expect(retrievePriorYearSpy.mock.calls).toHaveLength(1);
+            expect(showDataIndicatorSpy.mock.calls).toHaveLength(2);
+            expect(showDataIndicatorSpy.mock.calls[1][0]).toBe(false);
         });
 
         it('Should change the checkbox to disabled if the selectedDateRange is set to custom', () => {
@@ -118,12 +126,12 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.dispatch('click');
 
             expect(store.getState().hydrographState.showMedianData).toBe(true);
-            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
-            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
+            expect(showDataIndicatorSpy.mock.calls).toHaveLength(1);
+            expect(showDataIndicatorSpy.mock.calls[0][0]).toBe(true);
             expect(retrieveMedianStatisticsSpy).toHaveBeenCalledWith('11112222', '72019');
         });
 
-        it('Changing the median visibility back to false should set the visibility but not retrieve the median data', () => {
+        it('Changing the median visibility back to false should set isLoading to false to check for no data availability', () => {
             const checkbox = select('#median-checkbox');
             checkbox.property('checked', true);
             checkbox.dispatch('click');
@@ -131,8 +139,8 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             checkbox.property('checked', false);
             checkbox.dispatch('click');
             expect(store.getState().hydrographState.showMedianData).toBe(false);
-            expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
-            expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
+            expect(showDataIndicatorSpy.mock.calls).toHaveLength(2);
+            expect(showDataIndicatorSpy.mock.calls[1][0]).toBe(false);
             expect(retrieveMedianStatisticsSpy.mock.calls).toHaveLength(1);
         });
     });

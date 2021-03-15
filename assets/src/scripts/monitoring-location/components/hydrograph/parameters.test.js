@@ -6,9 +6,9 @@ import * as utils from 'ui/utils';
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
 
+import * as dataIndicator from './data-indicator';
 import {TEST_HYDROGRAPH_PARAMETERS} from './mock-hydrograph-state';
 import {drawSelectionTable} from './parameters';
-import * as dataLoadingIndicator from "./data-loading-indicator";
 
 describe('monitoring-location/components/hydrograph/parameters module', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
@@ -25,13 +25,13 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
     let fakeServer;
     let store;
     let retrieveHydrographDataSpy;
-    let loadingIndicatorSpy;
+    let showDataIndicatorSpy;
 
     beforeEach(() => {
         div = select('body').append('div');
         fakeServer = sinon.createFakeServer();
         retrieveHydrographDataSpy = jest.spyOn(hydrographData, 'retrieveHydrographData');
-        loadingIndicatorSpy = jest.spyOn(dataLoadingIndicator, 'showDataLoadingIndicator');
+        showDataIndicatorSpy = jest.spyOn(dataIndicator, 'showDataIndicators');
     });
 
     afterEach(() => {
@@ -67,8 +67,8 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         rowOne.dispatch('click');
 
         expect(store.getState().hydrographState.selectedParameterCode).toEqual('00060');
-        expect(loadingIndicatorSpy.mock.calls).toHaveLength(1);
-        expect(loadingIndicatorSpy.mock.calls[0][0]).toBe(true);
+        expect(showDataIndicatorSpy.mock.calls).toHaveLength(1);
+        expect(showDataIndicatorSpy.mock.calls[0][0]).toBe(true);
         expect(retrieveHydrographDataSpy).toHaveBeenCalledWith('11112222', {
             parameterCode: '00060',
             period: 'P7D',

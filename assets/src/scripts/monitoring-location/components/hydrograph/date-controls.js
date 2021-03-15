@@ -10,8 +10,7 @@ import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange} from 'ml/store/hydrograph-state';
 
-import {getMainLayout} from './selectors/layout';
-import {showDataLoadingIndicator} from './data-loading-indicator';
+import {showDataIndicators} from './data-indicator';
 
 const DATE_RANGE = [{
     name: '7 days',
@@ -97,10 +96,10 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
             if (!isCustom) {
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(selectedValue));
-                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataLoadingIndicator(false);
+                        showDataIndicators(false, store);
                     });
             }
         });
@@ -230,10 +229,10 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
                 daysBeforeValidationContainer.attr('hidden', true);
                 store.dispatch(clearGraphBrushOffset());
                 store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
-                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataLoadingIndicator(false);
+                        showDataIndicators(false, store);
                     });
             }
         });
@@ -348,10 +347,10 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
                     store.dispatch(setSelectedCustomDateRange(DateTime.fromMillis(startTime, {zone: config.locationTimeZone}).toISODate(),
                         DateTime.fromMillis(endTime, {zone: config.locationTimeZone}).toISODate()));
                     store.dispatch(setSelectedDateRange('custom'));
-                    showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                    showDataIndicators(true, store);
                     store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                         .then(() => {
-                            showDataLoadingIndicator(false);
+                            showDataIndicators(false, store);
                         });
                 }
             }
