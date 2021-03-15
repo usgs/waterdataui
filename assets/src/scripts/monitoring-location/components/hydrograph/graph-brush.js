@@ -7,7 +7,7 @@ import {mediaQuery} from 'ui/utils';
 
 import {appendXAxis} from 'd3render/axes';
 
-import {getSelectedIVMethodID, getGraphBrushOffset} from 'ml/selectors/hydrograph-state-selector';
+import {getGraphBrushOffset} from 'ml/selectors/hydrograph-state-selector';
 
 import {setGraphBrushOffset} from 'ml/store/hydrograph-state';
 
@@ -90,8 +90,7 @@ export const drawGraphBrush = function(container, store) {
                 })))
                 .call(link(store, drawDataSegments, createStructuredSelector({
                     visible: () => true,
-                    currentMethodID: getSelectedIVMethodID,
-                    tsSegmentsMap: getIVDataSegments('primary'),
+                    segments: getIVDataSegments('primary'),
                     dataKind: () => 'primary',
                     xScale: getBrushXScale,
                     yScale: getBrushYScale,

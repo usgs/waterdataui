@@ -103,10 +103,12 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
             startTime: startTime,
             endTime: endTime
         }).then(data => {
+            let parameter;
+            let values;
             if (data.value && data.value.timeSeries && data.value.timeSeries.length) {
                 const tsData = data.value.timeSeries[0];
                 // Create parameter object and adjust data if parameter code is calculated
-                let parameter = {
+                parameter = {
                     parameterCode: tsData.variable.variableCode[0].value,
                     name: tsData.variable.variableName,
                     description: tsData.variable.variableDescription,
@@ -119,7 +121,7 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
                 // Convert values from strings to float and set to null if they have the noDataValue.
                 // If calculated parameter code, update the value.
                 const noDataValue = tsData.variable.noDataValue;
-                const values = tsData.values.reduce((valuesByMethodId, value) => {
+                values = tsData.values.reduce((valuesByMethodId, value) => {
                     valuesByMethodId[value.method[0].methodID] = {
                         points: value.value.map(point => {
                             let pointValue = parseFloat(point.value);
@@ -140,12 +142,16 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
                     };
                     return valuesByMethodId;
                 }, {});
-
-                dispatch(addIVHydrographData(dataKind, {
-                    parameter,
-                    values
-                }));
+            } else {
+                parameter = {
+                    parameterCode: parameterCode
+                };
+                values = {};
             }
+            dispatch(addIVHydrographData(dataKind, {
+                parameter,
+                values
+            }));
         });
     };
 };

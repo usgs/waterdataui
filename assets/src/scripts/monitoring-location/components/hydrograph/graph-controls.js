@@ -9,10 +9,14 @@ import {getTimeRange} from 'ml/selectors/hydrograph-data-selector';
 import {retrieveMedianStatistics, retrievePriorYearIVData} from 'ml/store/hydrograph-data';
 import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrograph-state';
 
-import {getMainLayout} from './selectors/layout';
 import {isVisible} from './selectors/time-series-data';
 
-import {showDataLoadingIndicator} from './data-loading-indicator';
+import {showDataIndicators} from './data-indicator';
+
+const hasIVData = function(parameterCode) {
+    return config.ivPeriodOfRecord && parameterCode in config.ivPeriodOfRecord;
+};
+
 
 /*
  * Create the last year toggle, and median toggle for the time series graph.
@@ -40,26 +44,30 @@ export const drawGraphControls = function(elem, store, siteno) {
             const currentTimeRange = getTimeRange('current')(state);
             store.dispatch(setCompareDataVisibility(this.checked));
             if (this.checked) {
-                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                showDataIndicators(true, store);
                 store.dispatch(retrievePriorYearIVData(siteno, {
                     parameterCode: getSelectedParameterCode(state),
                     startTime: currentTimeRange.start,
                     endTime: currentTimeRange.end
                 }))
                     .then(() => {
-                        showDataLoadingIndicator(false);
+                        showDataIndicators(false, store);
                     });
+            } else {
+                showDataIndicators(false, store);
             }
         })
         // Sets the state of the toggle
-        .call(link(store,function(elem, {checked, selectedDateRange}) {
+        .call(link(store,function(elem, {checked, selectedDateRange, parameterCode}) {
             elem.property('checked', checked)
                 .attr('disabled',
+                hasIVData(parameterCode) &&
                 selectedDateRange !== 'custom' && config.ALLOW_COMPARE_DATA_FOR_PERIODS.includes(selectedDateRange) ?
                 null : true);
         }, createStructuredSelector({
             checked: isVisible('compare'),
-            selectedDateRange: getSelectedDateRange
+            selectedDateRange: getSelectedDateRange,
+            parameterCode: getSelectedParameterCode
         })));
     compareControlDiv.append('label')
         .classed('usa-checkbox__label', true)
@@ -81,11 +89,13 @@ export const drawGraphControls = function(elem, store, siteno) {
         .on('click', function() {
             store.dispatch(setMedianDataVisibility(this.checked));
             if (this.checked) {
-                showDataLoadingIndicator(true, getMainLayout(store.getState()).height);
+                showDataIndicators(true, store);
                 store.dispatch(retrieveMedianStatistics(siteno, getSelectedParameterCode(store.getState())))
                     .then(() => {
-                        showDataLoadingIndicator(false);
+                        showDataIndicators(false, store);
                     });
+            } else {
+                showDataIndicators(false, store);
             }
         })
         // Sets the state of the toggle

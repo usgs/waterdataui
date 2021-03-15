@@ -12,7 +12,6 @@ import {appendInfoTooltip} from 'd3render/info-tooltip';
 
 import {isWaterwatchVisible, getWaterwatchFloodLevels} from 'ml/selectors/flood-data-selector';
 import {getPrimaryParameter, getPrimaryMedianStatisticsData} from 'ml/selectors/hydrograph-data-selector';
-import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {getAxes}  from './selectors/axes';
 import {getGroundwaterLevelPoints} from './selectors/discrete-data';
@@ -45,7 +44,7 @@ const addDefsPatterns = function(elem) {
  * @param  {Number} modulo
  * @param  {Array} points
  */
-const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
+const drawMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
     const stepFunction = d3Line()
         .curve(curveStepAfter)
         .x(function(d) {
@@ -73,7 +72,7 @@ const plotMedianPoints = function(elem, {xscale, yscale, modulo, points}) {
  * @param  {Array} seriesPoints
  * @param {Boolean} enableClip
  */
-const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+const drawAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#median-points').remove();
     const container = elem
         .append('g')
@@ -87,7 +86,7 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
     }
 
     Object.values(seriesPoints).forEach((series, index) => {
-        plotMedianPoints(container, {xscale, yscale, modulo: index % 6, points: series.values});
+        drawMedianPoints(container, {xscale, yscale, modulo: index % 6, points: series.values});
     });
 };
 
@@ -99,7 +98,7 @@ const plotAllMedianPoints = function(elem, {visible, xscale, yscale, seriesPoint
  * @param  {Number} modulo
  * @param  {Array} points
  */
-const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
+const drawFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
     const stepFunction = d3Line()
         .x(function(_,i) {
             return xscale(xscale.domain()[i]);
@@ -124,7 +123,7 @@ const plotFloodLevelPoints = function(elem, {xscale, yscale, points, classes}) {
  * @param  {Array} seriesPoints
  * @param {Boolean} enableClip
  */
-const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
+const drawAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesPoints, enableClip}) {
     elem.select('#flood-level-points').remove();
     const container = elem
         .append('g')
@@ -145,7 +144,7 @@ const plotAllFloodLevelPoints = function(elem, {visible, xscale, yscale, seriesP
         ['waterwatch-data-series','major-flood-stage']];
 
     keys.forEach((key, index) => {
-        plotFloodLevelPoints(container, {xscale, yscale, points: Array(2).fill(seriesPoints[key]),
+        drawFloodLevelPoints(container, {xscale, yscale, points: Array(2).fill(seriesPoints[key]),
             classes: classes[index]});
     });
 };
@@ -245,8 +244,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         .call(link(store, appendAxes, getAxes('MAIN')))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: () => true,
-            currentMethodID: getSelectedIVMethodID,
-            tsSegmentsMap: getIVDataSegments('primary'),
+            segments: getIVDataSegments('primary'),
             dataKind: () => 'primary',
             xScale: getMainXScale('current'),
             yScale: getMainYScale,
@@ -254,8 +252,7 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
         })))
         .call(link(store, drawDataSegments, createStructuredSelector({
             visible: isVisible('compare'),
-            currentMethodID: getSelectedIVMethodID,
-            tsSegmentsMap: getIVDataSegments('compare'),
+            segments: getIVDataSegments('compare'),
             dataKind: () => 'compare',
             xScale: getMainXScale('prioryear'),
             yScale: getMainYScale,
@@ -267,14 +264,14 @@ export const drawTimeSeriesGraph = function(elem, store, siteNo, agencyCode, sit
             yScale: getMainYScale,
             enableClip: () => true
         })))
-        .call(link(store, plotAllMedianPoints, createStructuredSelector({
+        .call(link(store, drawAllMedianPoints, createStructuredSelector({
             visible: isVisible('median'),
             xscale: getMainXScale('current'),
             yscale: getMainYScale,
             seriesPoints: getPrimaryMedianStatisticsData,
             enableClip: () => true
         })))
-        .call(link(store, plotAllFloodLevelPoints, createStructuredSelector({
+        .call(link(store, drawAllFloodLevelPoints, createStructuredSelector({
             visible: isWaterwatchVisible,
             xscale: getBrushXScale,
             yscale: getMainYScale,

@@ -54,15 +54,14 @@ export const getCursorTime = memoize(timeRangeKind => createSelector(
  */
 export const getIVDataCursorPoint = memoize((dataKind, timeRangeKind) => createSelector(
     getIVDataPoints(dataKind),
-    getSelectedIVMethodID,
     getCursorTime(timeRangeKind),
     isVisible(dataKind),
     getGraphTimeRange('MAIN', timeRangeKind),
-    (ivData, selectedMethodID, cursorTime, isVisible, timeRange) => {
-        if (!ivData || !cursorTime || !isVisible || !timeRange || !selectedMethodID || !(selectedMethodID in ivData)) {
+    (ivData, cursorTime, isVisible, timeRange) => {
+        if (!ivData || !ivData.length || !cursorTime || !isVisible || !timeRange) {
             return null;
         }
-        const visiblePoints = ivData[selectedMethodID].filter(point => isInTimeRange(point.dateTime, timeRange));
+        const visiblePoints = ivData.filter(point => isInTimeRange(point.dateTime, timeRange));
         if (!visiblePoints.length) {
             return null;
         }

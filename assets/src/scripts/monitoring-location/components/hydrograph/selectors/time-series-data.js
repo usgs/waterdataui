@@ -4,7 +4,9 @@ import {createSelector} from 'reselect';
 
 import config from 'ui/config';
 
-import {getPrimaryMethods, getPrimaryParameter, getIVData, getTimeRange} from 'ml/selectors/hydrograph-data-selector';
+import {getIVData, getGroundwaterLevels, getMedianStatisticsData, getPrimaryMethods, getPrimaryParameter,
+    getTimeRange
+} from 'ml/selectors/hydrograph-data-selector';
 import {getSelectedIVMethodID, isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
 const formatTime = function(timeInMillis) {
@@ -32,6 +34,48 @@ export const isVisible = memoize(dataKind => createSelector(
     })
 );
 
+/*
+ * Returns a Redux selector that returns true if there is non-empty data and it is
+ * selected to be visible.
+ * @param {String} dataKind - 'primary' or 'compare'
+ * @return {Function}
+ */
+const hasVisibleIVData = memoize(dataKind => createSelector(
+    isVisible(dataKind),
+    getIVData(dataKind),
+    getSelectedIVMethodID,
+    (isVisible, ivData, selectedIVMethodID) => {
+        return isVisible && ivData && ivData.values && selectedIVMethodID in ivData.values ?
+            ivData.values[selectedIVMethodID].points.length > 0 : false;
+    }
+));
+
+const hasVisibleMedianStatisticsData = createSelector(
+    isVisible('median'),
+    getMedianStatisticsData,
+    (isVisible, medianStats) => isVisible && medianStats ? Object.keys(medianStats).length > 0 : false
+);
+
+const hasVisibleGroundwaterLevels = createSelector(
+    getGroundwaterLevels,
+    (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
+);
+
+/*
+ * Returns a selector function which returns true if there is any data that will be visible
+ * on the hydrograph.
+ * @return {Function}
+ */
+export const hasAnyVisibleData = createSelector(
+    hasVisibleIVData('primary'),
+    hasVisibleIVData('compare'),
+    hasVisibleMedianStatisticsData,
+    hasVisibleGroundwaterLevels,
+    (visiblePrimaryIVData, visibleCompareData, visibleMedianStats, visibleGWLevels) => {
+        return visiblePrimaryIVData || visibleCompareData || visibleMedianStats || visibleGWLevels;
+    }
+);
+
 /**
  * Returns a Redux selector function which returns the title to be used for the hydrograph
  * @return {Function}
@@ -51,7 +95,6 @@ export const getTitle = createSelector(
         return title;
     }
 );
-
 
 /*
  * Returns a Redux selector function which returns the description of the hydrograph

@@ -11,6 +11,7 @@ import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 
+import {showDataIndicators} from './data-indicator';
 import {getPreferredIVMethodID} from './selectors/time-series-data';
 
 const updateAvailableMethods = function(selectElem, methods, store) {
@@ -23,6 +24,7 @@ const updateAvailableMethods = function(selectElem, methods, store) {
     if (!selectedMethodID || selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
         selectedMethodID = getPreferredIVMethodID(store.getState());
         store.dispatch(setSelectedIVMethodID(selectedMethodID));
+        showDataIndicators(false, store);
     }
 
     methods.forEach((method) => {
@@ -58,5 +60,6 @@ export const drawMethodPicker = function(elem, store) {
         .call(link(store, updateAvailableMethods, getPrimaryMethods, store))
         .on('change', function() {
             store.dispatch(setSelectedIVMethodID(select(this).property('value')));
+            showDataIndicators(false, store);
         });
 };

@@ -1,7 +1,8 @@
 import config from 'ui/config';
 
+import {TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS} from '../mock-hydrograph-state';
 import {
-    isVisible, getTitle, getDescription, getPrimaryParameterUnitCode,
+    isVisible, hasAnyVisibleData, getTitle, getDescription, getPrimaryParameterUnitCode,
     getPreferredIVMethodID
 }
     from './time-series-data';
@@ -29,7 +30,7 @@ const TEST_STATE = {
                     }
                 },
                 '252055': {
-                    points: [],
+                    points: [{value: 24.2, qualifiers: ['A'], dateTime: 1582560900000}],
                     method: {
                         methodDescription: 'From multiparameter sonde',
                         methodID: '252055'
@@ -66,6 +67,102 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                     showMedianData: true
                 }
             })).toBe(true);
+        });
+    });
+
+    describe('hasVisibleData', () => {
+        it('Expects to return true when data is available and visible', () => {
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    primaryIVData: TEST_PRIMARY_IV_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '90649'
+                }
+            })).toBe(true);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    groundwaterLevels: TEST_GW_LEVELS
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
+                }
+            })).toBe(true);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
+                }
+            })).toBe(true);
+        });
+
+        it('Expects to return false when no data is available', () => {
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
+                    }
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true
+                }
+            })).toBe(false);
+
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {
+                            '90649': {
+                                points: [],
+                                method: {
+                                    methodID: '90649'
+                                }
+                            }
+                        }
+                    }
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '90649'
+
+                }
+            })).toBe(false);
+        });
+
+        it('Expects to return false if data is available but not available', () => {
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    primaryIVData: TEST_PRIMARY_IV_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: true,
+                    selectedIVMethodID: '252055'
+                }
+            })).toBe(false);
+            expect(hasAnyVisibleData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showCompareIVData: false,
+                    showMedianData: false
+                }
+            })).toBe(false);
         });
     });
 

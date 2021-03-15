@@ -1,8 +1,16 @@
+
+import config from 'ui/config';
 import {lineMarker, rectangleMarker, textOnlyMarker, circleMarker} from 'd3render/markers';
 
 import {getLegendMarkerRows} from './legend-data';
 
 describe('monitoring-location/components/hydrograph/selectors/legend-data', () => {
+    config.ivPeriodOfRecord = {
+        '72019': {}
+    };
+    config.gwPeriodOfRecord = {
+        '72019': {}
+    };
     const TEST_PRIMARY_IV_DATA = {
         parameter: {
             parameterCode: '72019'
@@ -106,6 +114,31 @@ describe('monitoring-location/components/hydrograph/selectors/legend-data', () =
             expect(compareRow[0].type).toEqual(textOnlyMarker);
             expect(compareRow[1].type).toEqual(lineMarker);
             expect(compareRow[2].type).toEqual(lineMarker);
+        });
+
+        it('Should return a no data marker for compare if compare data has no points', () => {
+            const markerRows = getLegendMarkerRows({
+                ...TEST_STATE,
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    compareIVData: {
+                        parameter: {
+                            parameterCode: '72019'
+                        },
+                        values: {}
+                    }
+                },
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    showCompareIVData: true
+                }
+            });
+
+            expect(markerRows).toHaveLength(3);
+            const compareRow = markerRows[2];
+            expect(compareRow).toHaveLength(2);
+            expect(compareRow[0].type).toEqual(textOnlyMarker);
+            expect(compareRow[1].type).toEqual(textOnlyMarker);
         });
     });
 });
