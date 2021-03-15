@@ -21,19 +21,28 @@ const STAGES = {
     }
 };
 
+/*
+ * Returns a selector function which returns an array of {Object}. Each object
+ * represents a flood level and includes the properties:
+ *      @prop {Number} value - the value of the flood level
+ *      @prop {String} label - a human friendly label for the flood level
+ *      @prop {String} class - a class to be used to decorate the flood level
+ */
 export const getFloodLevelData = createSelector(
     getWaterwatchFloodLevels,
     levels => {
         const result = [];
-        Object.keys(levels).forEach(stage => {
-            if (levels[stage]) {
-                result.push({
-                    value: levels[stage],
-                    label: STAGES[stage].label,
-                    class: STAGES[stage].class
-                });
-            }
-        });
+        if (levels) {
+            Object.keys(levels).forEach(stage => {
+                if (levels[stage]) {
+                    result.push({
+                        value: levels[stage],
+                        label: STAGES[stage].label,
+                        class: STAGES[stage].class
+                    });
+                }
+            });
+        }
         return result;
     }
 );

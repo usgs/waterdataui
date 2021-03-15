@@ -1,11 +1,16 @@
 import {line as d3Line} from 'd3-shape';
 
 /*
- * Draws the flood lines
+ * Renders the flood lines if available and visible on svg.
+ * @param {D3 selection for svg or group} svg
+ * @param {Boolean} visible
+ * @param {D3 scale} xscale
+ * @param {D3 scale} yscale
+ * @param {Array of Object} floodLevels - array elements describe value, label and class.
  */
-export const drawFloodLevelLines = function(elem, {visible, xscale, yscale, floodLevels}) {
-    elem.select('#flood-level-points').remove();
-    const container = elem.append('g')
+export const drawFloodLevelLines = function(svg, {visible, xscale, yscale, floodLevels}) {
+    svg.select('#flood-level-points').remove();
+    const container = svg.append('g')
         .lower()
         .attr('id', 'flood-level-points');
 

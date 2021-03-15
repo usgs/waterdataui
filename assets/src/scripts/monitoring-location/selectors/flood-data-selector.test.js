@@ -105,8 +105,16 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
         });
     });
 
-    describe('getWaterwatchData', () => {
-        it('Return true if waterwatch flood levels are returned', () => {
+    describe('getWaterwatchFloodLevels', () => {
+        it('Expects null if no flood levels are defined', () => {
+           expect(getWaterwatchFloodLevels({
+               floodData: {
+                   floodLevels: null
+               }
+           })).toBeNull();
+        });
+        
+        it('Waterwatch flood levels are returned', () => {
             expect(Object.values(getWaterwatchFloodLevels({
                 floodData: {
                     floodLevels: {
