@@ -15,6 +15,9 @@ recent data is chosen.
 ### Added
 - If the graph shows no data for the selected time range, a message will appear on top of the graph. In addition, if a particular kind of selected data isn't available (for instance if compare to last year is selected and there is no data for that time range)
 
+### Fixed
+- Flood lines are now only rendered if in range of the Y axis.
+
 ## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0)
 ### Added
 - A column indicating the approval status of the data shows in the Field Visit Data Table.
