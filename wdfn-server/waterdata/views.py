@@ -34,6 +34,7 @@ def questions_comments(email_for_data_questions):
     """Render the user feedback form."""
     referring_url = request.referrer
     user_system_data = request.user_agent.string
+    page_type = request.args.get('page_type')
 
     if request.method == 'POST':
         target_email = email_for_data_questions
@@ -57,7 +58,8 @@ def questions_comments(email_for_data_questions):
     return render_template(
         'questions_comments.html',
         email_for_data_questions=email_for_data_questions,
-        monitoring_location_url=referring_url
+        monitoring_location_url=referring_url,
+        page_type=page_type
     )
 
 
@@ -180,6 +182,7 @@ def monitoring_location(site_no):
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
                 'email_for_data_questions': email_for_data_questions,
+                'page_type': 'monitoring',
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
@@ -288,7 +291,9 @@ def networks(network_cd):
         network_cd=network_cd,
         collection=collection,
         extent=extent,
-        narrative=narrative
+        narrative=narrative,
+        email_for_data_questions=app.config['EMAIL_TARGET']['report'],
+        page_type='network'
     ), http_code
 
 

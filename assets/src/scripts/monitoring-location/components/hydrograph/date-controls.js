@@ -55,7 +55,7 @@ const isCustomPeriod = function(dateRange) {
 * time spans to graph (P7D, P30D, P365D), or they can select a 'custom' time span in the form of calendar dates or a
 * numerical entry of days before today. Only the calendar dates is a 'custom' selection. Even though 'days before today'
 * is a custom choice by users, it uses the standard time span format of P<some number of days>D (such as P34D), so
-* in for this function selection of days before today is NOT custom.
+* in this function selection of days before today is NOT custom.
 * @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
 * or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
 * @return {Boolean} -- true if the user selection is 'Calendar Dates'.
