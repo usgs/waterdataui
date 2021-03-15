@@ -20,11 +20,11 @@ describe('monitoring-location/components/hydrograph/discrete-data', () => {
                 {value: '13.0', dateTime: 1489672100000, label: 'Provisional', classes: ['gw-class', 'provisional'], radius: 5}
             ];
             xScale = scaleLinear()
-                .domain([0, 100])
-                .range([1489000000000, 1500000000000]);
+                .range([0, 100])
+                .domain([1489000000000, 1500000000000]);
             yScale = scaleLinear()
-                .domain([0, 100])
-                .range([11.0, 15.0]);
+                .range([0, 100])
+                .domain([11.0, 15.0]);
         });
 
         afterEach(() => {

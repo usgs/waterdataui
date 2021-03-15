@@ -4,12 +4,13 @@ import config from 'ui/config';
 
 import {defineLineMarker, defineRectangleMarker, defineCircleMarker, defineTextOnlyMarker} from 'd3render/markers';
 
-import {getWaterwatchFloodLevels, isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
+import {isWaterwatchVisible} from 'ml/selectors/flood-data-selector';
 import {getPrimaryMedianStatisticsData, getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 import {isCompareIVDataVisible, isMedianDataVisible} from 'ml/selectors/hydrograph-state-selector';
 
-import {getIVUniqueDataKinds, HASH_ID} from './iv-data';
 import {getUniqueGWKinds} from './discrete-data';
+import {getFloodLevelData} from './flood-level-data';
+import {getIVUniqueDataKinds, HASH_ID} from './iv-data';
 
 const TS_LABEL = {
     'primary': 'Current: ',
@@ -32,7 +33,7 @@ const getLegendDisplay = createSelector(
     getIVUniqueDataKinds('primary'),
     getIVUniqueDataKinds('compare'),
     isWaterwatchVisible,
-    getWaterwatchFloodLevels,
+    getFloodLevelData,
     getUniqueGWKinds,
     getPrimaryParameter,
     (showCompare, showMedian, medianSeries, currentClasses, compareClasses, showWaterWatch, floodLevels, gwLevelKinds,
@@ -111,36 +112,14 @@ const getGWMarkers = function(gwLevelKinds) {
     }
 };
 
-const floodLevelDisplay = function(floodLevels) {
-    let floodLevelsForDisplay = {};
-    Object.keys(floodLevels).forEach(key => {
-        if (floodLevels[key]) {
-            const keyWithCapitalFirstLetter = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
-            // Format label by cutting the camel case word at upper case letters
-            const label = keyWithCapitalFirstLetter.match(/([A-Z]?[^A-Z]*)/g).slice(0,-1);
-
-            Object.assign(floodLevelsForDisplay,
-                {[key]: {
-                    'label': [label.join(' ')],
-                    'class': [label.join('-').toLowerCase()]
-                }}
-            );
-        }
-    });
-
-    return floodLevelsForDisplay;
-};
-
 const getFloodLevelMarkers = function(floodLevels) {
-    const floodLevelsForDisplay = floodLevelDisplay(floodLevels);
-
-    return Object.keys(floodLevelsForDisplay).map((stage) => {
+    return floodLevels.map((level) => {
         return [
-            defineTextOnlyMarker(floodLevelsForDisplay[stage].label),
+            defineTextOnlyMarker(level.label),
             defineLineMarker(
                 null,
-                `waterwatch-data-series ${floodLevelsForDisplay[stage].class}`,
-                `${floodLevels[stage]} ft`)
+                `waterwatch-data-series ${level.class}`,
+                `${level.value} ft`)
         ];
     });
 };
