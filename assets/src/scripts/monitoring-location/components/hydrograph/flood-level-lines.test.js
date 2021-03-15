@@ -40,7 +40,7 @@ describe('monitoring-location/components/hydrograph/flood-level-lines', () => {
             expect(group.select('g').size()).toBe(0);
         });
 
-        it('Does not render flood levels if non are defined', () => {
+        it('Does not render flood levels if none are defined', () => {
             drawFloodLevelLines(svg, {
                 visible: true,
                 xscale,
