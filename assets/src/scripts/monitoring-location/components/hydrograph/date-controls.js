@@ -13,7 +13,7 @@ import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange}
 import {getMainLayout} from './selectors/layout';
 import {showDataLoadingIndicator} from './data-loading-indicator';
 
-const DATE_RANGE = [{
+const DATE_RANGE_MENU_OPTIONS = [{
     name: '7 days',
     period: 'P7D'
 }, {
@@ -39,19 +39,43 @@ const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
     }
 ];
 
-// The standard 'selectedDateRange' options -- the options that are not a custom period, such as P129D or P3D
-const STANDARD_INITIAL_VALUES = ['custom', 'P7D', 'P30D', 'P365D'];
-
+/*
+* Helper function that determines if the user has entered a 'custom' days before today selection.
+* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
+* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
+* @return {Boolean} -- true if the user has entered a time span to graph that is NOT 'custom' (which is to say a
+* calendar date selection) or any of the quick select time spans, as mentioned above. So, this will return
+* true if the dateRange is of the form P<some number of day which are not 7, 30, or 365>D such as P424D.
+*/
 const isCustomPeriod = function(dateRange) {
-    return dateRange !== 'custom' && !DATE_RANGE.find(range => range.period === dateRange);
+    return dateRange !== 'custom' && !DATE_RANGE_MENU_OPTIONS.find(range => range.period === dateRange);
 };
+
+/*
+* Helper function that determines if 'dateRange' is 'custom'. To explain, users can select a set of 'quick select'
+* time spans to graph (P7D, P30D, P365D), or they can select a 'custom' time span in the form of calendar dates or a
+* numerical entry of days before today. Only the calendar dates is a 'custom' selection. Even though 'days before today'
+* is a custom choice by users, it uses the standard time span format of P<some number of days>D (such as P34D), so
+* in for this function selection of days before today is NOT custom.
+* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
+* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
+* @return {Boolean} -- true if the user selection is 'Calendar Dates'.
+*/
 const isCustomDateRange = function(dateRange) {
     return dateRange === 'custom';
 };
 
+/*
+* Helper function that determines if the 'Custom days/dates' menu which allows selection of the dates and
+* arbitrary days should show.
+* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
+* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
+* @return {Boolean} -- true if the menu should show, false if not.
+*/
 const showCustomContainer = function(dateRange) {
     return isCustomPeriod(dateRange) || isCustomDateRange(dateRange);
 };
+
 
 /*
  * Set custom form hidden attribute and clear custom container inputs if it is being hidden
@@ -79,7 +103,7 @@ const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
 
     const li = listContainer.selectAll('li')
         .attr('class', 'usa-fieldset')
-        .data(DATE_RANGE)
+        .data(DATE_RANGE_MENU_OPTIONS)
         .enter().append('li');
 
     li.append('input')
@@ -142,10 +166,10 @@ const drawCustomRadioButtons = function(container, initialDateRange) {
         .attr('class', 'usa-radio__input')
         .property('value', d => d.value)
         .property('checked', d => d.value === 'calendar' ?
-            STANDARD_INITIAL_VALUES.includes(initialDateRange) :  !STANDARD_INITIAL_VALUES.includes(initialDateRange))
+            !isCustomPeriod(initialDateRange) :  isCustomPeriod(initialDateRange))
         .attr('ga-on', 'click')
         .attr('aria-expanded', d => d.value === 'calendar' ?
-            STANDARD_INITIAL_VALUES.includes(initialDateRange) : !STANDARD_INITIAL_VALUES.includes(initialDateRange))
+            !isCustomPeriod(initialDateRange) : isCustomPeriod(initialDateRange))
         .attr('ga-event-category', 'TimeSeriesGraph')
         .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
         .on('change', function(_, d) {
@@ -175,7 +199,7 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
         .attr('id', 'ts-custom-days-before-today-select-container')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date by days before today specification')
-        .attr('hidden', STANDARD_INITIAL_VALUES.includes(initialDateRange) ? true : null);
+        .attr('hidden', !isCustomPeriod(initialDateRange) ? true : null);
 
     const daysBeforeContainer = formContainer.append('div')
             .attr('class', 'usa-character-count')
@@ -293,7 +317,7 @@ const drawCustomCalendarDaysForm = function(container, store, siteno, initialDat
         .attr('role', 'customdate')
         .attr('class', 'usa-form')
         .attr('aria-label', 'Custom date specification')
-        .attr('hidden', STANDARD_INITIAL_VALUES.includes(initialDateRange) ? null : true);
+        .attr('hidden', !isCustomPeriod(initialDateRange) ? null : true);
     
     const dateRangePickerContainer = calendarDaysContainer.append('div')
         .attr('class', 'usa-date-range-picker');
