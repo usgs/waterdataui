@@ -129,7 +129,7 @@ export const getPrimaryParameterUnitCode = createSelector(
 export const getPreferredIVMethodID = createSelector(
     getIVData('primary'),
     (ivData) => {
-        if (!ivData) {
+        if (!ivData || !Object.keys(ivData.values).length) {
             return null;
         }
         const methodMetaData = Object.values(ivData.values)

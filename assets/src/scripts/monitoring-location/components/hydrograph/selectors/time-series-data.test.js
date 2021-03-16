@@ -239,6 +239,20 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
             })).toBeNull();
         });
 
+        it('Return null if no values for primary hydrograph data', () => {
+            expect(getPreferredIVMethodID({
+                ...TEST_STATE,
+                hydrographData: {
+                    primaryIVData: {
+                        parameter: {
+                            parameterCode: '00030',
+                        },
+                        values: {}
+                    }
+                }
+            })).toBeNull();
+        });
+
         it('If all methods have no points return either methodID', () => {
             expect(['69937','252055'].includes(getPreferredIVMethodID(TEST_STATE))).toBe(true);
         });
