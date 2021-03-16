@@ -5,14 +5,32 @@ Unit tests for the main WDFN views.
 import json
 import re
 from unittest import TestCase, mock
+from flask import request
 
 import pytest
 import requests_mock
 
 from .. import app
-from ..views import __version__
+from ..views import __version__, has_feedback_link
 from ..utils import parse_rdb
 from .rdb_snippets import SITE_RDB, PARAMETER_RDB
+
+
+class TestHasFeedbackLink(TestCase):
+    def setUp(self):
+        self.app_client = app.test_client()
+
+    def monitoring_location_page_has_feedback_link(self):
+        with app.test_request_context('/monitoring-location/0000000/'):
+            self.assertTrue(has_feedback_link())
+
+    def network_page_has_feedback_link(self):
+        with app.test_request_context('/networks/RTS/'):
+            self.assertTrue(has_feedback_link())
+
+    def questions_comments_page_has_no_feedback_link(self):
+        with app.test_request_context('/questions-comments/some-email-address/'):
+            self.assertFalse(has_feedback_link())
 
 
 class TestHomeView(TestCase):
@@ -222,7 +240,6 @@ class TestNetworkView(TestCase):
         response = self.app_client.get(url)
         # Assert an invalid ogc json network call 404s
         assert response.status_code == 404
-
 
 class TestCountryStateCountyView:
     # pylint: disable=R0201
