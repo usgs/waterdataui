@@ -1,6 +1,6 @@
 {% if request.endpoint == 'monitoring_location' or request.endpoint == 'networks'%}
     <div class="user-feedback">
-        <a href="{{ url_for('questions_comments', page_type=page_type, email_for_data_questions=email_for_data_questions) }}"
+        <a href="{{ url_for('questions_comments', referring_page_type=referring_page_type, email_for_data_questions=email_for_data_questions) }}"
            target="_blank"
            ga-on="click" ga-event-category="navigation" ga-event-action="toFeedBackForm_floatingLink">
             <p class="usa-prose">Questions or Comments</p>
