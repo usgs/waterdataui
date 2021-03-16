@@ -23,6 +23,22 @@ from .constants import STATION_FIELDS_D
 
 NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
 
+
+def has_feedback_link(request_endpoint):
+    """
+    Return true if page is eligible for feedback form links
+    :return: Boolean
+    """
+    if request_endpoint == 'monitoring_location' or request_endpoint == 'networks':
+        return True
+    else:
+        return False
+
+
+@app.context_processor
+def inject_has_feedback_link():
+    return dict(has_feedback_link=has_feedback_link)
+
 @app.route('/')
 def home():
     """Render the home page."""
