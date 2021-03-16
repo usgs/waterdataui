@@ -1,4 +1,4 @@
-{% if has_feedback_link(request.endpoint) %}
+{% if has_feedback_link %}
     <div class="user-feedback">
         <a href="{{ url_for('questions_comments', referring_page_type=referring_page_type, email_for_data_questions=email_for_data_questions) }}"
            target="_blank"
