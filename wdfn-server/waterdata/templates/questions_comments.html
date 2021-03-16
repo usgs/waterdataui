@@ -30,13 +30,17 @@
         <form class="usa-form" action="{{ url_for('questions_comments', email_for_data_questions=email_for_data_questions) }}" method="post" >
             <fieldset id="feedback-destination-selection" class="usa-fieldset">
                 <legend class="usa-legend usa-legend">Let us help you to:</legend>
-                <div class="usa-radio">
-                    <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>
-                    <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
-                </div>
+                {% if referring_page_type == "monitoring" %}
+                    <div class="usa-radio">
+                        <input class="usa-radio__input" id="feedback-selection-contact" type="radio" name="feedback-type" value="contact" required>
+                        <label class="usa-radio__label" for="feedback-selection-contact">Contact someone about data at this location</label>
+                    </div>
+                {% endif %}
                 <div class="usa-radio">
                     <input class="usa-radio__input" id="feedback-selection-report" type="radio" name="feedback-type" value="report">
-                    <label class="usa-radio__label" for="feedback-selection-report">Report a problem with this location</label>
+                    <label class="usa-radio__label" for="feedback-selection-report">
+                        Report a problem{%  if referring_page_type ==  "monitoring" %} with this location {% endif %}
+                    </label>
                 </div>
                 <div class="usa-radio">
                     <input class="usa-radio__input" id="feedback-selection-comment" type="radio" name="feedback-type" value="comment">

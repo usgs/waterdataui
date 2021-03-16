@@ -32,7 +32,7 @@ class TestQuestionsCommentsView(TestCase):
 
     def test_successful_view(self):
         fake_email = 'test%40test.gov'
-        response = self.app_client.get('/questions-comments/{}/'.format(fake_email))
+        response = self.app_client.get('/questions-comments/{}/?referring_page_type=monitoring'.format(fake_email))
         self.assertEqual(200, response.status_code)
 
 

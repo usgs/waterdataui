@@ -23,6 +23,22 @@ from .constants import STATION_FIELDS_D
 
 NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
 
+
+def has_feedback_link(request_endpoint):
+    """
+    Return true if page is eligible for feedback form links
+    :return: Boolean
+    """
+    if request_endpoint == 'monitoring_location' or request_endpoint == 'networks':
+        return True
+    else:
+        return False
+
+
+@app.context_processor
+def inject_has_feedback_link():
+    return dict(has_feedback_link=has_feedback_link)
+
 @app.route('/')
 def home():
     """Render the home page."""
@@ -34,6 +50,7 @@ def questions_comments(email_for_data_questions):
     """Render the user feedback form."""
     referring_url = request.referrer
     user_system_data = request.user_agent.string
+    referring_page_type = request.args.get('referring_page_type')
 
     if request.method == 'POST':
         target_email = email_for_data_questions
@@ -57,7 +74,8 @@ def questions_comments(email_for_data_questions):
     return render_template(
         'questions_comments.html',
         email_for_data_questions=email_for_data_questions,
-        monitoring_location_url=referring_url
+        monitoring_location_url=referring_url,
+        referring_page_type=referring_page_type
     )
 
 
@@ -180,6 +198,7 @@ def monitoring_location(site_no):
                 'parm_grp_summary': grouped_dataseries,
                 'cooperators': cooperators,
                 'email_for_data_questions': email_for_data_questions,
+                'referring_page_type': 'monitoring',
                 'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
@@ -288,7 +307,9 @@ def networks(network_cd):
         network_cd=network_cd,
         collection=collection,
         extent=extent,
-        narrative=narrative
+        narrative=narrative,
+        email_for_data_questions=app.config['EMAIL_TARGET']['report'],
+        referring_page_type='network'
     ), http_code
 
 
