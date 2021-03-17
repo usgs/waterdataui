@@ -72,7 +72,7 @@ class TestFeedbackSubmitted(TestCase):
 
     def test_successful_view(self):
         email_send_result = 'success'
-        response = self.app_client.get('/feedback-submitted/{}'.format(email_send_result))
+        response = self.app_client.get('/feedback-submitted/{}/'.format(email_send_result))
         self.assertEqual(200, response.status_code)
 
 
@@ -81,7 +81,7 @@ class TestProvisionalDataStatementView(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        response = self.app_client.get('/provisional-data-statement')
+        response = self.app_client.get('/provisional-data-statement/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -91,7 +91,7 @@ class TestIvDataAvailabilityStatementView(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        response = self.app_client.get('/iv-data-availability-statement')
+        response = self.app_client.get('/iv-data-availability-statement/')
 
         self.assertEqual(response.status_code, 200)
 
