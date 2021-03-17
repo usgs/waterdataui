@@ -79,7 +79,7 @@ def questions_comments(email_for_data_questions):
     )
 
 
-@app.route('/feedback-submitted/<email_send_result>')
+@app.route('/feedback-submitted/<email_send_result>/')
 def feedback_submitted(email_send_result):
     """Render a page that will show the user if the feedback email sent successfully."""
     return render_template(
@@ -88,13 +88,13 @@ def feedback_submitted(email_send_result):
     )
 
 
-@app.route('/provisional-data-statement')
+@app.route('/provisional-data-statement/')
 def provisional_data_statement():
     """Render the provisional data statement page."""
     return render_template('provisional_data_statement.html')
 
 
-@app.route('/iv-data-availability-statement')
+@app.route('/iv-data-availability-statement/')
 def iv_data_availability():
     """Render the IV data availability statement page."""
     return render_template('iv_data_availability_statement.html')
