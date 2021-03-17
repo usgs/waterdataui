@@ -26,7 +26,7 @@ import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
-import {drawSelectionTable} from './parameters';
+import {drawSelectionTable, drawSelectionList} from './parameters';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
@@ -148,6 +148,7 @@ export const attachToNode = function(store,
 
             fetchParametersPromise.then(() => {
                 nodeElem.select('.select-time-series-container')
+                    .call(drawSelectionList, store, siteno)
                     .call(drawSelectionTable, store, siteno);
             });
             renderTimeSeriesUrlParams(store);

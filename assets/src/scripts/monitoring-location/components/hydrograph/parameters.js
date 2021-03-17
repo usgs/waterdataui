@@ -17,6 +17,38 @@ import {getAvailableParameters} from './selectors/parameter-data';
 
 import {showDataIndicators} from './data-indicator';
 
+
+
+
+export const drawSelectionList = function(container, store, siteno) {
+    const parameters = getAvailableParameters(store.getState());
+
+    if (!Object.keys(parameters).length) {
+        return;
+    }
+
+    console.log('parameters ', parameters)
+
+    container.append('div')
+        .attr('id', 'CHANGE-ID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-select-time-series')
+        .append('h2') // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!check header number
+        .text('Select Data to Graph');
+    const selectionList = container.append('div')
+        .attr('class', 'grid-container');
+
+    parameters.forEach(parameter => {
+        const gridRow = selectionList.append('div')
+            .attr('class', 'grid-row');
+
+        gridRow.append('div').attr('class', 'tablet:grid-col')
+            .text(`${parameter.parameterCode}`);
+        gridRow.append('div').attr('class', 'tablet:grid-col')
+            .text(`${parameter.description}`);
+        gridRow.append('div').attr('class', 'tablet:grid-col')
+            .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
+    });
+};
+
 /**
  * Draws a table with clickable rows of time series parameter codes. Selecting
  * a row changes the active parameter code.
