@@ -299,9 +299,15 @@
     margin: 0;
     padding: 0;
 
-    .grid-row {
+    .grid-row-container-row {
       border-bottom: 1px solid black;
+    }
 
+    .grid-row-container-row:first-child {
+      border-top: 1px solid black;
+    }
+
+    .grid-row-inner {
       padding: 0.3em;
       .usa-radio__label {
         margin-top: 0;
@@ -309,16 +315,12 @@
       }
     }
 
-    .grid-row:first-child {
-      border-top: 1px solid black;
-    }
-
     .grid-row-inner {
       padding-right: 0;
       padding-left: 0;
     }
 
-    .open-close-row__param-select {
+    .open-close-icon__param-select {
       display: flex;
       justify-content: right;
     }

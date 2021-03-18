@@ -37,12 +37,29 @@ export const drawSelectionList = function(container, store, siteno) {
         .attr('class', 'grid-container');
 
     parameters.forEach(parameter => {
-        const gridRowInner_2 = selectionList.append('div')
+        const containerRow = selectionList.append('div')
+            .attr('class', 'grid-container grid-row-container-row');
+        const gridRowInnerUpperPeriodOfRecord = containerRow.append('div')
+            .attr('class', 'grid-row grid-row-inner');
+        const gridRowInnerWithRadioButton = containerRow.append('div')
+            .attr('class', 'grid-row grid-row-inner');
+        const gridRowInnerWaterAlert = containerRow.append('div')
             .attr('class', 'grid-row grid-row-inner');
 
-        const radioButtonContainer = gridRowInner_2.append('div').attr('class', 'radio-button__param-select');
-        const radioButtonDiv = radioButtonContainer.append('div')
-            .attr('class', 'usa-radio grid-col grid-col-1');
+
+        gridRowInnerUpperPeriodOfRecord.append('div')
+            .attr('class', 'grid-col grid-offset-1')
+            .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
+        gridRowInnerUpperPeriodOfRecord.append('div')
+            .attr('class', 'grid-col open-close-icon__param-select')
+            .text('open');
+
+
+
+        const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
+            .attr('class', 'radio-button__param-select')
+            .append('div')
+                .attr('class', 'usa-radio grid-col-1');
         radioButtonDiv.append('input')
             .attr('class', 'usa-radio__input')
             .attr('id', `radio-${parameter.parameterCode}`)
@@ -52,15 +69,22 @@ export const drawSelectionList = function(container, store, siteno) {
         radioButtonDiv.append('label')
             .attr('class', 'usa-radio__label')
             .attr('for', `radio-${parameter.parameterCode}`);
-        gridRowInner_2.append('div').attr('class', 'grid-col grid-col-0 tablet:grid-col-8 description__param-select')
+        gridRowInnerWithRadioButton.append('div')
+            .attr('class', 'grid-col-8 description__param-select')
             .append('div')
                 .text(`${parameter.description}`);
-        gridRowInner_2.append('div')
+        gridRowInnerWithRadioButton.append('div')
             .attr('class', 'grid-col grid-col-auto period-of-record__param-select')
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
-        gridRowInner_2.append('div')
-            .attr('class', 'grid-col open-close-row__param-select')
+        gridRowInnerWithRadioButton.append('div')
+            .attr('class', 'grid-col open-close-icon__param-select')
             .text('open');
+
+
+        gridRowInnerWaterAlert.append('div')
+            .attr('class', 'grid-col grid-offset-1')
+            .text('WaterAlert link');
+
     });
 };
 
