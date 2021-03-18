@@ -296,10 +296,13 @@
     margin-bottom: 0.2em;
   }
   .grid-container {
+    margin: 0;
     padding: 0;
 
     .grid-row {
       border-bottom: 1px solid black;
+
+      padding: 0.3em;
       .usa-radio__label {
         margin-top: 0;
         margin-bottom: 0;
@@ -310,10 +313,14 @@
       border-top: 1px solid black;
     }
 
-    .grid-col {
+    .grid-row-inner {
+      padding-right: 0;
+      padding-left: 0;
+    }
+
+    .open-close-row__param-select {
       display: flex;
-      align-items: center;
-      padding: 0.3em;
+      justify-content: right;
     }
   }
 }

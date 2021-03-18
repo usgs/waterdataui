@@ -37,26 +37,30 @@ export const drawSelectionList = function(container, store, siteno) {
         .attr('class', 'grid-container');
 
     parameters.forEach(parameter => {
-        const gridRow = selectionList.append('div')
-            .attr('class', 'grid-row');
+        const gridRowInner_2 = selectionList.append('div')
+            .attr('class', 'grid-row grid-row-inner');
 
-        const radioButtonContainer = gridRow.append('div').attr('class', 'radio-button__param-select');
+        const radioButtonContainer = gridRowInner_2.append('div').attr('class', 'radio-button__param-select');
         const radioButtonDiv = radioButtonContainer.append('div')
-            .attr('class', 'usa-radio grid-col grid-col-auto');
+            .attr('class', 'usa-radio grid-col grid-col-1');
         radioButtonDiv.append('input')
-            .attr('class', 'usa-radio__input ')
+            .attr('class', 'usa-radio__input')
             .attr('id', `radio-${parameter.parameterCode}`)
             .attr('type', 'radio')
             .attr('name', 'parameter-selection')
             .attr('value', `${parameter.parameterCode}`);
         radioButtonDiv.append('label')
-            .attr('class', 'usa-radio__label  grid-col')
+            .attr('class', 'usa-radio__label')
             .attr('for', `radio-${parameter.parameterCode}`);
-        gridRow.append('div').attr('class', 'grid-col grid-col-8  description__param-select')
+        gridRowInner_2.append('div').attr('class', 'grid-col grid-col-0 tablet:grid-col-8 description__param-select')
             .append('div')
                 .text(`${parameter.description}`);
-        gridRow.append('div').attr('class', 'grid-col grid-col-auto period-of-record__param-select')
+        gridRowInner_2.append('div')
+            .attr('class', 'grid-col grid-col-auto period-of-record__param-select')
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
+        gridRowInner_2.append('div')
+            .attr('class', 'grid-col open-close-row__param-select')
+            .text('open');
     });
 };
 
