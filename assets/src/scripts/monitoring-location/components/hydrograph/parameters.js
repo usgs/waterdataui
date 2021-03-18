@@ -30,8 +30,8 @@ export const drawSelectionList = function(container, store, siteno) {
     console.log('parameters ', parameters)
 
     container.append('div')
-        .attr('id', 'CHANGE-ID!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-select-time-series')
-        .append('h2') // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!check header number
+        .attr('id', 'parameter-selection-container')
+        .append('h2')
         .text('Select Data to Graph');
     const selectionList = container.append('div')
         .attr('class', 'grid-container');
@@ -40,11 +40,22 @@ export const drawSelectionList = function(container, store, siteno) {
         const gridRow = selectionList.append('div')
             .attr('class', 'grid-row');
 
-        gridRow.append('div').attr('class', 'tablet:grid-col')
-            .text(`${parameter.parameterCode}`);
-        gridRow.append('div').attr('class', 'tablet:grid-col')
-            .text(`${parameter.description}`);
-        gridRow.append('div').attr('class', 'tablet:grid-col')
+        const radioButtonContainer = gridRow.append('div').attr('class', 'radio-button__param-select');
+        const radioButtonDiv = radioButtonContainer.append('div')
+            .attr('class', 'usa-radio grid-col grid-col-auto');
+        radioButtonDiv.append('input')
+            .attr('class', 'usa-radio__input ')
+            .attr('id', `radio-${parameter.parameterCode}`)
+            .attr('type', 'radio')
+            .attr('name', 'parameter-selection')
+            .attr('value', `${parameter.parameterCode}`);
+        radioButtonDiv.append('label')
+            .attr('class', 'usa-radio__label  grid-col')
+            .attr('for', `radio-${parameter.parameterCode}`);
+        gridRow.append('div').attr('class', 'grid-col grid-col-8  description__param-select')
+            .append('div')
+                .text(`${parameter.description}`);
+        gridRow.append('div').attr('class', 'grid-col grid-col-auto period-of-record__param-select')
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
     });
 };
