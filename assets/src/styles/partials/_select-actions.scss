@@ -1,0 +1,24 @@
+$selected-action-color: 'accent-cool-dark';
+$base-action-color: 'base';
+$hover-action-color: 'base-light';
+
+.select-actions-container {
+  .usa-button-group {
+    @include u-bg($base-action-color);
+
+    .usa-button {
+      @include u-border('05');
+      @include u-border($selected-action-color);
+      @include u-bg($base-action-color);
+      @include u-text('white');
+    }
+
+    .usa-button:hover {
+      @include u-bg($hover-action-color);
+    }
+
+    .usa-button.selected-action {
+      @include u-bg($selected-action-color);
+    }
+  }
+}

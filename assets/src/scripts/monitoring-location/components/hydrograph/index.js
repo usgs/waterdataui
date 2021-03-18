@@ -18,6 +18,8 @@ import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDat
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
+import {getPreferredIVMethodID} from './selectors/time-series-data';
+
 import {showDataIndicators} from './data-indicator';
 import {drawDataTables} from './data-table';
 import {drawDownloadLinks} from './download-links';
@@ -27,12 +29,9 @@ import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {drawSelectionTable} from './parameters';
+import {drawSelectActions} from './select-actions';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
-
-import {getPreferredIVMethodID} from './selectors/time-series-data';
-
-
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -139,6 +138,7 @@ export const attachToNode = function(store,
 
 
             legendControlsContainer.call(drawGraphControls, store, siteno);
+            nodeElem.select('.select-actions-container').call(drawSelectActions, store);
 
             nodeElem.select('#iv-graph-list-container')
                 .call(drawDownloadLinks, store, siteno);
