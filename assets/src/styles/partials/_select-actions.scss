@@ -8,7 +8,7 @@ $hover-action-color: 'base-light';
   @include u-border('base');
   @include u-radius('md');
 
-  .usa-button-group {
+  .select-actions-button-group {
     @include u-bg($base-action-color);
 
     .usa-button {

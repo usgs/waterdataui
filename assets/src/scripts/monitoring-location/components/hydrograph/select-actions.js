@@ -46,7 +46,7 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
 export const drawSelectActions = function(container, store, siteno) {
     const state = store.getState();
     const listContainer = container.append('ul')
-        .attr('class', 'usa-button-group');
+        .attr('class', 'select-actions-button-group usa-button-group');
     appendButton(listContainer, {
         buttonLabel: 'Change time span',
         idOfDivToControl: 'change-time-span-container'
