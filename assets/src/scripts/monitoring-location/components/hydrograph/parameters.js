@@ -43,7 +43,19 @@ export const drawSelectionList = function(container, store, siteno) {
             .call(link(store, (elem, selectedParameterCode) => {
                 elem.classed('selected', parameter.parameterCode === selectedParameterCode)
                     .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
-            }, getSelectedParameterCode));
+            }, getSelectedParameterCode))
+            .on('click', function() {
+                const thisClass = select(this).attr('class');
+                if (!thisClass || !thisClass.includes('selected')) {
+                    store.dispatch(setSelectedParameterCode(parameter.parameterCode));
+                    showDataIndicators(true, store);
+                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+                        .then(() => {
+                            showDataIndicators(false, store);
+                        });
+                }
+
+            });
 
         const gridRowInnerTopPeriodOfRecord = containerRow.append('div')
             .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
@@ -71,7 +83,10 @@ export const drawSelectionList = function(container, store, siteno) {
             .attr('id', `radio-${parameter.parameterCode}`)
             .attr('type', 'radio')
             .attr('name', 'parameter-selection')
-            .attr('value', `${parameter.parameterCode}`);
+            .attr('value', `${parameter.parameterCode}`)
+            .call(link(store, (inputElem, selectedParameterCode) => {
+                inputElem.property('checked', parameter.parameterCode === selectedParameterCode ? true : null);
+            }, getSelectedParameterCode));
         radioButtonDiv.append('label')
             .attr('class', 'usa-radio__label')
             .attr('for', `radio-${parameter.parameterCode}`);
@@ -85,15 +100,14 @@ export const drawSelectionList = function(container, store, siteno) {
         gridRowInnerWithRadioButton.append('div')
             .attr('class', 'grid-col open-close-icon__param-select')
             .on('click', function() {
-                console.log('ran', select('#parameter-selection-container'))
-                // select(`#wateralert-row-${parameter.parameterCode}`).attr('background-color', 'red')
-                select('#parameter-selection-container').attr('background-color', 'red')
+                select(`#wateralert-row-${parameter.parameterCode}`)
+                    .attr('hidden', select(`#wateralert-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
             })
             .text('open');
 
         if(parameter.waterAlert.hasWaterAlert) {
             gridRowInnerWaterAlert.append('div')
-                .attr('id', `wateralert-row-${parameter}`)
+                .attr('id', `wateralert-row-${parameter.parameterCode}`)
                 .attr('hidden', true)
                 .attr('class', 'grid-col grid-offset-1')
                 .text('WaterAlert link');
