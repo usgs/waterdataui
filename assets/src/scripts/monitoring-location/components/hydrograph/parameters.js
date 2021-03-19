@@ -1,7 +1,7 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
 import {tooltip} from 'uswds-components';
 
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
@@ -45,7 +45,12 @@ export const drawSelectionList = function(container, store, siteno) {
                     .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
             }, getSelectedParameterCode))
             .on('click', function() {
-                const thisClass = select(this).attr('class');
+                const thisClass = select(this)
+                    .attr('class');
+                selectAll('.wateralert-row')
+                    .attr('hidden', 'true');
+                select(`#wateralert-row-${parameter.parameterCode}`).attr('hidden', null); // If the clicked row is not expanded, expand it.
+
                 if (!thisClass || !thisClass.includes('selected')) {
                     store.dispatch(setSelectedParameterCode(parameter.parameterCode));
                     showDataIndicators(true, store);
@@ -97,19 +102,31 @@ export const drawSelectionList = function(container, store, siteno) {
         gridRowInnerWithRadioButton.append('div')
             .attr('class', 'grid-col grid-col-auto period-of-record__param-select')
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
-        gridRowInnerWithRadioButton.append('div')
-            .attr('class', 'grid-col open-close-icon__param-select')
-            .on('click', function() {
+        const rowExpansionControlDiv = gridRowInnerWithRadioButton.append('div')
+            .attr('class', 'grid-col open-close-icon__param-select');
+        if (parameter.waterAlert.hasWaterAlert) {
+            rowExpansionControlDiv
+                .text('open')
+                .on('click', function(event) {
+                event.stopPropagation(); // Don't let clicks on the container div change the settings.
+
+                selectAll('.wateralert-row')
+                    .filter(function() {
+                        return this.id !== `wateralert-row-${parameter.parameterCode}`;
+                    })
+                    .attr('hidden', 'true');
+
                 select(`#wateralert-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#wateralert-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
-            })
-            .text('open');
+                });
+        }
+
 
         if(parameter.waterAlert.hasWaterAlert) {
             gridRowInnerWaterAlert.append('div')
                 .attr('id', `wateralert-row-${parameter.parameterCode}`)
                 .attr('hidden', true)
-                .attr('class', 'grid-col grid-offset-1')
+                .attr('class', 'grid-col grid-offset-1 wateralert-row')
                 .text('WaterAlert link');
         }
 
