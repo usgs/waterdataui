@@ -38,28 +38,34 @@ export const drawSelectionList = function(container, store, siteno) {
 
     parameters.forEach(parameter => {
         const containerRow = selectionList.append('div')
-            .attr('class', 'grid-container grid-row-container-row');
-        const gridRowInnerUpperPeriodOfRecord = containerRow.append('div')
-            .attr('class', 'grid-row grid-row-inner');
+            .attr('id', `container-row-${parameter.parameterCode}`)
+            .attr('class', 'grid-container grid-row-container-row')
+            .call(link(store, (elem, selectedParameterCode) => {
+                elem.classed('selected', parameter.parameterCode === selectedParameterCode)
+                    .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
+            }, getSelectedParameterCode));
+
+        const gridRowInnerTopPeriodOfRecord = containerRow.append('div')
+            .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
         const gridRowInnerWithRadioButton = containerRow.append('div')
             .attr('class', 'grid-row grid-row-inner');
         const gridRowInnerWaterAlert = containerRow.append('div')
             .attr('class', 'grid-row grid-row-inner');
 
 
-        gridRowInnerUpperPeriodOfRecord.append('div')
+        gridRowInnerTopPeriodOfRecord.append('div')
             .attr('class', 'grid-col grid-offset-1')
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
-        gridRowInnerUpperPeriodOfRecord.append('div')
+        gridRowInnerTopPeriodOfRecord.append('div')
             .attr('class', 'grid-col open-close-icon__param-select')
             .text('open');
 
 
 
         const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
-            .attr('class', 'radio-button__param-select')
+            .attr('class', 'grid-col-1 radio-button__param-select')
             .append('div')
-                .attr('class', 'usa-radio grid-col-1');
+                .attr('class', 'usa-radio');
         radioButtonDiv.append('input')
             .attr('class', 'usa-radio__input')
             .attr('id', `radio-${parameter.parameterCode}`)
@@ -70,7 +76,7 @@ export const drawSelectionList = function(container, store, siteno) {
             .attr('class', 'usa-radio__label')
             .attr('for', `radio-${parameter.parameterCode}`);
         gridRowInnerWithRadioButton.append('div')
-            .attr('class', 'grid-col-8 description__param-select')
+            .attr('class', 'grid-col-7 description__param-select')
             .append('div')
                 .text(`${parameter.description}`);
         gridRowInnerWithRadioButton.append('div')
@@ -78,12 +84,20 @@ export const drawSelectionList = function(container, store, siteno) {
             .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
         gridRowInnerWithRadioButton.append('div')
             .attr('class', 'grid-col open-close-icon__param-select')
+            .on('click', function() {
+                console.log('ran', select('#parameter-selection-container'))
+                // select(`#wateralert-row-${parameter.parameterCode}`).attr('background-color', 'red')
+                select('#parameter-selection-container').attr('background-color', 'red')
+            })
             .text('open');
 
-
-        gridRowInnerWaterAlert.append('div')
-            .attr('class', 'grid-col grid-offset-1')
-            .text('WaterAlert link');
+        if(parameter.waterAlert.hasWaterAlert) {
+            gridRowInnerWaterAlert.append('div')
+                .attr('id', `wateralert-row-${parameter}`)
+                .attr('hidden', true)
+                .attr('class', 'grid-col grid-offset-1')
+                .text('WaterAlert link');
+        }
 
     });
 };

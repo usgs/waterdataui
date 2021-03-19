@@ -299,8 +299,19 @@
     margin: 0;
     padding: 0;
 
+    .selected {
+      background-color: $selected;
+    }
+
+    .grid-row-period-of-record {
+      @media only screen and (min-width: 640px) {
+        display: none;
+      }
+    }
+
     .grid-row-container-row {
       border-bottom: 1px solid black;
+      padding: 0.3em;
     }
 
     .grid-row-container-row:first-child {
@@ -308,7 +319,7 @@
     }
 
     .grid-row-inner {
-      padding: 0.3em;
+
       .usa-radio__label {
         margin-top: 0;
         margin-bottom: 0;
@@ -320,9 +331,19 @@
       padding-left: 0;
     }
 
+    .period-of-record__param-select {
+      @media only screen and (max-width: 640px) {
+        display: none;
+      }
+    }
+
     .open-close-icon__param-select {
       display: flex;
       justify-content: right;
+
+      @media only screen and (max-width: 640px) {
+        display: none;
+      }
     }
   }
 }
