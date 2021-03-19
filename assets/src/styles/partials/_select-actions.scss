@@ -3,6 +3,11 @@ $base-action-color: 'base';
 $hover-action-color: 'base-light';
 
 .select-actions-container {
+  @include u-bg('accent-cool-lighter');
+  @include u-border('05');
+  @include u-border('base');
+  @include u-radius('md');
+
   .usa-button-group {
     @include u-bg($base-action-color);
 
@@ -11,9 +16,12 @@ $hover-action-color: 'base-light';
       @include u-border($selected-action-color);
       @include u-bg($base-action-color);
       @include u-text('white');
+      i {
+        @include u-margin-right('05');
+      }
     }
 
-    .usa-button:hover {
+    .usa-button:hover, .usa-button.selected-action:hover {
       @include u-bg($hover-action-color);
     }
 

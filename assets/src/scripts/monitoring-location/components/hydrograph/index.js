@@ -128,17 +128,12 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!thisShowOnlyGraph) {
-            nodeElem.select('#hydrograph-date-controls-container')
-                .call(drawDateRangeControls, store, siteno, initialPeriod, {
-                    start: startDT,
-                    end: endDT
-                });
             nodeElem.select('#hydrograph-method-picker-container')
                 .call(drawMethodPicker, store);
 
 
             legendControlsContainer.call(drawGraphControls, store, siteno);
-            nodeElem.select('.select-actions-container').call(drawSelectActions, store);
+            nodeElem.select('.select-actions-container').call(drawSelectActions, store, siteno);
 
             nodeElem.select('#iv-graph-list-container')
                 .call(drawDownloadLinks, store, siteno);
