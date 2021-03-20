@@ -337,12 +337,17 @@
       }
     }
 
-    .open-close-icon__param-select {
+    .open-close-radio_button_row {
       display: flex;
       justify-content: right;
-
       @media only screen and (max-width: 640px) {
         display: none;
+      }
+
+      .top-period-of-record {
+        @media only screen and (min-width: 640px) {
+          display: none;
+        }
       }
     }
   }
