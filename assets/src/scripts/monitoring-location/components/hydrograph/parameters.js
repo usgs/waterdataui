@@ -138,20 +138,27 @@ const drawRadioButtonRow = function(store, element, parameter) {
 
 /*
 * Helper function that draws a row containing the controls for the WaterAlert subscription.
+* @param {String} siteno - A unique identifier for the monitoring location
 * @param {Object} Element - The target element to append the row
 * @param {Object} parameter - Contains details about the current parameter code
 * @return {Object} The HTML for the grid row
 */
-const drawWaterAlertRow = function(element, parameter) {
+const drawWaterAlertRow = function(siteno, element, parameter) {
     const gridRowInnerWaterAlert = element.append('div')
         .attr('class', 'grid-row grid-row-inner');
-
+console.log('parameter ', parameter)
     if(parameter.waterAlert.hasWaterAlert) {
         gridRowInnerWaterAlert.append('div')
             .attr('id', `wateralert-row-${parameter.parameterCode}`)
             .attr('hidden', true)
             .attr('class', 'grid-col grid-offset-1 wateralert-row')
-            .text('WaterAlert link');
+            .append('a')
+            .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode}`)
+            .attr('class', 'water-alert-cell usa-tooltip')
+            .attr('data-position', 'left')
+            .attr('data-classes', 'width-full tablet:width-auto')
+            .attr('title', parameter.waterAlert.tooltipText)
+            .text(parameter.waterAlert.displayText);            
     }
 
     return gridRowInnerWaterAlert;
@@ -183,7 +190,7 @@ export const drawSelectionList = function(container, store, siteno) {
         // Add the nested grid rows
         drawTopPeriodOfRecordRow(containerRow, parameter);
         drawRadioButtonRow(store, containerRow, parameter);
-        drawWaterAlertRow(containerRow, parameter);
+        drawWaterAlertRow(siteno, containerRow, parameter);
         // Add the expansion container
 
         // Add the rows nested in the expansion container
