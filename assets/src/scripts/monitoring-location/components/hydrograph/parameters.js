@@ -154,11 +154,12 @@ console.log('parameter ', parameter)
             .attr('class', 'grid-col grid-offset-1 wateralert-row')
             .append('a')
             .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode}`)
+            .attr('target', '_blank')
             .attr('class', 'water-alert-cell usa-tooltip')
             .attr('data-position', 'left')
             .attr('data-classes', 'width-full tablet:width-auto')
             .attr('title', parameter.waterAlert.tooltipText)
-            .text(parameter.waterAlert.displayText);            
+            .text(parameter.waterAlert.displayText);
     }
 
     return gridRowInnerWaterAlert;

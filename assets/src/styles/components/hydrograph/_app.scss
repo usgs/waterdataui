@@ -319,10 +319,14 @@
     }
 
     .grid-row-inner {
-
       .usa-radio__label {
         margin-top: 0;
         margin-bottom: 0;
+      }
+      @media only screen and (max-width: 640px) {
+        .description__param-select {
+          font-weight: bold;
+        }
       }
     }
 
