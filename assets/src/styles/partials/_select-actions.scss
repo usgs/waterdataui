@@ -7,6 +7,11 @@ $hover-action-color: 'base-light';
   @include u-border('05');
   @include u-border('base');
   @include u-radius('md');
+  .usa-button {
+    i {
+      @include u-margin-right('05');
+    }
+  }
 
   .select-actions-button-group {
     @include u-bg($base-action-color);
@@ -16,9 +21,6 @@ $hover-action-color: 'base-light';
       @include u-border($selected-action-color);
       @include u-bg($base-action-color);
       @include u-text('white');
-      i {
-        @include u-margin-right('05');
-      }
     }
 
     .usa-button:hover, .usa-button.selected-action:hover {
@@ -28,5 +30,8 @@ $hover-action-color: 'base-light';
     .usa-button.selected-action {
       @include u-bg($selected-action-color);
     }
+  }
+  form {
+    @include u-padding(2);
   }
 }

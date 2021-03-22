@@ -226,9 +226,9 @@ export const retrieveMedianStatistics = function(siteno, parameterCode) {
  * @param {String} endTie - ISO 8601 time string
  * @return {Function} that returns a Promise
  */
-const retrieveGroundwaterLevels = function(site, {parameterCode, period, startTime, endTime}) {
+const retrieveGroundwaterLevels = function(siteno, {parameterCode, period, startTime, endTime}) {
     return function(dispatch) {
-        return fetchGroundwaterLevels({site, parameterCode, period, startTime, endTime})
+        return fetchGroundwaterLevels({siteno, parameterCode, period, startTime, endTime})
             .then(data => {
                 if (data.value && data.value.timeSeries && data.value.timeSeries.length) {
                     let values;

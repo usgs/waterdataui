@@ -11,7 +11,7 @@ import {parseRDB} from 'ui/utils';
  * @param {String} format - The format of the data returned from the water services API, such as 'json' or 'rdb'
  * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getServiceURLStatistics = function({siteno, parameterCode, statType, format}) {
+export const getStatisticsServiceURL = function({siteno, parameterCode, statType, format}) {
     return `${config.SERVICE_ROOT}/stat/?sites=${siteno}&statReportType=daily&statTypeCd=${statType}&parameterCd=${parameterCode}&format=${format}`;
 };
 
@@ -24,7 +24,7 @@ export const getServiceURLStatistics = function({siteno, parameterCode, statType
  * @returns {Promise} with response string if successful or rejected with error status
  */
 export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) {
-    return get(getServiceURLStatistics({
+    return get(getStatisticsServiceURL({
         siteno: sites,
         parameterCode: params,
         statType: statType,

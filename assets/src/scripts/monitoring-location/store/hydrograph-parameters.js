@@ -66,7 +66,7 @@ export const retrieveHydrographParameters = function(siteno) {
             fetchPromises.push(fetchIVParameters);
         }
         if (config.gwPeriodOfRecord) {
-            const fetchGWLevelParameters = fetchGroundwaterLevels({site: siteno})
+            const fetchGWLevelParameters = fetchGroundwaterLevels({siteno: siteno})
                 .then(series => {
                     if (series.value && series.value.timeSeries) {
                         return series.value.timeSeries.reduce((varsByPCode, ts) => {

@@ -25,7 +25,7 @@ function getNumberOfDays(period) {
 * @param {String} siteno - the unique identifier for the monitoring location
 * @param {Boolean} isExpanded - if the meta data has additional information
 */
-export const getServiceURLMetaData = function({siteno,  isExpanded}) {
+export const getSiteMetaDataServiceURL = function({siteno,  isExpanded}) {
     return `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}${isExpanded ? '&siteOutput=expanded' : ''}&siteStatus=all`;
 };
 
@@ -39,7 +39,7 @@ export const getServiceURLMetaData = function({siteno,  isExpanded}) {
 * @param {String} format - the data format returned from waterservices.usgs.gov
 * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getServiceURL = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
+export const getIVServiceURL = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
     let timeParams;
     let serviceRoot;
 
@@ -72,7 +72,7 @@ export const getServiceURL = function({siteno, parameterCode= null, period=null,
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
 export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
-    return get(getServiceURL({
+    return get(getIVServiceURL({
             siteno: sites,
             parameterCode: parameterCode,
             period:  period,

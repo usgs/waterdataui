@@ -58,7 +58,7 @@ export const hasVisibleMedianStatisticsData = createSelector(
 
 export const hasVisibleGroundwaterLevels = createSelector(
     getGroundwaterLevels,
-    (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
+    (gwLevels) => gwLevels && gwLevels.values && gwLevels.values.length
 );
 
 /*
