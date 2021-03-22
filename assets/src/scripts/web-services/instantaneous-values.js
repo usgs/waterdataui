@@ -64,16 +64,16 @@ export const getIVServiceURL = function({siteno, parameterCode= null, period=nul
 
 /**
  * Get a given time series dataset from Water Services.
- * @param  {Array}  sites  Array of site IDs to retrieve.
+ * @param  {String}  sites  Array of site IDs to retrieve.
  * @param  {String}  parameterCodes
  * @param {String} period - ISO 8601 Duration
  * @param {String} startTime - ISO 8601 time
  * @param {String} endTime - ISO 8601 time
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const fetchTimeSeries = function({sites, parameterCode= null, period=null, startTime=null, endTime=null}) {
+export const fetchTimeSeries = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null}) {
     return get(getIVServiceURL({
-            siteno: sites,
+            siteno: siteno,
             parameterCode: parameterCode,
             period:  period,
             startTime: startTime,

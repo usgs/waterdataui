@@ -58,11 +58,11 @@ describe('monitoring-location/store/hydrograph-parameters', () => {
 
             expect(mockIVCalls).toHaveLength(1);
             expect(mockIVCalls[0][0]).toEqual({
-                sites: ['11112222']
+                siteno: '11112222'
             });
             expect(mockGWCalls).toHaveLength(1);
             expect(mockGWCalls[0][0]).toEqual({
-                site: '11112222'
+                siteno: '11112222'
             });
         });
 

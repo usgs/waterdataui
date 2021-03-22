@@ -46,7 +46,7 @@ const TEST_STATE = {
     }
 };
 
-describe('monitoring-location/components/hydrograph/time-series module', () => {
+describe('monitoring-location/components/hydrograph/selectors/time-series-data module', () => {
     config.locationTimeZone = 'America/Chicago';
     describe('isVisible', () => {
         it('Returns whether the time series is visible', () => {

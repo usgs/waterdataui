@@ -29,7 +29,7 @@ export const retrieveHydrographParameters = function(siteno) {
     return function(dispatch) {
         let fetchPromises = [];
         if (config.ivPeriodOfRecord) {
-            const fetchIVParameters = fetchTimeSeries({sites: [siteno]})
+            const fetchIVParameters = fetchTimeSeries({siteno: siteno})
                 .then(series => {
                     if (series.value && series.value.timeSeries) {
                         const allParameterCodes = series.value.timeSeries.map(ts => ts.variable.variableCode[0].value);

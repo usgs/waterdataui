@@ -97,7 +97,7 @@ const retrieveIVData = function(siteno, dataKind, {parameterCode, period, startT
         const isCalculatedTemperatureCode = isCalculatedTemperature(parameterCode);
 
         return fetchTimeSeries({
-            sites: [siteno],
+            siteno: siteno,
             parameterCode: getParameterToFetch(parameterCode),
             period: period,
             startTime: startTime,
