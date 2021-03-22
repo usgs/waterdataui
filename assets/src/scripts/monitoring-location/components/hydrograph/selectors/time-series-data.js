@@ -40,7 +40,7 @@ export const isVisible = memoize(dataKind => createSelector(
  * @param {String} dataKind - 'primary' or 'compare'
  * @return {Function}
  */
-const hasVisibleIVData = memoize(dataKind => createSelector(
+export const hasVisibleIVData = memoize(dataKind => createSelector(
     isVisible(dataKind),
     getIVData(dataKind),
     getSelectedIVMethodID,
@@ -50,13 +50,13 @@ const hasVisibleIVData = memoize(dataKind => createSelector(
     }
 ));
 
-const hasVisibleMedianStatisticsData = createSelector(
+export const hasVisibleMedianStatisticsData = createSelector(
     isVisible('median'),
     getMedianStatisticsData,
     (isVisible, medianStats) => isVisible && medianStats ? Object.keys(medianStats).length > 0 : false
 );
 
-const hasVisibleGroundwaterLevels = createSelector(
+export const hasVisibleGroundwaterLevels = createSelector(
     getGroundwaterLevels,
     (gwLevels) => gwLevels && gwLevels.values ? gwLevels.values.length > 0 : false
 );

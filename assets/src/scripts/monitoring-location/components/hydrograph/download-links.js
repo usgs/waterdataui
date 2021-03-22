@@ -2,6 +2,7 @@
  *  Module with functions for processing and structuring download link URLs
  */
 
+import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
@@ -11,11 +12,13 @@ import {getServiceURL, getServiceURLMetaData} from 'ui/web-services/instantaneou
 import {getServiceURLStatistics} from 'ui/web-services/statistics-data';
 import {getServiceURLSGroundwater} from 'ui/web-services/groundwater-levels';
 
+import {drawErrorAlert} from 'd3render/alerts';
 import {appendInfoTooltip} from 'd3render/info-tooltip';
+
 import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
 import {getTimeRange, getMedianStatisticsData, getGroundwaterLevels, getIVData} from 'ml/selectors/hydrograph-data-selector';
 
-
+import {hasVisibleIVData, hasVisibleMedianStatisticsData, hasVisibleGroundwaterLevels} from './selectors/time-series-data';
 /**
 * Creates a set of links with dynamically populated URLs so that users can download data that is related to the
 * current hydrograph.
@@ -153,4 +156,95 @@ export const drawDownloadLinks = function(elem, store, siteno) {
         primaryIVData: getIVData('primary'),
         compareIVData: getIVData('compare')
     })));
+};
+
+const drawCheckbox = function(container, inputID, label, value) {
+    const checkboxContainer = container.append('div')
+        .attr('class', 'usa-checkbox');
+    checkboxContainer.append('input')
+        .attr('class', 'usa-checkbox__input')
+        .attr('id', inputID)
+        .attr('type', 'checkbox')
+        .attr('value', value);
+    checkboxContainer.append('label')
+        .attr('class', 'usa-checkbox__label')
+        .attr('for', inputID)
+        .text(label);
+};
+
+const drawCheckboxes = function(container, {
+    hasVisiblePrimaryIVData,
+    hasVisibleCompareIVData,
+    hasVisibleMedianData,
+    hasVisibleGroundwaterLevels
+}) {
+    container.select('.download-checkbox-container').remove();
+    const checkboxContainer = container.append('div')
+        .attr('class', 'download-checkbox-container');
+    if (hasVisiblePrimaryIVData) {
+        checkboxContainer.call(drawCheckbox, 'download-primary-iv-data', 'Current IV', 'primary');
+    }
+    if (hasVisibleCompareIVData) {
+        checkboxContainer.call(drawCheckbox, 'download-compare-iv-data', 'Prior year IV', 'compare');
+    }
+    if (hasVisibleMedianData) {
+        checkboxContainer.call(drawCheckbox, 'download-median-data', 'Median', 'median');
+    }
+    if (hasVisibleGroundwaterLevels) {
+        checkboxContainer.call(drawCheckbox, 'download-field-visits', 'Field visits', 'groundwater-levels');
+    }
+    checkboxContainer.call(drawCheckbox, 'download-site-meta-data', 'About this location', 'site');
+};
+
+export const drawDownloadForm = function(container, store, siteno) {
+    const formContainer = container.append('form')
+        .attr('class', 'usa-form')
+        .append('fieldset')
+            .attr('class', 'usa-fieldset');
+    formContainer.append('legend')
+        .attr('class', 'usa-legend')
+        .text('Select data to be downloaded');
+    formContainer.call(link(store, drawCheckboxes, createStructuredSelector({
+        hasVisiblePrimaryIVData: hasVisibleIVData('primary'),
+        hasVisibleCompareIVData: hasVisibleIVData('compare'),
+        hasVisibleMedianData: hasVisibleMedianStatisticsData,
+        hasVisibleGroundwaterLevels: hasVisibleGroundwaterLevels
+    })));
+
+    const downloadButton = container.append('button')
+        .attr('class', 'usa-button download-selected-data')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'download-selected-data')
+        .attr('ga-event-action', 'download')
+        .on('click', function() {
+            container.selectAll('.alert-error-container').remove();
+            const checkedInputs = formContainer.selectAll('input[type="checkbox"]:checked');
+            if (checkedInputs.size()) {
+                checkedInputs.each(function() {
+                    switch (select(this).attr('value')) {
+                        case 'primary':
+                        case 'compare':
+                        case 'median':
+                        case 'groundwater-levels':
+                        case 'site':
+                            console.log(`Downloading data for ${select(this).attr('value')}`);
+                            break;
+                        default:
+                            console.log('Unexpected value');
+                    }
+                });
+            } else {
+                container.insert('div', 'button')
+                    .attr('class', 'alert-error-container')
+                    .call(drawErrorAlert, {
+                        body:'Please select one or more checkboxes',
+                        useSlim: true
+                    });
+            }
+        });
+    downloadButton.append('i')
+        .attr('class', 'fas fa-file-download')
+        .attr('aria-hidden', true)
+        .attr('role', 'img');
+    downloadButton.append('span').text('Download');
 };

@@ -6,12 +6,14 @@
  * @param {String} kind - should be 'success', 'warning', 'error', or 'info'
  * @param {String} title
  * @param {String} body
+ * @param {String} useSlim
  */
-const drawAlert = function(elem, {kind, title, body}) {
+const drawAlert = function(elem, {kind, title, body, useSlim}) {
     elem.select('.usa-alert').remove();
     if (title || body) {
         const alertDiv = elem.append('div')
-            .attr('class', `usa-alert usa-alert--${kind}`);
+            .attr('class', `usa-alert usa-alert--${kind}`)
+            .classed('usa-alert--slim', useSlim);
         const alertBody = alertDiv.append('div')
             .attr('class', 'usa-alert__body');
         if (title) {
@@ -34,11 +36,12 @@ const drawAlert = function(elem, {kind, title, body}) {
  * @param {String} title
  * @param {String} body
  */
-export const drawSuccessAlert = function(elem, {title, body}) {
+export const drawSuccessAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
         kind:'success',
         title,
-        body
+        body,
+        useSlim
     });
 };
 
@@ -49,11 +52,12 @@ export const drawSuccessAlert = function(elem, {title, body}) {
  * @param {String} title
  * @param {String} body
  */
-export const drawInfoAlert = function(elem, {title, body}) {
+export const drawInfoAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
         kind: 'info',
         title,
-        body
+        body,
+        useSlim
     });
 };
 
@@ -64,11 +68,12 @@ export const drawInfoAlert = function(elem, {title, body}) {
  * @param {String} title
  * @param {String} body
  */
-export const drawWarningAlert = function(elem, {title, body}) {
+export const drawWarningAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
         kind: 'warning',
         title,
-        body
+        body,
+        useSlim
     });
 };
 
@@ -79,10 +84,11 @@ export const drawWarningAlert = function(elem, {title, body}) {
  * @param {String} title
  * @param {String} body
  */
-export const drawErrorAlert = function(elem, {title, body}) {
+export const drawErrorAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
         kind: 'error',
         title,
-        body
+        body,
+        useSlim
     });
 };

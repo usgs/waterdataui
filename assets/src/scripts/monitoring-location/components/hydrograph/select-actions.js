@@ -1,8 +1,9 @@
 import {select} from 'd3-selection';
 
+import {getSelectedCustomDateRange, getSelectedDateRange} from 'ml/selectors/hydrograph-state-selector';
+
 import {drawDateRangeControls} from './date-controls';
-import {drawDownloadLinks} from './download-links';
-import {getSelectedCustomDateRange, getSelectedDateRange} from '../../selectors/hydrograph-state-selector';
+import {drawDownloadForm} from './download-links';
 
 const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToControl}) {
     const button = listContainer.append('li')
@@ -64,5 +65,5 @@ export const drawSelectActions = function(container, store, siteno) {
     container.append('div')
         .attr('id', 'download-graph-data-container')
         .attr('hidden', true)
-        .call(drawDownloadLinks, store, siteno);
+        .call(drawDownloadForm, store, siteno);
 };
