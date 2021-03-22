@@ -4,7 +4,7 @@ import sinon from 'sinon';
 
 import config from 'ui/config';
 
-import {fetchTimeSeries} from './instantaneous-values';
+import {getSiteMetaDataServiceURL, getIVServiceURL, fetchTimeSeries} from './instantaneous-values';
 
 
 describe('web-services/instantaneous-values', () => {
@@ -21,6 +21,126 @@ describe('web-services/instantaneous-values', () => {
     afterEach(() => {
         restoreConsole();
         fakeServer.restore();
+    });
+
+    describe('getSiteMetaDataServiceURL', () => {
+       it('Expects the correct URL when isExpanded is false', () => {
+           const result = getSiteMetaDataServiceURL({
+               siteno: '11112222'
+           });
+           expect(result).toContain(`${config.SERVICE_ROOT}/site`);
+           expect(result).toContain('sites=11112222');
+           expect(result).not.toContain('siteOutput=expanded');
+       });
+
+       it('Expects the correct URL when isExpanded is true', () => {
+           const result = getSiteMetaDataServiceURL({
+               siteno: '11112222',
+               isExpanded: true
+           });
+           expect(result).toContain(`${config.SERVICE_ROOT}/site`);
+           expect(result).toContain('sites=11112222');
+           expect(result).toContain('siteOutput=expanded');
+       });
+    });
+
+    describe('getIVServiceURL', () => {
+        it('expects if no parameters are defaulted that the url will only contain sites parameter', () => {
+           const result = getIVServiceURL({
+               siteno: '11112222',
+               format: 'json'
+           });
+           expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+           expect(result).toContain('sites=1111222');
+           expect(result).toContain('format=json');
+           expect(result).not.toContain('parameterCd');
+           expect(result).not.toContain('period');
+           expect(result).not.toContain('startDT');
+           expect(result).not.toContain('endDT');
+        });
+
+        it('Expects if parameterCode is defined, the url contains the parameterCode', () => {
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                format: 'json'
+            });
+            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain('parameterCd=72019');
+        });
+
+        it('Expects if period is under 120 days SERVICE_ROOT will be used', () => {
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                period: 'P119D',
+                format: 'json'
+            });
+            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain('period=P119D');
+            expect(result).not.toContain('startDT');
+            expect(result).not.toContain('endDT');
+        });
+
+        it('Expects if period is over 120 days PAST_SERVICE_ROOT will be used', () => {
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                period: 'P120D',
+                format: 'json'
+            });
+            expect(result).toContain(`${config.PAST_SERVICE_ROOT}/iv`);
+            expect(result).toContain('period=P120D');
+            expect(result).not.toContain('startDT');
+            expect(result).not.toContain('endDT');
+        });
+
+        it('Expects if period, startTime, and endTime are defined, only period is used', () => {
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                period: 'P7D',
+                startTime: '2020-01-04',
+                endTime: '2020-01-31',
+                format: 'json'
+            });
+            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain('period=P7D');
+            expect(result).not.toContain('startDT');
+            expect(result).not.toContain('endDT');
+        });
+
+        it('Expects if no period, but startTime and endTime are defined and less than 120 days in the past, the SERVICE_ROOT is used', () => {
+            const startTime = DateTime.local().minus({days: 100}).toISO();
+            const endTime = DateTime.local().minus({days: 10}).toISO();
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                startTime: startTime,
+                endTime: endTime,
+                format: 'json'
+            });
+            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).not.toContain('period');
+            expect(result).toContain(`startDT=${startTime}`);
+            expect(result).toContain(`endDT=${endTime}`);
+        });
+
+        it('Expects if no period, but startTime and endTime are defined and more than 120 days in the past, the PAST_SERVICE_ROOT is used', () => {
+            const startTime = DateTime.local().minus({days: 121}).toISO();
+            const endTime = DateTime.local().minus({days: 10}).toISO();
+            const result = getIVServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                startTime: startTime,
+                endTime: endTime,
+                format: 'json'
+            });
+            expect(result).toContain(`${config.PAST_SERVICE_ROOT}/iv`);
+            expect(result).not.toContain('period');
+            expect(result).toContain(`startDT=${startTime}`);
+            expect(result).toContain(`endDT=${endTime}`);
+        });
     });
 
     describe('getTimeSeries function', () => {

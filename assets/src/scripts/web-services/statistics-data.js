@@ -6,7 +6,7 @@ import {parseRDB} from 'ui/utils';
 /**
  * Formats a URL for the purpose of downloading median statistics in RDB format
  * @param  {String}  siteno - A code that uniquely identifies a monitoring location
- * @param  {Array}  parameterCode - USGS five digit parameter code
+ * @param  {String}  parameterCode - USGS five digit parameter code
  * @param {String} statType - The statistics type requested from the water services API, such as 'median'
  * @param {String} format - The format of the data returned from the water services API, such as 'json' or 'rdb'
  * @return {String} The URL used to contact waterservices.usgs.gov
@@ -18,15 +18,15 @@ export const getStatisticsServiceURL = function({siteno, parameterCode, statType
 /*
  * Fetches statistics information in the RDB format for the statType. If params is not specified all parameters for the
  * sites are fetched.
- * @param {Array of String} sites
+ * @param {String} siteno
  * @param {String} statType
- * @param {Array of String} params
+ * @param {String} parameterCode
  * @returns {Promise} with response string if successful or rejected with error status
  */
-export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) {
+export const fetchSitesStatisticsRDB = function({siteno, statType, parameterCode}) {
     return get(getStatisticsServiceURL({
-        siteno: sites,
-        parameterCode: params,
+        siteno: siteno,
+        parameterCode: parameterCode,
         statType: statType,
         format: 'rdb'
     }));
@@ -36,11 +36,11 @@ export const fetchSitesStatisticsRDB = function({sites, statType, params=null}) 
  * Fetches the median statistics for the site and the parameters. If params is null all parameters are fetched.
  * @param {String} site
  * @param {String} statType
- * @param {Array of String} params
+ * @param {String} parameterCode
  * @returns {Promise}. If resolved, {Object} is returned. If rejected, the error status is passed
  */
-export const fetchSiteStatistics = function({siteno, statType, params=null}) {
-    let medianRDB = fetchSitesStatisticsRDB({sites: [siteno], statType, params: params});
+export const fetchSiteStatistics = function({siteno, statType, parameterCode=null}) {
+    let medianRDB = fetchSitesStatisticsRDB({siteno, statType, parameterCode});
     return medianRDB.then((response) => {
         const statsData = parseRDB(response);
         return statsData.reduce((finalResult, dataLine) => {

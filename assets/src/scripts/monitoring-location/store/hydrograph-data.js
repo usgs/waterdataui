@@ -68,7 +68,7 @@ const addMedianStatisticsData = function(statsData) {
 };
 
 /*
- * Synchronous Redux action which sets the median data
+ * Synchronous Redux action which sets the groundwater levels data
  * @param {Object} gwLevels
  *      @prop {Object} parameter
  *      @prop {Array} values
@@ -194,7 +194,7 @@ export const retrieveMedianStatistics = function(siteno, parameterCode) {
         } else {
             const isCalculatedParameterCode = isCalculatedTemperature(parameterCode);
             const parameterToFetch = getParameterToFetch(parameterCode);
-            return fetchSiteStatistics({siteno: siteno, statType: 'median', params: [parameterToFetch]})
+            return fetchSiteStatistics({siteno: siteno, statType: 'median', parameterCode: parameterToFetch})
                 .then(stats => {
                     let resultStats = {};
                     if (parameterToFetch in stats) {

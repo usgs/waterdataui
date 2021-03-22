@@ -39,7 +39,7 @@ const getMedianDataURL = function(store, siteno) {
     return getStatisticsServiceURL({
         siteno,
         parameterCode: getPrimaryParameter(store.getState()).parameterCode,
-        stat_type: 'median',
+        statType: 'median',
         format: 'rdb'
     });
 };

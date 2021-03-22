@@ -12,7 +12,14 @@ import config from 'ui/config';
  * @param {String} format - The format of the data returned from the water services API, such as 'json' or 'rdb'
  * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getGroundwaterServiceURL = function({siteno, parameterCode, period=null, startTime=null, endTime=null, format}) {
+export const getGroundwaterServiceURL = function ({
+                                                      siteno,
+                                                      parameterCode = null,
+                                                      period = null,
+                                                      startTime = null,
+                                                      endTime = null,
+                                                      format
+                                                  }) {
     const parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
     let timeQuery;
     if (period) {
