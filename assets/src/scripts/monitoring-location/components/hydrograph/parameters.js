@@ -6,8 +6,6 @@ import {select, selectAll} from 'd3-selection';
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
 
-import {appendInfoTooltip} from 'd3render/info-tooltip';
-
 import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydrograph-state-selector';
 
 import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
@@ -26,7 +24,8 @@ import {showDataIndicators} from './data-indicator';
 const addRowExpansionControl = function(element, parameter) {
     if (parameter.waterAlert.hasWaterAlert) {
         element
-            .text('open')
+            .append('i')
+            .attr('class', `fas fa-chevron-down chevron-${parameter.parameterCode}`)
             .on('click', function(event) {
                 event.stopPropagation();
                 selectAll('.expansion-container-row')
@@ -36,6 +35,20 @@ const addRowExpansionControl = function(element, parameter) {
                     .attr('hidden', 'true');
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
+
+                // const newClass = select(`.chevron-${parameter.parameterCode}`).attr('class') === `fas fa-chevron-down chevron-${parameter.parameterCode}` ?
+                //     `fas fa-chevron-up chevron-${parameter.parameterCode}` :
+                //     `fas fa-chevron-down chevron-${parameter.parameterCode}`;
+                // selectAll(`.chevron-${parameter.parameterCode}`).attr('class', newClass);
+
+                selectAll('.fa-chevron-up')._groups[0].forEach(iconElement => {
+                    iconElement.classList.remove('fa-chevron-up');
+                    iconElement.classList.add('fa-chevron-down');
+                });
+                selectAll(`.chevron-${parameter.parameterCode}`)._groups[0].forEach(iconElement => {
+                    iconElement.classList.remove('fa-chevron-down');
+                    iconElement.classList.add('fa-chevron-up');
+                });
             });
     }
 };
@@ -62,12 +75,26 @@ const drawContainingRow = function(store, siteno, element, parameter) {
                 .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
         .on('click', function() {
-            const thisClass = select(this)
-                .attr('class');
+            // Switch all the open/close icons to closed
+            const openRowIcons = selectAll('.fa-chevron-up');
+            openRowIcons._groups[0].forEach(iconElement => {
+                iconElement.classList.remove('fa-chevron-up');
+                iconElement.classList.add('fa-chevron-down');
+            });
+            // Set the 'clicked on' row's open/close icon to open
+            // Note - there are two open/close icons for each parameter, but only one shows at time, dependent on screen width
+            const selectedRowIcons = selectAll(`.chevron-${parameter.parameterCode}`);
+            selectedRowIcons._groups[0].forEach(iconElement => {
+                iconElement.classList.remove('fa-chevron-down');
+                iconElement.classList.add('fa-chevron-up');
+            });
+
             selectAll('.expansion-container-row')
                 .attr('hidden', 'true');
             select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden', null);
 
+            const thisClass = select(this)
+                .attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(parameter.parameterCode));
                 showDataIndicators(true, store);
@@ -150,7 +177,7 @@ const drawRadioButtonRow = function(store, element, parameter) {
 const drawWaterAlertRow = function(siteno, element, parameter) {
     const gridRowInnerWaterAlert = element.append('div')
         .attr('class', 'grid-row grid-row-inner');
-console.log('parameter ', parameter)
+
     if(parameter.waterAlert.hasWaterAlert) {
         gridRowInnerWaterAlert.append('div')
             .attr('id', `wateralert-row-${parameter.parameterCode}`)
