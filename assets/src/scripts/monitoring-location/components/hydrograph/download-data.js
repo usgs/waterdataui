@@ -18,6 +18,20 @@ import {getTimeRange, getPrimaryParameter} from 'ml/selectors/hydrograph-data-se
 
 import {hasVisibleIVData, hasVisibleMedianStatisticsData, hasVisibleGroundwaterLevels} from './selectors/time-series-data';
 
+const INFO_TEXT = `
+<div>
+    All data is in 
+    <a href="https://waterdata.usgs.gov/nwis/?tab_delimited_format_info" target="_blank">RDB</a> format.
+</div>
+<div>
+    Data is retrieved from <a href="https://waterservices.usgs.gov"  target="_blank">USGS Water Data Services.</a>
+</div>
+<div>
+ If you are an R user, use the 
+ <a href="https://usgs-r.github.io/dataRetrieval/" target="_blank">USGS dataRetrieval package</a> to
+ download, analyze and plot your data
+</div>    
+`
 const toISO = function(inMillis) {
     return DateTime.fromMillis(inMillis, {zone: config.locationTimeZone}).toISO();
 };
@@ -88,10 +102,10 @@ const drawCheckboxes = function(container, {
     const checkboxContainer = container.append('div')
         .attr('class', 'download-checkbox-container');
     if (hasVisiblePrimaryIVData) {
-        checkboxContainer.call(drawCheckbox, 'download-primary-iv-data', 'Current IV', 'primary');
+        checkboxContainer.call(drawCheckbox, 'download-primary-iv-data', 'Current time-series data', 'primary');
     }
     if (hasVisibleCompareIVData) {
-        checkboxContainer.call(drawCheckbox, 'download-compare-iv-data', 'Prior year IV', 'compare');
+        checkboxContainer.call(drawCheckbox, 'download-compare-iv-data', 'Prior year time-series data', 'compare');
     }
     if (hasVisibleMedianData) {
         checkboxContainer.call(drawCheckbox, 'download-median-data', 'Median', 'median');
@@ -110,7 +124,8 @@ const drawCheckboxes = function(container, {
  * @param {String} siteno
  */
 export const drawDownloadForm = function(container, store, siteno) {
-    const formContainer = container.append('form')
+    const downloadContainer = container.append('div');
+    const formContainer = downloadContainer.append('form')
         .attr('class', 'usa-form')
         .append('fieldset')
             .attr('class', 'usa-fieldset');
@@ -174,4 +189,8 @@ export const drawDownloadForm = function(container, store, siteno) {
         .attr('aria-hidden', true)
         .attr('role', 'img');
     downloadButton.append('span').text('Download');
+
+    downloadContainer.append('div')
+        .attr('class', 'download-info')
+        .html(INFO_TEXT);
 };

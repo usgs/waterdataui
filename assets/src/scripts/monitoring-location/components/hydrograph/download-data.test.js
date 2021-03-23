@@ -3,13 +3,13 @@ import {select} from 'd3-selection';
 import config from 'ui/config';
 
 import {configureStore} from 'ml/store';
-import {setCompareDataVisibility, setMedianDataVisibility, setSelectedIVMethodID} from 'ml/store/hydrograph-state';
+import {setCompareDataVisibility, setMedianDataVisibility} from 'ml/store/hydrograph-state';
 
-import {drawDownloadForm} from './download-links';
+import {drawDownloadForm} from './download-data';
 import {TEST_CURRENT_TIME_RANGE, TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS} from './mock-hydrograph-state';
 
 
-describe('monitoring-location/components/hydrograph/download-links', () => {
+describe('monitoring-location/components/hydrograph/download-data', () => {
     config.SERVICE_ROOT = 'https://fakeserviceroot.com';
     config.PAST_SERVICE_ROOT = 'https://fakeserviceroot-more-than-120-days.com';
     config.GROUNDWATER_LEVELS_ENDPOINT = 'https://fakegroundwater.org/gwlevels/';

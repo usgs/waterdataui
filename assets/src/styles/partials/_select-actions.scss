@@ -1,12 +1,15 @@
-$selected-action-color: 'accent-cool-dark';
+$selected-action-color: 'primary';
 $base-action-color: 'base';
 $hover-action-color: 'base-light';
+$action-separator-color: 'base-lighter';
+$select-actions-container-color: 'base-lightest';
 
 .select-actions-container {
-  @include u-bg('accent-cool-lighter');
+  @include u-bg($select-actions-container-color);
   @include u-border('05');
-  @include u-border('base');
+  @include u-border($base-action-color);
   @include u-radius('md');
+  @include u-margin-y(2);
   .usa-button {
     i {
       @include u-margin-right('05');
@@ -15,12 +18,26 @@ $hover-action-color: 'base-light';
 
   .select-actions-button-group {
     @include u-bg($base-action-color);
+    flex-direction: unset;
+    flex-wrap: unset;
+    .usa-button-group__item {
+      @include u-margin-bottom(0);
+    }
 
+    .usa-button-group__item {
+      @include u-margin-x(0);
+    }
     .usa-button {
-      @include u-border('05');
-      @include u-border($selected-action-color);
       @include u-bg($base-action-color);
+      @include u-border-left($action-separator-color);
+      @include u-border-left('05');
+      @include u-radius(0);
       @include u-text('white');
+    }
+    .usa-button-group__item:first-child {
+      .usa-button {
+        @include u-border-left(0);
+      }
     }
 
     .usa-button:hover, .usa-button.selected-action:hover {
@@ -30,8 +47,5 @@ $hover-action-color: 'base-light';
     .usa-button.selected-action {
       @include u-bg($selected-action-color);
     }
-  }
-  form {
-    @include u-padding(2);
   }
 }

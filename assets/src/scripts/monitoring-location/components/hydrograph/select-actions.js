@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 import {getSelectedCustomDateRange, getSelectedDateRange} from 'ml/selectors/hydrograph-state-selector';
 
 import {drawDateRangeControls} from './date-controls';
-import {drawDownloadForm} from './download-links';
+import {drawDownloadForm} from './download-data';
 
 const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToControl}) {
     const button = listContainer.append('li')
@@ -19,7 +19,7 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
                 const thisButton = select(this);
                 const actionContainer = select(`#${idOfDivToControl}`);
                 const isVisible = thisButton.attr('aria-expanded') === 'true';
-                select(this)
+                thisButton
                     .classed('selected-action', !isVisible)
                     .attr('aria-expanded', !isVisible);
                 actionContainer.attr('hidden', isVisible ? true : null);
@@ -54,7 +54,7 @@ export const drawSelectActions = function(container, store, siteno) {
     });
     appendButton(listContainer, {
         faIcon: 'fa-file-download',
-        buttonLabel: 'Download graph data',
+        buttonLabel: 'Download data',
         idOfDivToControl: 'download-graph-data-container'
     });
 
