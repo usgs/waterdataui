@@ -31,7 +31,7 @@ const INFO_TEXT = `
  <a href="https://usgs-r.github.io/dataRetrieval/" target="_blank">USGS dataRetrieval package</a> to
  download, analyze and plot your data
 </div>    
-`
+`;
 const toISO = function(inMillis) {
     return DateTime.fromMillis(inMillis, {zone: config.locationTimeZone}).toISO();
 };
