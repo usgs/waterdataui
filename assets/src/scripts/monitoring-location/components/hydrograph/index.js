@@ -129,7 +129,6 @@ export const attachToNode = function(store,
             nodeElem.select('#hydrograph-method-picker-container')
                 .call(drawMethodPicker, store);
 
-
             legendControlsContainer.call(drawGraphControls, store, siteno);
             nodeElem.select('.select-actions-container').call(drawSelectActions, store, siteno);
 

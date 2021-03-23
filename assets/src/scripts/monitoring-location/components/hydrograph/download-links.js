@@ -7,7 +7,7 @@ import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
 import config from 'ui/config.js';
-import{link}  from 'ui/lib/d3-redux';
+import {link}  from 'ui/lib/d3-redux';
 import {getIVServiceURL, getSiteMetaDataServiceURL} from 'ui/web-services/instantaneous-values';
 import {getStatisticsServiceURL} from 'ui/web-services/statistics-data';
 import {getGroundwaterServiceURL} from 'ui/web-services/groundwater-levels';
@@ -29,8 +29,8 @@ const getIVDataURL =  function(store, siteno, timeRangeKind) {
     return getIVServiceURL({
         siteno,
         parameterCode: getPrimaryParameter(currentState).parameterCode,
-        startDT: toISO(timeRange.start),
-        endDT: toISO(timeRange.end),
+        startTime: toISO(timeRange.start),
+        endTime: toISO(timeRange.end),
         format: 'rdb'
     });
 };
@@ -102,6 +102,13 @@ const drawCheckboxes = function(container, {
     checkboxContainer.call(drawCheckbox, 'download-site-meta-data', 'About this location', 'site');
 };
 
+/*
+ * Render the download form and set up all appropriate even handlers. The checkboxes drawn are tied to what data is currently
+ * visible on the hydrograph.
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ */
 export const drawDownloadForm = function(container, store, siteno) {
     const formContainer = container.append('form')
         .attr('class', 'usa-form')
