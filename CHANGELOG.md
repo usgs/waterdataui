@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...master)
 ### Added
-- Creating a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the download data and change time span sections.
+- Created a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the download data and change time span sections.
 
 ### Changed
 - Reworked the Download data section to use checkboxes rather than links. Clicking download opens separate tabs for each data type. Data types reflect those that are currently shown on the graph.
