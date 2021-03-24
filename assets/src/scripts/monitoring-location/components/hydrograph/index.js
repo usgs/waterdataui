@@ -18,21 +18,18 @@ import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDat
 
 import {Actions as floodDataActions} from 'ml/store/flood-inundation';
 
+import {getPreferredIVMethodID} from './selectors/time-series-data';
+
 import {showDataIndicators} from './data-indicator';
 import {drawDataTables} from './data-table';
-import {drawDownloadLinks} from './download-links';
-import {drawDateRangeControls} from './date-controls';
 import {drawGraphBrush} from './graph-brush';
 import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {drawSelectionTable} from './parameters';
+import {drawSelectActions} from './select-actions';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
-
-import {getPreferredIVMethodID} from './selectors/time-series-data';
-
-
 
 /*
  * Renders the hydrograph on the node element using the Redux store for state information. The siteno, latitude, and
@@ -129,19 +126,11 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!thisShowOnlyGraph) {
-            nodeElem.select('#hydrograph-date-controls-container')
-                .call(drawDateRangeControls, store, siteno, initialPeriod, {
-                    start: startDT,
-                    end: endDT
-                });
             nodeElem.select('#hydrograph-method-picker-container')
                 .call(drawMethodPicker, store);
 
-
             legendControlsContainer.call(drawGraphControls, store, siteno);
-
-            nodeElem.select('#iv-graph-list-container')
-                .call(drawDownloadLinks, store, siteno);
+            nodeElem.select('.select-actions-container').call(drawSelectActions, store, siteno);
 
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);

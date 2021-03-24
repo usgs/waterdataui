@@ -74,7 +74,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 const mockStatsCalls = statisticsDataService.fetchSiteStatistics.mock.calls;
                 expect(mockIVCalls).toHaveLength(1);
                 expect(mockIVCalls).toContainEqual([{
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
@@ -82,7 +82,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 }]);
                 expect(mockGWCalls).toHaveLength(1);
                 expect(mockGWCalls).toContainEqual([{
-                    site: '11112222',
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
@@ -113,14 +113,14 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 const mockStatsCalls = statisticsDataService.fetchSiteStatistics.mock.calls;
                 expect(mockIVCalls).toHaveLength(2);
                 expect(mockIVCalls[0][0]).toEqual({
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
                     endTime: null
                 });
                 expect(mockIVCalls[1][0]).toEqual({
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: undefined,
                     startTime: '2020-02-04T12:00:00.000-06:00',
@@ -128,7 +128,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 });
                 expect(mockGWCalls).toHaveLength(1);
                 expect(mockGWCalls).toContainEqual([{
-                    site: '11112222',
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
@@ -138,7 +138,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 expect(mockStatsCalls[0][0]).toEqual({
                     siteno: '11112222',
                     statType: 'median',
-                    params: ['00060']
+                    parameterCode: '00060'
                 });
             });
 
@@ -162,7 +162,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 const mockStatsCalls = statisticsDataService.fetchSiteStatistics.mock.calls;
                 expect(mockIVCalls).toHaveLength(1);
                 expect(mockIVCalls[0][0]).toEqual({
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
@@ -173,7 +173,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 expect(mockStatsCalls[0][0]).toEqual({
                     siteno: '11112222',
                     statType: 'median',
-                    params: ['00060']
+                    parameterCode: '00060'
                 });
             });
 
@@ -199,7 +199,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
 
                 expect(mockGWCalls).toHaveLength(1);
                 expect(mockGWCalls[0][0]).toEqual({
-                    site: '11112222',
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: 'P7D',
                     startTime: null,
@@ -365,7 +365,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
                 expect(mockIVCalls).toHaveLength(1);
                 expect(mockIVCalls[0][0]).toEqual({
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00010',
                     period: 'P7D',
                     startTime: null,
@@ -431,7 +431,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 const mockIVCalls = ivDataService.fetchTimeSeries.mock.calls;
                 expect(mockIVCalls).toHaveLength(2);
                 expect(mockIVCalls[1][0]).toEqual({
-                    sites: ['11112222'],
+                    siteno: '11112222',
                     parameterCode: '00060',
                     period: undefined,
                     startTime: '2020-02-04T12:00:00.000-06:00',
@@ -489,7 +489,7 @@ describe('monitoring-location/store/hydrograph-data', () => {
                 expect(mockStatsCalls[0][0]).toEqual({
                     siteno: '11112222',
                     statType: 'median',
-                    params: ['00060']
+                    parameterCode: '00060'
                 });
                 expect(store.getState().hydrographData.medianStatisticsData).toBeDefined();
             });

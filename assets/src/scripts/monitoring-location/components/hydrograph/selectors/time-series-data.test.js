@@ -2,8 +2,8 @@ import config from 'ui/config';
 
 import {TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS} from '../mock-hydrograph-state';
 import {
-    isVisible, hasAnyVisibleData, getTitle, getDescription, getPrimaryParameterUnitCode,
-    getPreferredIVMethodID
+    isVisible, hasVisibleIVData, hasVisibleGroundwaterLevels, hasVisibleMedianStatisticsData, hasAnyVisibleData,
+    getTitle, getDescription, getPrimaryParameterUnitCode, getPreferredIVMethodID
 }
     from './time-series-data';
 
@@ -46,7 +46,7 @@ const TEST_STATE = {
     }
 };
 
-describe('monitoring-location/components/hydrograph/time-series module', () => {
+describe('monitoring-location/components/hydrograph/selectors/time-series-data module', () => {
     config.locationTimeZone = 'America/Chicago';
     describe('isVisible', () => {
         it('Returns whether the time series is visible', () => {
@@ -70,7 +70,103 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
         });
     });
 
-    describe('hasVisibleData', () => {
+    describe('hasVisibleIVData', () => {
+        it('return false if no data exists', () => {
+            expect(hasVisibleIVData('primary')({
+                hydrographData: {},
+                hydrographState: {}
+            })).toBe(false);
+        });
+
+        it('Return false if data has been selected but no data exists', () => {
+            expect(hasVisibleIVData('compare')(TEST_STATE)).toBe(false);
+        });
+
+        it('return true if data is selected and visible', () => {
+            expect(hasVisibleIVData('primary')(TEST_STATE)).toBe(true);
+        });
+
+        it('Return false if data is selected but no data points are available', () => {
+            expect(hasVisibleIVData('primary')({
+                ...TEST_STATE,
+                hydrographState: {
+                    ...TEST_STATE.hydrographState,
+                    selectedIVMethodID: '69937'
+                }
+            })).toBe(false);
+        });
+    });
+
+    describe('hasVisibleMedianStatisticsData', () => {
+        it('Return false if no data is available', () => {
+            expect(hasVisibleMedianStatisticsData({
+                hydrographData: {},
+                hydrographState: {}
+            })).toBe(false);
+        });
+
+        it('Return false if median data is available for not selected for display', () => {
+            expect(hasVisibleMedianStatisticsData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showMedianData: false
+                }
+            })).toBe(false);
+        });
+
+        it('Return false if no median data is available and but is selected for display', () => {
+            expect(hasVisibleMedianStatisticsData({
+                hydrographData: {
+                    medianStatisticsData: {}
+                },
+                hydrographState: {
+                    showMedianData: true
+                }
+            })).toBe(false);
+        });
+
+        it('return true if median data is available and it is selected for display', () => {
+            expect(hasVisibleMedianStatisticsData({
+                hydrographData: {
+                    medianStatisticsData: TEST_MEDIAN_DATA
+                },
+                hydrographState: {
+                    showMedianData: true
+                }
+            })).toBe(true);
+        });
+    });
+
+    describe('hasVisibleGroundwaterLevels', () => {
+        it('Return false if no data is available', () => {
+            expect(hasVisibleGroundwaterLevels({
+                hydrographData: {}
+            })).toBe(false);
+        });
+
+        it('Return false if the data contains no points', () => {
+            expect(hasVisibleGroundwaterLevels({
+                hydrographData: {
+                    groundwaterLevels: {
+                        ...TEST_GW_LEVELS,
+                        values: []
+                    }
+                }
+            })).toBe(false);
+        });
+
+        it('Return true if the data contains points', () => {
+            expect(hasVisibleGroundwaterLevels({
+                hydrographData: {
+                    groundwaterLevels: TEST_GW_LEVELS
+                }
+            })).toBe(true);
+        });
+    });
+
+    describe('hasAnyVisibleData', () => {
         it('Expects to return true when data is available and visible', () => {
             expect(hasAnyVisibleData({
                 hydrographData: {
@@ -245,7 +341,7 @@ describe('monitoring-location/components/hydrograph/time-series module', () => {
                 hydrographData: {
                     primaryIVData: {
                         parameter: {
-                            parameterCode: '00030',
+                            parameterCode: '00030'
                         },
                         values: {}
                     }

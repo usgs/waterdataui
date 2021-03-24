@@ -23,6 +23,7 @@ describe('alerts module', () => {
             expect(container.selectAll('.usa-alert--success').size()).toBe(1);
             expect(container.selectAll('h3').text()).toBe('This is a success');
             expect(container.selectAll('p').text()).toBe('This is a success body');
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(0);
         });
 
         it('Remove the previous alert and replaces with new title and body', () => {
@@ -51,6 +52,14 @@ describe('alerts module', () => {
             });
             expect(container.selectAll('.usa-alert--success').size()).toBe(0);
         });
+
+        it('Creates a slim success alert', () => {
+            drawSuccessAlert(container, {
+                body: 'This is a success body',
+                useSlim: true
+            });
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(1);
+        });
     });
 
     describe('drawInfoAlert', () => {
@@ -63,6 +72,7 @@ describe('alerts module', () => {
             expect(container.selectAll('.usa-alert--info').size()).toBe(1);
             expect(container.selectAll('h3').text()).toBe('This is a info');
             expect(container.selectAll('p').text()).toBe('This is a info body');
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(0);
         });
 
         it('Remove the previous alert and replaces with new title and body', () => {
@@ -91,6 +101,14 @@ describe('alerts module', () => {
             });
             expect(container.selectAll('.usa-alert--info').size()).toBe(0);
         });
+
+        it('Creates a slim info alert', () => {
+            drawInfoAlert(container, {
+                body: 'This is a info body',
+                useSlim: true
+            });
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(1);
+        });
     });
 
     describe('drawWarningAlert', () => {
@@ -103,6 +121,7 @@ describe('alerts module', () => {
             expect(container.selectAll('.usa-alert--warning').size()).toBe(1);
             expect(container.selectAll('h3').text()).toBe('This is a warning');
             expect(container.selectAll('p').text()).toBe('This is a warning body');
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(0);
         });
 
         it('Remove the previous alert and replaces with new title and body', () => {
@@ -131,6 +150,14 @@ describe('alerts module', () => {
             });
             expect(container.selectAll('.usa-alert--warning').size()).toBe(0);
         });
+
+        it('Creates a slim warning alert', () => {
+            drawSuccessAlert(container, {
+                body: 'This is a warning body',
+                useSlim: true
+            });
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(1);
+        });
     });
 
     describe('drawErrorAlert', () => {
@@ -143,6 +170,7 @@ describe('alerts module', () => {
             expect(container.selectAll('.usa-alert--error').size()).toBe(1);
             expect(container.selectAll('h3').text()).toBe('This is a error');
             expect(container.selectAll('p').text()).toBe('This is a error body');
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(0);
         });
 
         it('Remove the previous alert and replaces with new title and body', () => {
@@ -170,6 +198,14 @@ describe('alerts module', () => {
                 body: ''
             });
             expect(container.selectAll('.usa-alert--error').size()).toBe(0);
+        });
+
+        it('Creates a slim error alert', () => {
+            drawSuccessAlert(container, {
+                body: 'This is a error body',
+                useSlim: true
+            });
+            expect(container.selectAll('.usa-alert--slim').size()).toBe(1);
         });
     });
 });

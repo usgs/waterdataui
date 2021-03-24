@@ -41,7 +41,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         }
     };
 
-    config.igwPeriodOfRecord = {
+    config.gwPeriodOfRecord = {
         '72019': {
             begin_date: '01-02-2000',
             end_date: '10-15-2015'
@@ -66,13 +66,12 @@ describe('monitoring-location/components/hydrograph module', () => {
             .attr('href', 'https://fakeserver/link');
         let component = body.append('div')
             .attr('id', 'hydrograph');
-        component.append('div').attr('id', 'hydrograph-date-controls-container');
         component.append('div').attr('id', 'hydrograph-method-picker-container');
         component.append('div').attr('class', 'graph-container')
             .append('div')
                 .attr('id', 'hydrograph-loading-indicator-container')
                 .attr('class', 'loading-indicator-container');
-
+        component.append('div').attr('class', 'select-actions-container');
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('id', 'iv-data-table-container');
 
@@ -315,9 +314,8 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(selectAll('.cursor-slider-svg').size()).toBe(1);
         });
 
-        it('should have date control elements', () => {
-            expect(selectAll('#ts-daterange-select-container').size()).toBe(1);
-            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(1);
+        it('should have date control form', () => {
+            expect(selectAll('#change-time-span-container').size()).toBe(1);
         });
 
         it('should have method select element', () => {
