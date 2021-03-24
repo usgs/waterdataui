@@ -32,14 +32,21 @@ export const getSiteMetaDataServiceURL = function({siteno,  isExpanded}) {
 /*
 * Get a URL formatted to download data from waterservices.usgs.gov
 * @param  {Array}  sites  Array of site IDs to retrieve.
-* @param  {String}  parameterCode - USGS five digit parameter code
+* @param  {String} parameterCode - USGS five digit parameter code
 * @param {String} period - ISO 8601 Duration
 * @param {String} startTime - ISO 8601 time
 * @param {String} endTime - ISO 8601 time
 * @param {String} format - the data format returned from waterservices.usgs.gov
 * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getIVServiceURL = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null, format=null}) {
+export const getIVServiceURL = function({
+                                             siteno,
+                                             parameterCode = null,
+                                             period = null,
+                                             startTime = null,
+                                             endTime = null,
+                                             format = null
+                                         }) {
     let timeParams;
     let serviceRoot;
 
@@ -65,13 +72,13 @@ export const getIVServiceURL = function({siteno, parameterCode= null, period=nul
 /**
  * Get a given time series dataset from Water Services.
  * @param  {String}  sites  Array of site IDs to retrieve.
- * @param  {String}  parameterCodes
+ * @param  {String} parameterCode
  * @param {String} period - ISO 8601 Duration
  * @param {String} startTime - ISO 8601 time
  * @param {String} endTime - ISO 8601 time
  * @return {Promise} resolves to an array of time series model object, rejects to an error
  */
-export const fetchTimeSeries = function({siteno, parameterCode= null, period=null, startTime=null, endTime=null}) {
+export const fetchTimeSeries = function({siteno, parameterCode=null, period=null, startTime=null, endTime=null}) {
     return get(getIVServiceURL({
             siteno: siteno,
             parameterCode: parameterCode,
