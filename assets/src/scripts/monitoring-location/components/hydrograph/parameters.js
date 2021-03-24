@@ -209,6 +209,7 @@ export const drawSelectionList = function(container, store, siteno) {
         .attr('id', 'parameter-selection-title')
         .text('Select Data to Graph');
     const selectionList = container.append('div')
+        .attr('id', 'select-time-series')
         .attr('class', 'grid-container');
 
     parameters.forEach(parameter => {
