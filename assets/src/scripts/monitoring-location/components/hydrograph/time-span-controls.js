@@ -12,178 +12,8 @@ import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange}
 
 import {showDataIndicators} from './data-indicator';
 
-const DATE_RANGE_MENU_OPTIONS = [{
-    name: '7 days',
-    period: 'P7D'
-}, {
-    name: '30 days',
-    period: 'P30D'
-}, {
-    name: '1 year',
-    period: 'P365D'
-}, {
-    name: 'Custom dates/days',
-    period: 'custom'
-}];
-const CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS = [
-    {
-        id: 'custom-input-calendar-days',
-        value: 'calendar',
-        text: 'Calendar dates'
-    },
-    {
-        id: 'custom-input-days-before-today',
-        value: 'days',
-        text: 'Days before today'
-    }
-];
-
-/*
-* Helper function that determines if the user has entered a 'custom' days before today selection.
-* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
-* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
-* @return {Boolean} -- true if the user has entered a time span to graph that is NOT 'custom' (which is to say a
-* calendar date selection) or any of the quick select time spans, as mentioned above. So, this will return
-* true if the dateRange is of the form P<some number of day which are not 7, 30, or 365>D such as P424D.
-*/
-const isCustomPeriod = function(dateRange) {
-    return dateRange !== 'custom' && !DATE_RANGE_MENU_OPTIONS.find(range => range.period === dateRange);
-};
-
-/*
-* Helper function that determines if 'dateRange' is 'custom'. To explain, users can select a set of 'quick select'
-* time spans to graph (P7D, P30D, P365D), or they can select a 'custom' time span in the form of calendar dates or a
-* numerical entry of days before today. Only the calendar dates is a 'custom' selection. Even though 'days before today'
-* is a custom choice by users, it uses the standard time span format of P<some number of days>D (such as P34D), so
-* in this function selection of days before today is NOT custom.
-* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
-* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
-* @return {Boolean} -- true if the user selection is 'Calendar Dates'.
-*/
-const isCustomDateRange = function(dateRange) {
-    return dateRange === 'custom';
-};
-
-/*
-* Helper function that determines if the 'Custom days/dates' menu which allows selection of the dates and
-* arbitrary days should show.
-* @param {String} dateRange -- Will be either one of the quick select time spans (P7D, P30D, P365D) or the word 'custom'
-* or a 'custom' days selection with the form of P<some number of days>D (such as P3230D).
-* @return {Boolean} -- true if the menu should show, false if not.
-*/
-const showCustomContainer = function(dateRange) {
-    return isCustomPeriod(dateRange) || isCustomDateRange(dateRange);
-};
-
-
-/*
- * Set custom form hidden attribute and clear custom container inputs if it is being hidden
- * @param {Boolean} showCustom
- */
-function setCustomFormVisibility(showCustom) {
-    const customContainer = select('#container-radio-group-and-form-buttons');
-    customContainer.attr('hidden', showCustom ? null : true);
-    // Clear text inputs if form is not visible
-    if (!showCustom) {
-        customContainer.selectAll('input[type="text"]').property('value', '');
-    }
-}
-
-/*
- * Render the time range radio buttons
- * @param {D3 container} elem
- * @param {Redux store} store
- * @param {String} siteno
- * @param {String} initialDateRange - used to set the initial selected radio button
- */
-const drawSelectRadioButtons = function(elem, store, siteno, initialDateRange) {
-    const listContainer = elem.append('ul')
-        .attr('class', 'usa-fieldset usa-list--unstyled');
-
-    const li = listContainer.selectAll('li')
-        .attr('class', 'usa-fieldset')
-        .data(DATE_RANGE_MENU_OPTIONS)
-        .enter().append('li');
-
-    li.append('input')
-        .attr('type', 'radio')
-        .attr('name', 'ts-daterange-input')
-        .attr('id', d => `${d.period}-input`)
-        .attr('class', 'usa-radio__input')
-        .property('value', d => d.period)
-        .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeSeriesGraph')
-        .attr('ga-event-action', d => `changeDateRangeTo${d.period}`)
-        .property('checked', d => d.period === initialDateRange || d.period === 'custom' && isCustomPeriod(initialDateRange))
-        .on('change', function() {
-            const checkedButton = li.select('input:checked');
-            const selectedValue = checkedButton.property('value');
-            const isCustom = selectedValue === 'custom';
-            setCustomFormVisibility(isCustom);
-            li.select('#custom-input').attr('aria-expanded', isCustom);
-            if (!isCustom) {
-                store.dispatch(clearGraphBrushOffset());
-                store.dispatch(setSelectedDateRange(selectedValue));
-                showDataIndicators(true, store);
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                    .then(() => {
-                        showDataIndicators(false, store);
-                    });
-            }
-        });
-    li.select('#custom-input').attr('aria-expanded', isCustomPeriod(initialDateRange));
-
-    li.append('label')
-        .attr('class', 'usa-radio__label')
-        .attr('for', (d) => `${d.period}-input`)
-        .text((d) => d.name);
-};
-
-/*
- * Render the radio buttons that select which kind of custom time span is desired
- * @param {D3 selection} container
- * @param {String} initialDateRange - Is either the word 'custom' or has the form of P<some number>(D or Y), such as 'P7D'.
- */
-const drawCustomRadioButtons = function(container, initialDateRange) {
-    const radioButtonContainer = container.append('div')
-        .attr('id', 'ts-custom-date-radio-group')
-        .attr('role', 'radiogroup')
-        .attr('aria-label', 'Custom time interval select');
-    radioButtonContainer.append('p').text('Enter time span using');
-    const listContainer = radioButtonContainer.append('ul')
-            .attr('class', 'usa-fieldset usa-list--unstyled');
-    const radioButtonListItem = listContainer.selectAll('li')
-        .attr('class', 'usa-fieldset')
-        .data(CUSTOM_TIMEFRAME_RADIO_BUTTON_DETAILS)
-        .enter()
-        .append('li');
-
-    radioButtonListItem.append('input')
-        .attr('type', 'radio')
-        .attr('name', 'ts-custom-daterange-input')
-        .attr('id', d => `${d.value}-input`)
-        .attr('class', 'usa-radio__input')
-        .property('value', d => d.value)
-        .property('checked', d => d.value === 'calendar' ?
-            !isCustomPeriod(initialDateRange) :  isCustomPeriod(initialDateRange))
-        .attr('ga-on', 'click')
-        .attr('aria-expanded', d => d.value === 'calendar' ?
-            !isCustomPeriod(initialDateRange) : isCustomPeriod(initialDateRange))
-        .attr('ga-event-category', 'TimeSeriesGraph')
-        .attr('ga-event-action', d => `changeDateRangeWith${d.value}`)
-        .on('change', function(_, d) {
-            container.select('#days-input').attr('aria-expanded', d.value === 'days');
-            container.select('#calendar-input').attr('aria-expanded', d.value === 'calendar');
-            container.select('#ts-custom-days-before-today-select-container')
-                .attr('hidden', d.value === 'days' ? null : true);
-            container.select('#ts-customdaterange-select-container')
-                .attr('hidden', d.value === 'calendar' ? null : true);
-        });
-
-        radioButtonListItem.append('label')
-            .attr('class', 'usa-radio__label')
-            .attr('for', (d) => `${d.value}-input`)
-            .text((d) => d.text);
+const isISODuration = function(timeSpan) {
+    return typeof timeSpan === 'string';
 };
 
 /*
@@ -302,7 +132,7 @@ const drawDatePicker = function(container, id, label, initialDate) {
 };
 
 /*
- * Render the custom calendar days form
+ * Render the date range picker
  * @param {D3 selection} container
  * @param {Redux store} store
  * @param {String} siteno
@@ -310,7 +140,7 @@ const drawDatePicker = function(container, id, label, initialDate) {
  * @param {Object} initialCustomDateRange - has start and end String properties containing an ISO 8601 date string
  *      and is used to set the initial values of the calendar pickers
  */
-const drawCustomCalendarDaysForm = function(container, store, siteno, initialDateRange, initialCustomDateRange) {
+const drawDateRangeForm = function(container, store, siteno) {
     const calendarDaysContainer = container.append('div')
         .attr('id', 'ts-customdaterange-select-container')
         .attr('role', 'customdate')
@@ -410,4 +240,8 @@ export const drawDateRangeControls = function(elem, store, siteno, initialDateRa
         .call(drawCustomDaysBeforeForm, store, siteno, initialDateRange)
         .call(drawCustomCalendarDaysForm, store, siteno, initialDateRange, initialCustomDateRange);
     setCustomFormVisibility(showCustomContainer(initialDateRange));
+};
+
+export const drawTimeSpanControl = function(container, store, siteno) {
+
 };
