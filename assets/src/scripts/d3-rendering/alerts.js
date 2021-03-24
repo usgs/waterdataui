@@ -6,7 +6,7 @@
  * @param {String} kind - should be 'success', 'warning', 'error', or 'info'
  * @param {String} title
  * @param {String} body
- * @param {String} useSlim
+ * @param {Boolean} useSlim
  */
 const drawAlert = function(elem, {kind, title, body, useSlim}) {
     elem.select('.usa-alert').remove();
@@ -35,6 +35,7 @@ const drawAlert = function(elem, {kind, title, body, useSlim}) {
  * @param {D3 selection} elem
  * @param {String} title
  * @param {String} body
+ * @param {Boolean} useSlim
  */
 export const drawSuccessAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
@@ -51,6 +52,7 @@ export const drawSuccessAlert = function(elem, {title, body, useSlim}) {
  * @param {D3 selection} elem
  * @param {String} title
  * @param {String} body
+ * @param {Boolean} useSlim
  */
 export const drawInfoAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
@@ -67,6 +69,7 @@ export const drawInfoAlert = function(elem, {title, body, useSlim}) {
  * @param {D3 selection} elem
  * @param {String} title
  * @param {String} body
+ * @param {Boolean} useSlim
  */
 export const drawWarningAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
@@ -83,6 +86,7 @@ export const drawWarningAlert = function(elem, {title, body, useSlim}) {
  * @param {D3 selection} elem
  * @param {String} title
  * @param {String} body
+ * @param {Boolean} useSlim
  */
 export const drawErrorAlert = function(elem, {title, body, useSlim}) {
     drawAlert(elem, {
