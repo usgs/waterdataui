@@ -47,56 +47,20 @@ const drawRowExpansionControl = function(element, parameter, type) {
                 // Allow the user to hide the expansion row even on the clicked parameter row.
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
-                console.log('this ', this.getAttribute('aria-expanded'))
-
-                // If the clicked open/close icon is not the same row as the already clicked, set all other icons to 'closed'.
-                console.log('this ', this.getAttribute('aria-expanded'))
-                const clickedElement = select(this)
-                console.log('clickedElement ', clickedElement)
-                console.log('clickedElement attr ', clickedElement.attr('aria-expanded'))
-                clickedElement.attr('aria-expanded') === 'true' ? console.log('this b true') : console.log('this be  false');
-                clickedElement.attr('aria-expanded') === 'true' ? clickedElement.attr('aria-expanded', 'false') : clickedElement.attr('aria-expanded', 'true');
-                clickedElement.attr('aria-expanded') === 'true' ? clickedElement.attr('class', CLOSE_ICON_CLASS ) : clickedElement.attr('class', OPEN_ICON_CLASS );
-
-                // this.getAttribute('aria-expanded') ? this.setAttribute(): '';
-                // selectAll('.expansion-toggle')
-                //     .filter(function() {
-                //
-                //         return this.ariaExpanded === 'true';
-                //     })
-                //     .attr('class', 'fas fa-chevron-down expansion-toggle')
-                //     .attr('aria-expanded', 'false');
-                // const clickedElement = select(this);
-                // clickedElement.attr('aria-expanded', `${clickedElement.attr('aria-expanded') === 'true' ? 'false' :'true'}`);
-
-                // const isToggleSetToExpanded = select(`#expansion-toggle-desktop-${parameter.parameterCode}`).attr('aria-expanded');
-                // if (isToggleSetToExpanded) {
-                //     console.log('expanded ', isToggleSetToExpanded)
-                //     clickedElement
-                //         .attr('class', 'fas fa-chevron-down expansion-toggle')
-                //         .attr('aria-expanded', '2boo');
-                // } else {
-                //     console.log('not expanded ', isToggleSetToExpanded)
-                //     clickedElement.attr('class', 'fas fa-chevron-up expansion-toggle')
-                //         .attr('aria-expanded', 'boo');
-                // }
-
-                    // if (toggleClassList.includes('fa-chevron-down')) {
-                    //     select(`#expansion-toggle-desktop-${parameter.parameterCode}`).attr('class', 'fas fa-chevron-up expansion-toggle');
-                    // } else {
-                    //     select(`#expansion-toggle-desktop-${parameter.parameterCode}`).attr('class', 'fas fa-chevron-down expansion-toggle');
-                    // }
 
 
-                // select(`#expansion-toggle-mobile-${parameter.parameterCode}`).attr('class', 'fas fa-chevron-up expansion-toggle');
-                // If the open/close icon clicked is already the active row, toggle the icon
-                // const allExpansionToggles = selectAll('.expansion-toggle');
-                //
-                // allExpansionToggles.filter(function() {
-                //     return this.id === `#expansion-toggle-desktop-${parameter.parameterCode}` && this.classList.contains('fa-chevron-up');
-                // })
-                // .attr('class', 'fas fa-chevron-down expansion-toggle');
-                //
+
+                const clickedElementDesktop = select(`#expansion-toggle-desktop-${parameter.parameterCode}`);
+                const clickedElementMobile = select(`#expansion-toggle-mobile-${parameter.parameterCode}`);
+
+                clickedElementDesktop.attr('aria-expanded') === 'true' ? console.log('this b desktop true') : console.log('this be  false');
+                clickedElementDesktop.attr('aria-expanded') === 'true' ? clickedElementDesktop.attr('aria-expanded', 'false') : clickedElementDesktop.attr('aria-expanded', 'true');
+                clickedElementDesktop.attr('aria-expanded') === 'true' ? clickedElementDesktop.attr('class', CLOSE_ICON_CLASS ) : clickedElementDesktop.attr('class', OPEN_ICON_CLASS );
+
+                clickedElementMobile.attr('aria-expanded') === 'true' ? console.log('this b mobile true') : console.log('this be mobile false');
+                clickedElementMobile.attr('aria-expanded') === 'true' ? clickedElementMobile.attr('aria-expanded', 'false') : clickedElementMobile.attr('aria-expanded', 'true');
+                clickedElementMobile.attr('aria-expanded') === 'true' ? clickedElementMobile.attr('class', CLOSE_ICON_CLASS ) : clickedElementMobile.attr('class', OPEN_ICON_CLASS );
+
 
             });
     }
