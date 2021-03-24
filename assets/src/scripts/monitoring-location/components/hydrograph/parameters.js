@@ -15,8 +15,9 @@ import {getAvailableParameters} from './selectors/parameter-data';
 
 import {showDataIndicators} from './data-indicator';
 
-const OPEN_ICON_CLASS = 'fas fa-chevron-down expansion-toggle';
-const CLOSE_ICON_CLASS = 'fas fa-chevron-up expansion-toggle';
+const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
+const ROW_TOGGLE_OPENED_CLASS = 'fas fa-chevron-up expansion-toggle';
+const ROW_TOGGLE_ICON_TYPES = ['desktop', 'mobile'];
 
 
 
@@ -33,10 +34,10 @@ const drawRowExpansionControl = function(element, parameter, type) {
         element
             .append('i')
             .attr('id', `expansion-toggle-${type}-${parameter.parameterCode}`)
-            .attr('class', 'fas fa-chevron-down expansion-toggle')
+            .attr('class', ROW_TOGGLE_CLOSED_CLASS)
             .attr('aria-expanded', 'false')
             .on('click', function(event) {
-                // Stop clicks on the main row from triggering the open/close toggle.
+                // Stop clicks on the parameter container row from triggering the open/close toggle.
                 event.stopPropagation();
                 // Hide the expansion container on all rows except the clicked parameter row.
                 selectAll('.expansion-container-row')
@@ -48,20 +49,18 @@ const drawRowExpansionControl = function(element, parameter, type) {
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
 
-
-
-                const clickedElementDesktop = select(`#expansion-toggle-desktop-${parameter.parameterCode}`);
-                const clickedElementMobile = select(`#expansion-toggle-mobile-${parameter.parameterCode}`);
-
-                clickedElementDesktop.attr('aria-expanded') === 'true' ? console.log('this b desktop true') : console.log('this be  false');
-                clickedElementDesktop.attr('aria-expanded') === 'true' ? clickedElementDesktop.attr('aria-expanded', 'false') : clickedElementDesktop.attr('aria-expanded', 'true');
-                clickedElementDesktop.attr('aria-expanded') === 'true' ? clickedElementDesktop.attr('class', CLOSE_ICON_CLASS ) : clickedElementDesktop.attr('class', OPEN_ICON_CLASS );
-
-                clickedElementMobile.attr('aria-expanded') === 'true' ? console.log('this b mobile true') : console.log('this be mobile false');
-                clickedElementMobile.attr('aria-expanded') === 'true' ? clickedElementMobile.attr('aria-expanded', 'false') : clickedElementMobile.attr('aria-expanded', 'true');
-                clickedElementMobile.attr('aria-expanded') === 'true' ? clickedElementMobile.attr('class', CLOSE_ICON_CLASS ) : clickedElementMobile.attr('class', OPEN_ICON_CLASS );
-
-
+                // If the icon is open, close it and vice versa
+                // Note - there are two open/close icons for each parameter, but only one will show at a time at
+                // any given screen size. Both icons need to be synced.
+                ROW_TOGGLE_ICON_TYPES.forEach(typeOfIcon => {
+                    const rowToggle = select(`#expansion-toggle-${typeOfIcon}-${parameter.parameterCode}`);
+                    rowToggle.attr('aria-expanded') === 'true' ?
+                        rowToggle.attr('class',  ROW_TOGGLE_CLOSED_CLASS) :
+                        rowToggle.attr('class', ROW_TOGGLE_OPENED_CLASS);
+                    rowToggle.attr('aria-expanded') === 'true' ?
+                        rowToggle.attr('aria-expanded', 'false') :
+                        rowToggle.attr('aria-expanded', 'true');
+                });
             });
     }
 };
@@ -71,7 +70,7 @@ const drawRowExpansionControl = function(element, parameter, type) {
 * creates the main grid rows for each parameter and adds on click functions. Later, another grid will be nested in these rows.
 * @param {Object} Store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* @param {Object} element - The target element to append the row
+* @param {Object} element - The target element on which to append the row
 * @param {Object} parameter - Contains details about the current parameter code
 */
 const drawContainingRow = function(store, siteno, element, parameter) {
@@ -88,7 +87,7 @@ const drawContainingRow = function(store, siteno, element, parameter) {
         }, getSelectedParameterCode))
         .on('click', function() {
             selectAll('.fa-chevron-up')
-                .attr('class', 'fas fa-chevron-down expansion-toggle')
+                .attr('class', ROW_TOGGLE_CLOSED_CLASS)
                 .attr('aria-expanded', 'false');
             select(`#expansion-toggle-desktop-${parameter.parameterCode}`)
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
