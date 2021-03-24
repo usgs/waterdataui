@@ -1,8 +1,7 @@
 import config from 'ui/config';
 
-import {isCompareIVDataVisible, isMedianDataVisible, getSelectedDateRange, getSelectedCustomDateRange,
-    getSelectedParameterCode, getSelectedIVMethodID, getGraphCursorOffset, getGraphBrushOffset,
-    getInputsForRetrieval
+import {isCompareIVDataVisible, isMedianDataVisible, getSelectedTimeSpan, getSelectedParameterCode,
+    getSelectedIVMethodID, getGraphCursorOffset, getGraphBrushOffset, getInputsForRetrieval
 } from './hydrograph-state-selector';
 
 describe('monitoring-location/selectors/hydrograph-state-selector', () => {
@@ -41,40 +40,18 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
 
     describe('getSelectedDateRange', () => {
        it('Returns null if no selected date range', () => {
-           expect(getSelectedDateRange({
+           expect(getSelectedTimeSpan({
                hydrographState: {}
            })).toBeNull();
        });
 
        it('Returns selected date range', () => {
-           expect(getSelectedDateRange({
+           expect(getSelectedTimeSpan({
                hydrographState: {
-                   selectedDateRange: 'P45D'
+                   selectedTimeSpan: 'P45D'
                }
            })).toEqual('P45D');
        });
-    });
-
-    describe('getSelectedCustomDateRange', () => {
-        it('Returns null if no selected custom date range', () => {
-            expect(getSelectedCustomDateRange({
-                hydrographState: {}
-            })).toBeNull();
-        });
-
-        it('Returns selected custom date range', () => {
-            expect(getSelectedCustomDateRange({
-                hydrographState: {
-                    selectedCustomDateRange: {
-                        start: '2021-02-01',
-                        end: '2021-02-06'
-                    }
-                }
-            })).toEqual({
-                start: '2021-02-01',
-                end: '2021-02-06'
-            });
-        });
     });
 
     describe('getSelectedIVMethodID', () => {
@@ -154,8 +131,7 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
                 hydrographState: {
                     showCompareIVData: false,
                     showMedianData: true,
-                    selectedDateRange: 'P30D',
-                    selectedCustomDateRange: null,
+                    selectedTimeSpan: 'P30D',
                     selectedParameterCode: '00060'
                 }
             })).toEqual({
@@ -172,8 +148,7 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
                 hydrographState: {
                     showCompareIVData: true,
                     showMedianData: false,
-                    selectedDateRange: 'custom',
-                    selectedCustomDateRange: {
+                    selectedTimeSpan: {
                         start: '2021-02-01',
                         end: '2021-02-06'
                     },

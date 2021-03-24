@@ -1,12 +1,11 @@
 export const INITIAL_STATE = {
     showCompareIVData: false,
     showMedianData : false,
-    selectedDateRange: 'P7D',
-    selectedCustomDateRange: null,
+    selectedTimeSpan: 'P7D',
     selectedParameterCode: null,
     selectedIVMethodID: null,
     graphCursorOffset: null,
-    graphBrushOffset: null,
+    graphBrushOffset: null
 };
 
 /*
@@ -59,29 +58,15 @@ export const setSelectedIVMethodID = function(methodID) {
 };
 
 /*
- * Synchronous action sets the date range kind of the hydrograph.
- * @param {String} dateRange - represents an ISO 8601 Duration or "custom"
+ * Synchronous action sets the time span of the hydrograph.
+ * @param {String or Object} timeSpan - Can either be a String representing an ISO8601 Duration or an
+ *      Object with two string properties, start and end which contain ISO8601 Date strings.
  * @return {Object} - Redux action
  */
-export const setSelectedDateRange = function(dateRange) {
-
+export const setSelectedTimeSpan = function(timeSpan) {
     return {
-        type: 'SET_SELECTED_DATE_RANGE',
-        dateRange
-    };
-};
-
-/*
- * Synchronous action sets the custom date range for the hydrograph
- * @param {String} startDate - ISO 8601 Date (yyyy-mm-dd)
- * @param {String} endDate - ISO 8601 Date (yyyy-mm-dd)
- * @return {Object} - Redux action
- */
-export const setSelectedCustomDateRange = function(startDate, endDate) {
-    return {
-        type: 'SET_SELECTED_CUSTOM_DATE_RANGE',
-        startDate,
-        endDate
+        type: 'SET_SELECTED_TIME_SPAN',
+        timeSpan
     };
 };
 
@@ -124,19 +109,17 @@ export const clearGraphBrushOffset = function() {
 
 export const hydrographStateReducer = function(hydrographState=INITIAL_STATE, action) {
     switch (action.type) {
-        case 'SET_COMPARE_DATA_VISIBILITY': {
+        case 'SET_COMPARE_DATA_VISIBILITY':
             return {
                 ...hydrographState,
                 showCompareIVData: action.show
             };
-        }
 
-        case 'SET_MEDIAN_DATA_VISIBILITY': {
+        case 'SET_MEDIAN_DATA_VISIBILITY':
             return {
                 ...hydrographState,
                 showMedianData: action.show
             };
-        }
 
         case 'SET_SELECTED_PARAMETER_CODE':
             return {
@@ -150,19 +133,10 @@ export const hydrographStateReducer = function(hydrographState=INITIAL_STATE, ac
                 selectedIVMethodID: action.methodID
             };
 
-        case 'SET_SELECTED_DATE_RANGE':
+        case 'SET_SELECTED_TIME_SPAN':
             return {
                 ...hydrographState,
-                selectedDateRange: action.dateRange
-            };
-
-        case 'SET_SELECTED_CUSTOM_DATE_RANGE':
-            return {
-                ...hydrographState,
-                selectedCustomDateRange: {
-                    start: action.startDate,
-                    end: action.endDate
-                }
+                selectedTimeSpan: action.timeSpan
             };
 
         case 'SET_GRAPH_CURSOR_OFFSET':

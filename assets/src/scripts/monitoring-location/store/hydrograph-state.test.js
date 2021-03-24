@@ -2,8 +2,8 @@ import {applyMiddleware, combineReducers, createStore} from 'redux';
 import {default as thunk} from 'redux-thunk';
 
 import {INITIAL_STATE, setCompareDataVisibility, setMedianDataVisibility, setSelectedParameterCode,
-    setSelectedIVMethodID, setSelectedDateRange, setSelectedCustomDateRange,
-    setGraphCursorOffset, setGraphBrushOffset, clearGraphBrushOffset, hydrographStateReducer
+    setSelectedIVMethodID, setSelectedTimeSpan, setGraphCursorOffset, setGraphBrushOffset, clearGraphBrushOffset,
+    hydrographStateReducer
 } from './hydrograph-state';
 
 describe('monitoring-location/store/hydrograph-state', () => {
@@ -56,21 +56,18 @@ describe('monitoring-location/store/hydrograph-state', () => {
             });
         });
 
-        describe('setSelectedDateRange', () => {
-            it('sets the selected date range kind', () => {
-                store.dispatch(setSelectedDateRange('P30D'));
-                expect(store.getState().hydrographState.selectedDateRange).toBe('P30D');
-            });
-        });
+        describe('setSelectedTimeSpan', () => {
+            it('sets the selected timeSpan', () => {
+                store.dispatch(setSelectedTimeSpan('P30D'));
+                expect(store.getState().hydrographState.selectedTimeSpan).toBe('P30D');
 
-        describe('setSelectedCustomDateRange', () => {
-            it('sets the selected custom date range', () => {
-                store.dispatch(setSelectedCustomDateRange('2020-01-03', '2020-01-16'));
-                const state = store.getState().hydrographState;
-
-                expect(state.selectedCustomDateRange).toEqual({
-                    start: '2020-01-03',
-                    end: '2020-01-16'
+                store.dispatch(setSelectedTimeSpan({
+                    start: '2021-01-15',
+                    end: '2021-03-15'
+                }));
+                expect(store.getState().hydrographState.selectedTimeSpan).toEqual({
+                    start: '2021-01-15',
+                    end: '2021-03-15'
                 });
             });
         });
