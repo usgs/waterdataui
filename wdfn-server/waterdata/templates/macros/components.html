@@ -2,7 +2,6 @@
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
          data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
          data-parameter-code="{{ default_parameter_code }}">
-        <div id="hydrograph-date-controls-container"></div>
         <div id="hydrograph-method-picker-container"></div>
         <div id="hydrograph-wrapper">
             <div class="graph-container"></div>
@@ -20,40 +19,8 @@
                 </a>
             </p>
         </div>
+        <div class="select-actions-container"></div>
         <div class="select-time-series-container"></div>
-        <div class="wdfn-accordion iv-graph-data-download usa-accordion">
-            <h2 class="usa-accordion__heading">
-                <button class="usa-accordion__button"
-                        aria-expanded="false" aria-controls="iv-graph-data-download-container"
-                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithDataDownloadAccordion">
-                    Download this graph's data
-                </button>
-            </h2>
-            <div id="iv-graph-data-download-container" class="usa-accordion__content usa-prose">
-                <p>
-                    These links download data from the
-                    <a class="usa-link" href="{{ config.SERVICE_ROOT }}"
-                       target="_blank" rel="noopener">
-                        USGS Water Data Services
-                    </a>
-                    in the
-                    <a class="usa-link" href="{{ config.RDB_FORMAT_INFORMATION }}"
-                       target="_blank" rel="noopener">
-                        RDB format
-                    </a>
-                    .
-                </p>
-                <div id="iv-graph-list-container"></div>
-                <p>
-                    If you are an R user, use the
-                        <a class="usa-link" href="{{ config.DATA_RETRIEVAL_PACKAGE_INFORMATION }}"
-                           target="_blank" rel="noopener">
-                            USGS dataRetrieval Package
-                        </a>
-                    to download, analyze, and plot your data.
-                </p>
-            </div>
-        </div>
         <div class="wdfn-accordion graph-data usa-accordion">
             <h2 class="usa-accordion__heading">
                 <button class="usa-accordion__button"

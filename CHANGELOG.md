@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...master)
+### Added
+- Created a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the download data and change time span sections.
+
+### Changed
+- Reworked the Download data section to use checkboxes rather than links. Clicking download opens separate tabs for each data type. Data types reflect those that are currently shown on the graph.
+
+## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) 2021-03-17
 ### Changed
 - The data loading indicator for the hydrograph now appears on top of the graph rather than with the date controls.
 - Cleaned up hydrograph rendering and made changes to make it possible to determine when rendering of the hydrograph is complete.
@@ -19,7 +26,7 @@ recent data is chosen.
 ### Fixed
 - Flood lines are now only rendered if in range of the Y axis.
 
-## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0)
+## [0.43.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.42.0) - 2021-03-01
 ### Added
 - A column indicating the approval status of the data shows in the Field Visit Data Table.
 - Color coding of provisional and approved data for groundwater on hydrograph
@@ -28,7 +35,7 @@ recent data is chosen.
 - The converted Fahrenheit line no longer drops off graph with zero values.
 - Locations with only some flood level indicators no longer show  NaN
 
-## [0.42.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...waterdataui-0.42.0)
+## [0.42.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.40.0...waterdataui-0.42.0) - 2021-02-04
 ### Added
 - Added display of discrete ground water level data on the IV hydrograph.
 - Added a selection for Celsius converted to Fahrenheit to the parameter table.

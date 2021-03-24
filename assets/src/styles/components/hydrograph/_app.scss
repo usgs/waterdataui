@@ -55,6 +55,25 @@
   @include u-margin-bottom(2);
 }
 
+#download-graph-data-container > div {
+  @include grid-row;
+  @include grid-gap;
+  @include u-flex('row');
+  @include u-padding(2);
+  .usa-legend {
+    @include u-text('bold');
+  }
+  .download-info {
+    @include u-padding(2);
+    @include u-flex('auto');
+    @include u-flex('align-self-center');
+    @include u-text('italic');
+  }
+  .alert-error-container {
+    @include u-margin-top(2);
+  }
+}
+
 #select-time-series {
   label {
     @include u-text('bold');

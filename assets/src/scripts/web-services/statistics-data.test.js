@@ -2,10 +2,10 @@ import sinon from 'sinon';
 
 import {MOCK_STATISTICS_RDB} from 'ui/mock-service-data';
 
-import {fetchSiteStatistics, fetchSitesStatisticsRDB} from './statistics-data';
+import {getStatisticsServiceURL, fetchSiteStatistics, fetchSitesStatisticsRDB} from './statistics-data';
 
 
-describe('statistics-data', () => {
+describe('web-services/statistics-data', () => {
     let fakeServer;
 
     beforeEach(() => {
@@ -16,15 +16,30 @@ describe('statistics-data', () => {
         fakeServer.restore();
     });
 
-    describe('fetchSiteStatisticsRDB', () => {
+    describe('getStatisticsServiceURL', () => {
+        it('Expects the parameters specified will appear in the URL', () => {
+            const result = getStatisticsServiceURL({
+                siteno: '11112222',
+                parameterCode: '72019',
+                statType: 'max',
+                format: 'rdb'
+            });
+            expect(result).toContain('sites=11112222');
+            expect(result).toContain('statReportType=daily');
+            expect(result).toContain('statTypeCd=max');
+            expect(result).toContain('parameterCd=72019');
+            expect(result).toContain('format=rdb');
+        });
+    });
 
-        const sites = ['05370000'];
+    describe('fetchSiteStatisticsRDB', () => {
+        const siteno = '05370000';
         const statType = 'median';
-        const params = ['00060'];
+        const parameterCode = '00060';
 
         it('Gets a full year of statistical data', () => {
             /* eslint no-use-before-define: 0 */
-            fetchSitesStatisticsRDB({sites: sites, statType: statType, params: params});
+            fetchSitesStatisticsRDB({siteno,statType, parameterCode});
             const request = fakeServer.requests[0];
 
             expect(request.url).toContain('statTypeCd=median');
@@ -39,10 +54,10 @@ describe('statistics-data', () => {
 
         const siteno = '05370000';
         const statType = 'median';
-        const params = ['00060'];
+        const parameterCode = '00060';
 
         beforeEach(() => {
-            promise = fetchSiteStatistics({siteno, statType, params});
+            promise = fetchSiteStatistics({siteno, statType, parameterCode});
             request = fakeServer.requests[0];
             request.respond(200, {}, MOCK_STATISTICS_RDB);
         });
