@@ -205,9 +205,8 @@ export const drawSelectionList = function(container, store, siteno) {
         return;
     }
     // Add the primary parameter selection container.
-    container.append('div')
-        .attr('id', 'parameter-selection-container')
-        .append('h2')
+    container.append('h2')
+        .attr('id', 'parameter-selection-title')
         .text('Select Data to Graph');
     const selectionList = container.append('div')
         .attr('class', 'grid-container');

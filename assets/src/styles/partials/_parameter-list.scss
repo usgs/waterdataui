@@ -1,0 +1,73 @@
+/*
+ * Styles related to the Parameter Selection List.
+ */
+@import '../components/hydrograph/variables';
+
+$row-border-color: 'black';
+
+.select-time-series-container {
+  h2 {
+    margin-bottom: 0.2em;
+  }
+  .grid-container {
+    margin: 0;
+    padding: 0;
+
+    .selected {
+      background-color: $selected;
+    }
+
+    .grid-row-period-of-record {
+      @include at-media('tablet') {
+        display: none;
+      }
+    }
+
+    .grid-row-container-row {
+      @include u-border-bottom(1px, $row-border-color);
+      @include u-padding(1);
+    }
+
+    .grid-row-container-row:first-child {
+      @include u-border-top(1px, $row-border-color);
+    }
+
+    .grid-row-inner {
+      .usa-radio__label {
+        @include u-margin-top(0);
+        @include u-margin-bottom(0);
+      }
+      @media only screen and (max-width: 640px) {
+        .description__param-select {
+          @include u-font-weight('bold');
+        }
+      }
+    }
+
+    .grid-row-inner {
+      @include u-padding-right(0);
+      @include u-padding-left(0);
+    }
+
+    .period-of-record__param-select {
+      display: none;
+      @include at-media('tablet') {
+        display: inline;
+      }
+    }
+
+    .open-close-radio_button_row {
+      display: none;
+      @include at-media('tablet') {
+        display: flex;
+        justify-content: right;
+      }
+
+      .top-period-of-record {
+        @include at-media('tablet') {
+          display: none;
+        }
+      }
+    }
+  }
+}

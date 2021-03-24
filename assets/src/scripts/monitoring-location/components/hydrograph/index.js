@@ -27,7 +27,6 @@ import {drawGraphControls} from './graph-controls';
 import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {drawSelectionList} from './parameters';
-import {drawSelectionTable} from './parameters';
 import {drawSelectActions} from './select-actions';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
