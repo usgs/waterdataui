@@ -32,10 +32,17 @@ const INFO_TEXT = `
  download, analyze and plot your data
 </div>    
 `;
+
+/*
+ * Helper function to return a ISO formated string in the location's time zone for the epoch time, inMillis
+ */
 const toISO = function(inMillis) {
     return DateTime.fromMillis(inMillis, {zone: config.locationTimeZone}).toISO();
 };
 
+/*
+ * Helper functions to return the appropriate service URL using information in the Redux store
+ */
 const getIVDataURL =  function(store, siteno, timeRangeKind) {
     const currentState = store.getState();
     const timeRange = getTimeRange(timeRangeKind)(currentState);
@@ -48,7 +55,6 @@ const getIVDataURL =  function(store, siteno, timeRangeKind) {
         format: 'rdb'
     });
 };
-
 const getMedianDataURL = function(store, siteno) {
     return getStatisticsServiceURL({
         siteno,
@@ -57,7 +63,6 @@ const getMedianDataURL = function(store, siteno) {
         format: 'rdb'
     });
 };
-
 const getGroundwaterLevelURL = function(store, siteno) {
     const currentState = store.getState();
     const timeRange = getTimeRange('current')(currentState);
@@ -70,7 +75,6 @@ const getGroundwaterLevelURL = function(store, siteno) {
         format: 'rdb'
     });
 };
-
 const getSiteMetaDataURL = function(siteno) {
     return getSiteMetaDataServiceURL({
         siteno,
@@ -78,6 +82,9 @@ const getSiteMetaDataURL = function(siteno) {
     });
 };
 
+/*
+ * Helper function to render a single checkbox in container.
+ */
 const drawCheckbox = function(container, inputID, label, value) {
     const checkboxContainer = container.append('div')
         .attr('class', 'usa-checkbox');
@@ -92,6 +99,9 @@ const drawCheckbox = function(container, inputID, label, value) {
         .text(label);
 };
 
+/*
+ * Helper function to remove existing checkboxes and then render the checkboxes for the visible data.
+ */
 const drawCheckboxes = function(container, {
     hasVisiblePrimaryIVData,
     hasVisibleCompareIVData,

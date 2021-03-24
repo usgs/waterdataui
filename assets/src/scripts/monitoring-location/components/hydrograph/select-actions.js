@@ -5,6 +5,9 @@ import {getSelectedCustomDateRange, getSelectedDateRange} from 'ml/selectors/hyd
 import {drawDateRangeControls} from './date-controls';
 import {drawDownloadForm} from './download-data';
 
+/*
+ * Helper function to render a select action button on listContainer
+ */
 const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToControl}) {
     const button = listContainer.append('li')
         .attr('class', 'usa-button-group__item')
@@ -17,22 +20,20 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
             .attr('ga-event-action', `${idOfDivToControl}-toggle`)
             .on('click', function() {
                 const thisButton = select(this);
-                const actionContainer = select(`#${idOfDivToControl}`);
-                const isVisible = thisButton.attr('aria-expanded') === 'true';
-                thisButton
-                    .classed('selected-action', !isVisible)
-                    .attr('aria-expanded', !isVisible);
-                actionContainer.attr('hidden', isVisible ? true : null);
-                // Add code to make sure only one button is active in the button group
-                if (!isVisible) {
-                    const allButtons = listContainer.selectAll('.usa-button');
-                    allButtons.each(function() {
-                        const button = select(this);
-                        if (button.attr('aria-controls') !== idOfDivToControl && button.attr('aria-expanded') === 'true') {
-                            button.dispatch('click');
-                        }
-                    });
+                const wasSelected = thisButton.attr('aria-expanded') === 'true';
+
+                // If this button was not selected, we need to unselect the button (if any)
+                if (!wasSelected) {
+                    const selectedButton = listContainer.select('.selected-action');
+                    selectedButton.dispatch('click');
                 }
+
+                const actionContainer = select(`#${idOfDivToControl}`);
+                thisButton
+                    .classed('selected-action', !wasSelected)
+                    .attr('aria-expanded', !wasSelected);
+                actionContainer.attr('hidden', wasSelected ? true : null);
+
             });
     if (faIcon) {
         button.append('i')
@@ -44,6 +45,13 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
     return button;
 };
 
+/*
+ * Render the select action element on container. The store and siteno are needed to render the action forms within
+ * the select action element.
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ */
 export const drawSelectActions = function(container, store, siteno) {
     const state = store.getState();
     const listContainer = container.append('ul')
