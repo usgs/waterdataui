@@ -179,7 +179,7 @@ export const drawDownloadForm = function(container, store, siteno) {
                             downloadUrl = getSiteMetaDataURL(siteno);
                             break;
                         default:
-                            console.log('Unexpected value');
+                            console.log(`Unhandled value for downloading data: ${select(this).attr('value')}`);
                     }
                     if (downloadUrl) {
                         window.open(downloadUrl, '_blank');
