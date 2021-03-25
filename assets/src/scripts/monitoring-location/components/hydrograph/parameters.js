@@ -39,8 +39,11 @@ const drawRowExpansionControl = function(element, parameter, type) {
             .on('click', function(event) {
                 // Stop clicks on the toggle from triggering a change in selected parameter.
                 event.stopPropagation();
-                // Hide the expansion container on all rows.
+                // Hide the expansion container on all rows on all rows except the clicked parameter row.
                 select('#select-time-series').selectAll('.expansion-container-row')
+                    .filter(function() {
+                        return this.id !== `expansion-container-row-${parameter.parameterCode}`;
+                    })
                     .attr('hidden', 'true');
                 // Allow the user to hide the expansion row even on the clicked parameter row.
                 select(`#expansion-container-row-${parameter.parameterCode}`)
@@ -63,8 +66,12 @@ const drawRowExpansionControl = function(element, parameter, type) {
 };
 
 /*
-* Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid. This section of code
-* creates the main grid rows for each parameter and adds on click functions. Later, another grid will be nested in these rows.
+* Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid.
+* The grid has one 'container row' for each parameter (this function creates the 'container rows' for each parameter).
+* As a side note - each container row will eventually contain three internal rows.
+* 1) The 'Top Period Of Record Row' (shows only on mobile)
+* 2) The 'Radio Button Row' (radio button and description show on mobile and desktop, toggle and period of record don't show mobile)
+* 3) The 'Expansion Container Row' only shows when row clicked or toggled on. May act as a container for additional rows.
 * @param {Object} Store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
 * @param {Object} element - The target element on which to append the row
@@ -77,13 +84,12 @@ const drawContainingRow = function(store, siteno, element, parameter) {
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', `time-series-parmcd-${parameter.parameterCode}`)
-        .attr('role', 'option')
         .call(link(store, (elem, selectedParameterCode) => {
             elem.classed('selected', parameter.parameterCode === selectedParameterCode)
                 .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
         .on('click', function() {
-            selectAll('.fa-chevron-up')
+            select('#select-time-series').selectAll('.fa-chevron-up')
                 .attr('class', ROW_TOGGLE_CLOSED_CLASS)
                 .attr('aria-expanded', 'false');
             select(`#expansion-toggle-desktop-${parameter.parameterCode}`)
@@ -93,7 +99,7 @@ const drawContainingRow = function(store, siteno, element, parameter) {
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
 
-            selectAll('.expansion-container-row')
+            select('#select-time-series').selectAll('.expansion-container-row')
                 .attr('hidden', 'true');
             select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden', null);
 
@@ -115,8 +121,7 @@ const drawContainingRow = function(store, siteno, element, parameter) {
 * and contains the period of record that appears above the parameter description.
 * @param {Object} Element - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
-* @return {Object} The HTML for the grid row
-* */
+*/
 const drawTopPeriodOfRecordRow = function(element, parameter) {
     const gridRowInnerTopPeriodOfRecord = element.append('div')
         .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
