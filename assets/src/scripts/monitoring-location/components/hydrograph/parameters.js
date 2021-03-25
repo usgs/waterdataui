@@ -80,7 +80,7 @@ const drawRowExpansionControl = function(container, parameter, type) {
 const drawContainingRow = function(container, store, siteno, parameter) {
     return container.append('div')
         .attr('id', `container-row-${parameter.parameterCode}`)
-        .attr('class', 'grid-container grid-row-container-row')
+        .attr('class', 'grid-row-container-row')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', `time-series-parmcd-${parameter.parameterCode}`)
@@ -124,12 +124,12 @@ const drawContainingRow = function(container, store, siteno, parameter) {
 */
 const drawTopPeriodOfRecordRow = function(container, parameter) {
     const gridRowInnerTopPeriodOfRecord = container.append('div')
-        .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
+        .attr('class', 'grid-row-inner grid-row-period-of-record');
     gridRowInnerTopPeriodOfRecord.append('div')
-        .attr('class', 'grid-col-10 grid-offset-1')
+        .attr('class', 'grid-row-period-of-record-text')
         .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
     const TopPeriodOfRecordRowExpansionControlDiv = gridRowInnerTopPeriodOfRecord.append('div')
-        .attr('class', 'grid-col-1 open-close-top-period-of-record');
+        .attr('class', 'toggle-for-top-period-of-record');
 
     drawRowExpansionControl(TopPeriodOfRecordRowExpansionControlDiv, parameter, 'mobile');
 };
@@ -160,11 +160,11 @@ const drawRadioButtonRow = function(container, parameter, store) {
         .attr('class', 'usa-radio__label')
         .attr('for', `radio-${parameter.parameterCode}`);
     gridRowInnerWithRadioButton.append('div')
-        .attr('class', 'grid-col-7 description__param-select')
+        .attr('class', 'description__param-select')
         .text(`${parameter.description}`);
     const periodOfRecordToggleContainer = gridRowInnerWithRadioButton.append('div')
         .attr('id', 'period-of-record-and-toggle-container')
-        .attr('class', 'grid-col period-of-record__param-select');
+        .attr('class', 'period-of-record__param-select');
     periodOfRecordToggleContainer.append('div')
         .attr('id', 'period-of-record-text')
         .attr('class', 'period-of-record__param-select')
@@ -187,7 +187,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
 
         gridRowInnerWaterAlert.append('div')
             .attr('id', `wateralert-row-${parameter.parameterCode}`)
-            .attr('class', 'grid-col grid-offset-1 wateralert-row')
+            .attr('class', 'wateralert-row')
             .append('a')
             .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode}`)
             .attr('target', '_blank')
@@ -217,7 +217,7 @@ export const drawSelectionList = function(container, store, siteno) {
         .text('Select Data to Graph');
     const selectionList = container.append('div')
         .attr('id', 'select-time-series')
-        .attr('class', 'grid-container');
+        .attr('class', 'main-parameter-selection-container');
 
     parameters.forEach(parameter => {
         // Add the main grid rows

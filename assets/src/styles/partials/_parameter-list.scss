@@ -7,23 +7,38 @@ $row-border-color: 'black';
 
 .select-time-series-container {
   #parameter-selection-title {
-    margin-bottom: 0.2em;
+    @include u-font-weight('bold');
+    @include u-font-size('body', 'lg');
+    @include u-margin-bottom(2px);
   }
-  .grid-container {
-    margin: 0;
-    padding: 0;
 
+  #select-time-series {
+    @include grid-container;
+    @include u-margin(0);
+    @include u-padding(0);
+  }
+
+  .main-parameter-selection-container {
     .selected {
       background-color: $selected;
     }
 
     .grid-row-period-of-record {
+      @include grid-row;
+      .grid-row-period-of-record-text {
+        @include grid-col(10);
+        @include grid-offset(1);
+      }
+      .toggle-for-top-period-of-record {
+        @include grid-col(1);
+      }
       @include at-media('tablet') {
         display: none;
       }
     }
 
     .grid-row-container-row {
+      @include grid-container;
       @include u-border-bottom(1px, $row-border-color);
       @include u-padding(1);
     }
@@ -37,9 +52,13 @@ $row-border-color: 'black';
         @include u-margin-top(0);
         @include u-margin-bottom(0);
       }
-      @media only screen and (max-width: 640px) {
+      .description__param-select {
+        @include grid-col(7);
+        @include u-font-weight('bold');
+      }
+      @include at-media('tablet') {
         .description__param-select {
-          @include u-font-weight('bold');
+          @include u-font-weight('normal');
         }
       }
     }
@@ -47,9 +66,15 @@ $row-border-color: 'black';
     .grid-row-inner {
       @include u-padding-right(0);
       @include u-padding-left(0);
+
+      .wateralert-row {
+        @include grid-col;
+        @include grid-offset(1);
+      }
     }
 
     .period-of-record__param-select {
+      @include grid-col;
       display: none;
       @include at-media('tablet') {
         display: inline;
