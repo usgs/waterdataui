@@ -28,10 +28,10 @@ const ROW_TOGGLE_ICON_TYPES = ['desktop', 'mobile'];
 * @param {D3 selection} parameter - Contains details about the current parameter code
 * @param {String} type - Either 'desktop' or 'mobile'--indicates at what screen size the controls will show.
 */
-const drawRowExpansionControl = function(element, parameter, type) {
+const drawRowExpansionControl = function(elem, parameter, type) {
     // Don't show the open/close controls, if there is nothing in the expansion row, such as WaterAlert links.
     if (parameter.waterAlert.hasWaterAlert) {
-        element
+        elem
             .append('i')
             .attr('id', `expansion-toggle-${type}-${parameter.parameterCode}`)
             .attr('class', ROW_TOGGLE_CLOSED_CLASS)
@@ -72,13 +72,13 @@ const drawRowExpansionControl = function(element, parameter, type) {
 * 1) The 'Top Period Of Record Row' (shows only on mobile)
 * 2) The 'Radio Button Row' (radio button and description show on mobile and desktop, toggle and period of record don't show mobile)
 * 3) The 'Expansion Container Row' only shows when row clicked or toggled on. May act as a container for additional rows.
+* @param {Object} element - The target element on which to append the row
 * @param {Object} Store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* @param {Object} element - The target element on which to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawContainingRow = function(store, siteno, element, parameter) {
-    return element.append('div')
+const drawContainingRow = function(elem, store, siteno, parameter) {
+    return elem.append('div')
         .attr('id', `container-row-${parameter.parameterCode}`)
         .attr('class', 'grid-container grid-row-container-row')
         .attr('ga-on', 'click')
@@ -119,11 +119,11 @@ const drawContainingRow = function(store, siteno, element, parameter) {
 /*
 * Helper function that creates the top row of each parameter selection. This row is hidden except on narrow screens
 * and contains the period of record that appears above the parameter description.
-* @param {Object} Element - The target element to append the row
+* @param {Object} elem - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawTopPeriodOfRecordRow = function(element, parameter) {
-    const gridRowInnerTopPeriodOfRecord = element.append('div')
+const drawTopPeriodOfRecordRow = function(elem, parameter) {
+    const gridRowInnerTopPeriodOfRecord = elem.append('div')
         .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
     gridRowInnerTopPeriodOfRecord.append('div')
         .attr('class', 'grid-col-10 grid-offset-1')
@@ -136,12 +136,12 @@ const drawTopPeriodOfRecordRow = function(element, parameter) {
 
 /*
 * Helper function that draws the row containing the radio button and parameter description.
-* @param {Object} Store - The application Redux state
-* @param {Object} Element - The target element to append the row
+* @param {Object} elem - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
+* @param {Object} Store - The application Redux state
 */
-const drawRadioButtonRow = function(store, element, parameter) {
-    const gridRowInnerWithRadioButton = element.append('div')
+const drawRadioButtonRow = function(elem, parameter, store) {
+    const gridRowInnerWithRadioButton = elem.append('div')
         .attr('class', 'grid-row grid-row-inner');
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
         .attr('class', 'grid-col-1 radio-button__param-select')
@@ -178,12 +178,12 @@ const drawRadioButtonRow = function(store, element, parameter) {
 
 /*
 * Helper function that draws a row containing the controls for the WaterAlert subscription.
+* @param {Object} Elem- The target element to append the row
 * @param {String} siteno - A unique identifier for the monitoring location
-* @param {Object} Element - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawWaterAlertRow = function(siteno, element, parameter) {
-    const gridRowInnerWaterAlert = element.append('div')
+const drawWaterAlertRow = function(elem, siteno, parameter) {
+    const gridRowInnerWaterAlert = elem.append('div')
         .attr('class', 'grid-row grid-row-inner');
 
         gridRowInnerWaterAlert.append('div')
@@ -201,30 +201,30 @@ const drawWaterAlertRow = function(siteno, element, parameter) {
 
 /*
 * A main function that creates the parameter selection list
+* @param {Object} elem - The target element to append the selection list
 * @param {Object} Store - The application Redux state
-* @param {Object} Element - The target element to append the selection list
 * @param {String} siteno - A unique identifier for the monitoring location
 * */
-export const drawSelectionList = function(container, store, siteno) {
+export const drawSelectionList = function(elem, store, siteno) {
     const parameters = getAvailableParameters(store.getState());
 
     if (!Object.keys(parameters).length) {
         return;
     }
     // Add the primary parameter selection container.
-    container.append('h2')
+    elem.append('h2')
         .attr('id', 'parameter-selection-title')
         .text('Select Data to Graph');
-    const selectionList = container.append('div')
+    const selectionList = elem.append('div')
         .attr('id', 'select-time-series')
         .attr('class', 'grid-container');
 
     parameters.forEach(parameter => {
         // Add the main grid rows
-        const containerRow = drawContainingRow(store, siteno, selectionList, parameter);
+        const containerRow = drawContainingRow(selectionList, store, siteno, parameter);
         // Add the nested grid rows
         drawTopPeriodOfRecordRow(containerRow, parameter);
-        drawRadioButtonRow(store, containerRow, parameter);
+        drawRadioButtonRow(containerRow, parameter, store);
         // Add the expansion container in nested grid
         const expansionContainerRow = containerRow.append('div')
             .attr('id', `expansion-container-row-${parameter.parameterCode}`)
@@ -232,10 +232,10 @@ export const drawSelectionList = function(container, store, siteno) {
             .attr('hidden', 'true');
         // Add the rows nested in the expansion container
         if (parameter.waterAlert.hasWaterAlert) {
-            drawWaterAlertRow(siteno, expansionContainerRow, parameter);
+            drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
-    tooltip.on(container.node());
+    tooltip.on(elem.node());
 };
