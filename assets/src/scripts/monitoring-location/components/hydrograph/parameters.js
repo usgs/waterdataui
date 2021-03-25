@@ -161,11 +161,16 @@ const drawRadioButtonRow = function(store, element, parameter) {
         .attr('class', 'grid-col-7 description__param-select')
         .append('div')
         .text(`${parameter.description}`);
-    gridRowInnerWithRadioButton.append('div')
-        .attr('class', 'grid-col-auto period-of-record__param-select')
+    const periodOfRecordToggleContainer = gridRowInnerWithRadioButton.append('div')
+        .attr('id', 'period-of-record-and-toggle-container')
+        .attr('class', 'grid-col period-of-record__param-select');
+    periodOfRecordToggleContainer.append('div')
+        .attr('id', 'period-of-record-text')
+        .attr('class', 'period-of-record__param-select')
         .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
-    const radioRowExpansionControlDiv = gridRowInnerWithRadioButton.append('div')
-        .attr('class', 'grid-col open-close-radio_button_row');
+    const radioRowExpansionControlDiv = periodOfRecordToggleContainer.append('div')
+        .attr('id', 'expansion-toggle')
+        .attr('class', 'toggle-radio_button_row');
     drawRowExpansionControl(radioRowExpansionControlDiv, parameter, 'desktop');
 };
 
