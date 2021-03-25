@@ -1,8 +1,6 @@
 import {select} from 'd3-selection';
 
-import {getSelectedCustomDateRange, getSelectedDateRange} from 'ml/selectors/hydrograph-state-selector';
-
-import {drawDateRangeControls} from './date-controls';
+import {drawTimeSpanControls} from './time-span-controls';
 import {drawDownloadForm} from './download-data';
 
 /*
@@ -13,6 +11,7 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
         .attr('class', 'usa-button-group__item')
         .append('button')
             .attr('class', 'usa-button')
+            .attr('role', 'checkbox')
             .attr('aria-expanded', false)
             .attr('aria-controls', idOfDivToControl)
             .attr('ga-on', 'click')
@@ -69,7 +68,7 @@ export const drawSelectActions = function(container, store, siteno) {
     container.append('div')
         .attr('id', 'change-time-span-container')
         .attr('hidden', true)
-        .call(drawDateRangeControls, store, siteno, getSelectedDateRange(state), getSelectedCustomDateRange(state));
+        .call(drawTimeSpanControls, store, siteno);
     container.append('div')
         .attr('id', 'download-graph-data-container')
         .attr('hidden', true)

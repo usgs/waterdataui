@@ -5,10 +5,10 @@ import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
 
-import {getInputsForRetrieval} from 'ml/selectors/hydrograph-state-selector';
+import {getInputsForRetrieval, getSelectedTimeSpan} from 'ml/selectors/hydrograph-state-selector';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
-import {clearGraphBrushOffset, setSelectedDateRange, setSelectedCustomDateRange} from 'ml/store/hydrograph-state';
+import {clearGraphBrushOffset, setSelectedTimeSpan} from 'ml/store/hydrograph-state';
 
 import {showDataIndicators} from './data-indicator';
 
@@ -106,29 +106,25 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
  * @param {String} label - label for the date picker
  * @param {String} initialDate - ISO 8601 Date format
  */
-const drawDatePicker = function(container, id, label, initialDate) {
-    container.append('label')
-        .attr('class', 'usa-label')
-        .attr('id', `${id}-label`)
-        .attr('for', id)
-        .text(label);
-
-    container.append('div')
+const drawDatePicker = function(container, id, ariaLabel, initialDate) {
+    const formGroup = container.append('div')
+        .attr('class', 'usa-form-group');
+    formGroup.append('div')
         .attr('class', 'usa-hint')
         .attr('id', `${id}-hint`)
-        .text('mm/dd/yyyy')
-        .append('div')
-            .attr('class', 'usa-date-picker')
-            .attr('data-default-value', initialDate)
-            .attr('data-min-date', '1900-01-01')
-            .attr('data-max-date', '2100-12-31')
-            .append('input')
-                .attr('class', 'usa-input')
-                .attr('type', 'text')
-                .attr('id', id)
-                .attr('name', id)
-                .attr('aria-describedby', `${id}-label ${id}-hint`)
-                .attr('type', 'text');
+        .text('mm/dd/yyyy');
+    formGroup.append('div')
+        .attr('class', 'usa-date-picker time-span-date-range-picker')
+        .attr('data-default-value', initialDate ? initialDate : null)
+        .append('input')
+            .attr('class', 'usa-input')
+            .attr('type', 'text')
+            .attr('maxlength', 10)
+            .attr('size', 10)
+            .attr('id', id)
+            .attr('name', id)
+            .attr('aria-label', ariaLabel)
+            .attr('aria-describedby', `${id}-hint`);
 };
 
 /*
@@ -136,112 +132,27 @@ const drawDatePicker = function(container, id, label, initialDate) {
  * @param {D3 selection} container
  * @param {Redux store} store
  * @param {String} siteno
- * @param {String} initialDateRange - if 'custom' then this container is made visible
- * @param {Object} initialCustomDateRange - has start and end String properties containing an ISO 8601 date string
- *      and is used to set the initial values of the calendar pickers
  */
-const drawDateRangeForm = function(container, store, siteno) {
-    const calendarDaysContainer = container.append('div')
-        .attr('id', 'ts-customdaterange-select-container')
-        .attr('role', 'customdate')
-        .attr('class', 'usa-form')
-        .attr('aria-label', 'Custom date specification')
-        .attr('hidden', !isCustomPeriod(initialDateRange) ? null : true);
-    
-    const dateRangePickerContainer = calendarDaysContainer.append('div')
-        .attr('class', 'usa-date-range-picker');
-    dateRangePickerContainer.append('div')
-        .attr('id', 'start-date-form-group')
-        .attr('class', 'usa-form-group')
-        .call(drawDatePicker, 'custom-start-date', 'Start Date', initialCustomDateRange ? initialCustomDateRange.start : '');
-    dateRangePickerContainer.append('div')
-        .attr('id', 'end-date-form-group')
-        .attr('class', 'usa-form-group')
-        .call(drawDatePicker, 'custom-end-date', 'End Date', initialCustomDateRange ? initialCustomDateRange.end : '');
-
-    const calendarDaysValidationContainer = calendarDaysContainer.append('div')
-        .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
-        .attr('id', 'custom-date-alert-container')
-        .attr('hidden', true);
-    const dateAlertBody = calendarDaysValidationContainer.append('div')
-        .attr('class', 'usa-alert__body')
-        .attr('id', 'custom-date-alert');
-    dateAlertBody.append('h3')
-        .attr('class', 'usa-alert__heading')
-        .text('Date requirements');
+const drawDateRangeForm = function(container, store) {
+    const initialTimeSpan = getSelectedTimeSpan(store.getState());
+    const hasInitialDateRange = !isISODuration(initialTimeSpan);
+    container.append('span')
+        .text('Date range:');
+    const dateRangePickerContainer = container.append('div')
+        .attr('class', 'usa-date-range-picker')
+        .call(drawDatePicker, 'start-date', 'Start date', hasInitialDateRange ? initialTimeSpan.start : '');
+    dateRangePickerContainer.append('span').text('to');
+    dateRangePickerContainer.call(drawDatePicker, 'end-date', 'End date', hasInitialDateRange ? initialTimeSpan.end : '');
 
     // required to init the USWDS date picker after page load before calling the
     // dateRangePicker on function
     datePicker.init(dateRangePickerContainer.node());
     // required to init the USWDS date range picker after page load
     dateRangePicker.on(dateRangePickerContainer.node());
-
-    // Adds controls for the calendar day submit button
-    const calendarDaysSubmitContainer = calendarDaysContainer.append('div')
-        .attr('class', 'submit-button');
-    calendarDaysSubmitContainer.append('button')
-        .attr('class', 'usa-button')
-        .attr('id', 'custom-date-submit-calendar')
-        .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeSeriesGraph')
-        .attr('ga-event-action', 'customDateSubmit')
-        .text('Display data on graph')
-        .on('click', function() {
-            const startDateStr = calendarDaysContainer.select('#custom-start-date').property('value');
-            const endDateStr = calendarDaysContainer.select('#custom-end-date').property('value');
-            if (startDateStr.length === 0 || endDateStr.length === 0) {
-                dateAlertBody.selectAll('p').remove();
-                dateAlertBody.append('p')
-                    .text('Both start and end dates must be specified.');
-                calendarDaysValidationContainer.attr('hidden', null);
-            } else {
-                const startTime = DateTime.fromFormat(startDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone}).toMillis();
-                const endTime = DateTime.fromFormat(endDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone}).toMillis();
-                if (startTime > endTime) {
-                    dateAlertBody.selectAll('p').remove();
-                    dateAlertBody.append('p')
-                        .text('The start date must precede the end date.');
-                    calendarDaysValidationContainer.attr('hidden', null);
-                } else {
-                    calendarDaysValidationContainer.attr('hidden', true);
-                    store.dispatch(clearGraphBrushOffset());
-                    store.dispatch(setSelectedCustomDateRange(DateTime.fromMillis(startTime, {zone: config.locationTimeZone}).toISODate(),
-                        DateTime.fromMillis(endTime, {zone: config.locationTimeZone}).toISODate()));
-                    store.dispatch(setSelectedDateRange('custom'));
-                    showDataIndicators(true, store);
-                    store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                        .then(() => {
-                            showDataIndicators(false, store);
-                        });
-                }
-            }
-        });
 };
 
-/*
- * Renders the date controls used to set the time range. This can be done by using short cut selections or by
- * using the custom date range form.
- * @param {D3 selection} elem
- * @param {Redux store} store
- * @param {String} siteno
- * @param {String} initialDateRange
- * @param {Object} initialCustomDateRange - has string start and end components containing an ISO 8601 date string
- */
-export const drawDateRangeControls = function(elem, store, siteno, initialDateRange, initialCustomDateRange) {
-    // Add a container that holds the custom selection radio buttons and the form fields
-    elem.append('div')
-        .attr('id', 'ts-daterange-select-container')
-        .attr('role', 'radiogroup')
-        .attr('aria-label', 'Time interval select')
-        .call(drawSelectRadioButtons, store, siteno, initialDateRange);
-    elem.append('div')
-        .attr('id', 'container-radio-group-and-form-buttons')
-        .call(drawCustomRadioButtons, initialDateRange)
-        .call(drawCustomDaysBeforeForm, store, siteno, initialDateRange)
-        .call(drawCustomCalendarDaysForm, store, siteno, initialDateRange, initialCustomDateRange);
-    setCustomFormVisibility(showCustomContainer(initialDateRange));
-};
-
-export const drawTimeSpanControl = function(container, store, siteno) {
-
+export const drawTimeSpanControls = function(container, store, siteno) {
+    container.append('div')
+        .attr('class', 'date-range-container')
+        .call(drawDateRangeForm, store);
 };

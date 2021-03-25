@@ -12,7 +12,7 @@ import {renderTimeSeriesUrlParams} from 'ml/url-params';
 
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {retrieveHydrographParameters} from 'ml/store/hydrograph-parameters';
-import {setSelectedParameterCode, setCompareDataVisibility, setSelectedCustomDateRange, setSelectedDateRange,
+import {setSelectedParameterCode, setCompareDataVisibility, setSelectedTimeSpan,
     setSelectedIVMethodID
 } from 'ml/store/hydrograph-state';
 
@@ -90,12 +90,14 @@ export const attachToNode = function(store,
     store.dispatch(setSelectedParameterCode(parameterCode));
     store.dispatch(setCompareDataVisibility(initialLoadCompare));
     if (period) {
-        store.dispatch(setSelectedDateRange(period));
+        store.dispatch(setSelectedTimeSpan(period));
     } else if (startDT && endDT) {
-        store.dispatch(setSelectedDateRange('custom'));
-        store.dispatch(setSelectedCustomDateRange(startDT, endDT));
+        store.dispatch(setSelectedTimeSpan({
+            start: startDT,
+            end: endDT
+        }));
     } else {
-        store.dispatch(setSelectedDateRange('P7D'));
+        store.dispatch(setSelectedTimeSpan('P7D'));
     }
 
     // Fetch waterwatch flood levels

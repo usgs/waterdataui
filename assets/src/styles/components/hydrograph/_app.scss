@@ -3,56 +3,24 @@
  */
 @import './variables';
 
-#ts-daterange-select-container {
-  ul {
-    display: inline-block;
-    li {
-      display: inline-block;
-      label {
-        margin: 0;
-        @include u-margin-bottom(1);
-        width: 110px;
-      }
-    }
-  }
-}
-#container-radio-group-and-form-buttons {
-  border: solid 1px color('black');
-  @include u-margin-bottom(1);
-  #ts-custom-date-radio-group {
-    @include u-padding-left(1);
-    p {
-      @include u-text('bold');
-      @include u-margin-bottom(1);
-    }
-    ul {
-      display: inline-block;
-      li {
-        display: inline-block;
-        @include u-padding-right(1);
-      }
-    }
-  }
-  #ts-custom-days-before-today-select-container {
-    @include u-padding-right(1);
-    @include u-padding-bottom(1);
-    @include u-padding-left(1);
-    .usa-label {
-      @include u-text('bold');
-    }
-  }
-  #ts-customdaterange-select-container {
-    @include u-padding-right(1);
-    @include u-padding-bottom(1);
-    @include u-padding-left(1);
-    label {
-      @include u-text('bold');
-    }
-  }
-}
-
 #ts-method-select-container {
   @include u-margin-bottom(2);
+}
+
+#change-time-span-container {
+  @include u-padding(2);
+  .date-range-container {
+    div {
+      display: inline-block;
+    }
+    .usa-date-picker {
+      width: 11rem;
+    }
+
+    .usa-date-picker__calendar {
+      width: units($theme-input-max-width);
+    }
+  }
 }
 
 #download-graph-data-container > div {
