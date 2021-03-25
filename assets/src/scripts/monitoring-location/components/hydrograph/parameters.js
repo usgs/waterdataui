@@ -25,7 +25,7 @@ const ROW_TOGGLE_ICON_TYPES = ['desktop', 'mobile'];
 * Helper function that adds the on click open and close functionality. Stopping event propagation is needed to prevent
 * clicks on the containing element from changing this elements behavior.
 * @param {Object} element - the element to add the on click action
-* @param {Object} parameter - Contains details about the current parameter code
+* @param {D3 selection} parameter - Contains details about the current parameter code
 * @param {String} type - Either 'desktop' or 'mobile'--indicates at what screen size the controls will show.
 */
 const drawRowExpansionControl = function(element, parameter, type) {
@@ -37,13 +37,10 @@ const drawRowExpansionControl = function(element, parameter, type) {
             .attr('class', ROW_TOGGLE_CLOSED_CLASS)
             .attr('aria-expanded', 'false')
             .on('click', function(event) {
-                // Stop clicks on the parameter container row from triggering the open/close toggle.
+                // Stop clicks on the toggle from triggering a change in selected parameter.
                 event.stopPropagation();
-                // Hide the expansion container on all rows except the clicked parameter row.
-                selectAll('.expansion-container-row')
-                    .filter(function() {
-                        return this.id !== `expansion-container-row-${parameter.parameterCode}`;
-                    })
+                // Hide the expansion container on all rows.
+                select('#select-time-series').selectAll('.expansion-container-row')
                     .attr('hidden', 'true');
                 // Allow the user to hide the expansion row even on the clicked parameter row.
                 select(`#expansion-container-row-${parameter.parameterCode}`)
@@ -71,7 +68,7 @@ const drawRowExpansionControl = function(element, parameter, type) {
 * @param {Object} Store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
 * @param {Object} element - The target element on which to append the row
-* @param {Object} parameter - Contains details about the current parameter code
+* @param {D3 selection} parameter - Contains details about the current parameter code
 */
 const drawContainingRow = function(store, siteno, element, parameter) {
     return element.append('div')
@@ -117,7 +114,7 @@ const drawContainingRow = function(store, siteno, element, parameter) {
 * Helper function that creates the top row of each parameter selection. This row is hidden except on narrow screens
 * and contains the period of record that appears above the parameter description.
 * @param {Object} Element - The target element to append the row
-* @param {Object} parameter - Contains details about the current parameter code
+* @param {D3 selection} parameter - Contains details about the current parameter code
 * @return {Object} The HTML for the grid row
 * */
 const drawTopPeriodOfRecordRow = function(element, parameter) {
@@ -136,7 +133,7 @@ const drawTopPeriodOfRecordRow = function(element, parameter) {
 * Helper function that draws the row containing the radio button and parameter description.
 * @param {Object} Store - The application Redux state
 * @param {Object} Element - The target element to append the row
-* @param {Object} parameter - Contains details about the current parameter code
+* @param {D3 selection} parameter - Contains details about the current parameter code
 */
 const drawRadioButtonRow = function(store, element, parameter) {
     const gridRowInnerWithRadioButton = element.append('div')
@@ -178,7 +175,7 @@ const drawRadioButtonRow = function(store, element, parameter) {
 * Helper function that draws a row containing the controls for the WaterAlert subscription.
 * @param {String} siteno - A unique identifier for the monitoring location
 * @param {Object} Element - The target element to append the row
-* @param {Object} parameter - Contains details about the current parameter code
+* @param {D3 selection} parameter - Contains details about the current parameter code
 */
 const drawWaterAlertRow = function(siteno, element, parameter) {
     const gridRowInnerWaterAlert = element.append('div')
