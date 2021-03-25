@@ -24,14 +24,14 @@ const ROW_TOGGLE_ICON_TYPES = ['desktop', 'mobile'];
 /*
 * Helper function that adds the on click open and close functionality. Stopping event propagation is needed to prevent
 * clicks on the containing element from changing this elements behavior.
-* @param {Object} element - the element to add the on click action
+* @param {Object} container - the element to add the on click action
 * @param {D3 selection} parameter - Contains details about the current parameter code
 * @param {String} type - Either 'desktop' or 'mobile'--indicates at what screen size the controls will show.
 */
-const drawRowExpansionControl = function(elem, parameter, type) {
+const drawRowExpansionControl = function(container, parameter, type) {
     // Don't show the open/close controls, if there is nothing in the expansion row, such as WaterAlert links.
     if (parameter.waterAlert.hasWaterAlert) {
-        elem
+        container
             .append('i')
             .attr('id', `expansion-toggle-${type}-${parameter.parameterCode}`)
             .attr('class', ROW_TOGGLE_CLOSED_CLASS)
@@ -72,20 +72,20 @@ const drawRowExpansionControl = function(elem, parameter, type) {
 * 1) The 'Top Period Of Record Row' (shows only on mobile)
 * 2) The 'Radio Button Row' (radio button and description show on mobile and desktop, toggle and period of record don't show mobile)
 * 3) The 'Expansion Container Row' only shows when row clicked or toggled on. May act as a container for additional rows.
-* @param {Object} element - The target element on which to append the row
-* @param {Object} Store - The application Redux state
+* @param {Object} container - The target element on which to append the row
+* @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawContainingRow = function(elem, store, siteno, parameter) {
-    return elem.append('div')
+const drawContainingRow = function(container, store, siteno, parameter) {
+    return container.append('div')
         .attr('id', `container-row-${parameter.parameterCode}`)
         .attr('class', 'grid-container grid-row-container-row')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
         .attr('ga-event-action', `time-series-parmcd-${parameter.parameterCode}`)
-        .call(link(store, (elem, selectedParameterCode) => {
-            elem.classed('selected', parameter.parameterCode === selectedParameterCode)
+        .call(link(store, (container, selectedParameterCode) => {
+            container.classed('selected', parameter.parameterCode === selectedParameterCode)
                 .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
         .on('click', function() {
@@ -119,11 +119,11 @@ const drawContainingRow = function(elem, store, siteno, parameter) {
 /*
 * Helper function that creates the top row of each parameter selection. This row is hidden except on narrow screens
 * and contains the period of record that appears above the parameter description.
-* @param {Object} elem - The target element to append the row
+* @param {Object} container - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawTopPeriodOfRecordRow = function(elem, parameter) {
-    const gridRowInnerTopPeriodOfRecord = elem.append('div')
+const drawTopPeriodOfRecordRow = function(container, parameter) {
+    const gridRowInnerTopPeriodOfRecord = container.append('div')
         .attr('class', 'grid-row grid-row-inner grid-row-period-of-record');
     gridRowInnerTopPeriodOfRecord.append('div')
         .attr('class', 'grid-col-10 grid-offset-1')
@@ -138,10 +138,10 @@ const drawTopPeriodOfRecordRow = function(elem, parameter) {
 * Helper function that draws the row containing the radio button and parameter description.
 * @param {Object} elem - The target element to append the row
 * @param {D3 selection} parameter - Contains details about the current parameter code
-* @param {Object} Store - The application Redux state
+* @param {Object} store - The application Redux state
 */
-const drawRadioButtonRow = function(elem, parameter, store) {
-    const gridRowInnerWithRadioButton = elem.append('div')
+const drawRadioButtonRow = function(container, parameter, store) {
+    const gridRowInnerWithRadioButton = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
         .attr('class', 'grid-col-1 radio-button__param-select')
@@ -161,7 +161,6 @@ const drawRadioButtonRow = function(elem, parameter, store) {
         .attr('for', `radio-${parameter.parameterCode}`);
     gridRowInnerWithRadioButton.append('div')
         .attr('class', 'grid-col-7 description__param-select')
-        .append('div')
         .text(`${parameter.description}`);
     const periodOfRecordToggleContainer = gridRowInnerWithRadioButton.append('div')
         .attr('id', 'period-of-record-and-toggle-container')
@@ -178,12 +177,12 @@ const drawRadioButtonRow = function(elem, parameter, store) {
 
 /*
 * Helper function that draws a row containing the controls for the WaterAlert subscription.
-* @param {Object} Elem- The target element to append the row
+* @param {Object} container- The target element to append the row
 * @param {String} siteno - A unique identifier for the monitoring location
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
-const drawWaterAlertRow = function(elem, siteno, parameter) {
-    const gridRowInnerWaterAlert = elem.append('div')
+const drawWaterAlertRow = function(container, siteno, parameter) {
+    const gridRowInnerWaterAlert = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
 
         gridRowInnerWaterAlert.append('div')
@@ -201,21 +200,22 @@ const drawWaterAlertRow = function(elem, siteno, parameter) {
 
 /*
 * A main function that creates the parameter selection list
-* @param {Object} elem - The target element to append the selection list
-* @param {Object} Store - The application Redux state
+* @param {Object} container - The target element to append the selection list
+* @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
 * */
-export const drawSelectionList = function(elem, store, siteno) {
+export const drawSelectionList = function(container, store, siteno) {
     const parameters = getAvailableParameters(store.getState());
 
     if (!Object.keys(parameters).length) {
         return;
     }
     // Add the primary parameter selection container.
-    elem.append('h2')
+    container.append('p')
         .attr('id', 'parameter-selection-title')
+        .attr('class', 'usa-prose')
         .text('Select Data to Graph');
-    const selectionList = elem.append('div')
+    const selectionList = container.append('div')
         .attr('id', 'select-time-series')
         .attr('class', 'grid-container');
 
@@ -237,5 +237,5 @@ export const drawSelectionList = function(elem, store, siteno) {
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
-    tooltip.on(elem.node());
+    tooltip.on(container.node());
 };
