@@ -1,5 +1,5 @@
 import {select} from 'd3-selection';
-import {DateTime} from 'luxon';
+import {DateTime, Duration} from 'luxon';
 // required to make the USWDS component JS available to init after page load
 import {datePicker, dateRangePicker} from 'uswds-components';
 
@@ -89,7 +89,7 @@ const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateR
             } else {
                 daysBeforeValidationContainer.attr('hidden', true);
                 store.dispatch(clearGraphBrushOffset());
-                store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
+                //store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
                 showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
@@ -115,7 +115,9 @@ const drawDatePicker = function(container, id, ariaLabel, initialDate) {
         .text('mm/dd/yyyy');
     formGroup.append('div')
         .attr('class', 'usa-date-picker time-span-date-range-picker')
-        .attr('data-default-value', initialDate ? initialDate : null)
+        .attr('data-min-date', '1900-01-01')
+        .attr('data-max-date', DateTime.now().toISODate())
+        .attr('data-default-value', initialDate ? initialDate : '')
         .append('input')
             .attr('class', 'usa-input')
             .attr('type', 'text')
@@ -138,21 +140,43 @@ const drawDateRangeForm = function(container, store) {
     const hasInitialDateRange = !isISODuration(initialTimeSpan);
     container.append('span')
         .text('Date range:');
-    const dateRangePickerContainer = container.append('div')
+    container.append('div')
         .attr('class', 'usa-date-range-picker')
-        .call(drawDatePicker, 'start-date', 'Start date', hasInitialDateRange ? initialTimeSpan.start : '');
-    dateRangePickerContainer.append('span').text('to');
-    dateRangePickerContainer.call(drawDatePicker, 'end-date', 'End date', hasInitialDateRange ? initialTimeSpan.end : '');
+        .call(drawDatePicker, 'start-date', 'Start date', hasInitialDateRange ? initialTimeSpan.start : '')
+        .call(drawDatePicker, 'end-date', 'End date', hasInitialDateRange ? initialTimeSpan.end : '');
 
-    // required to init the USWDS date picker after page load before calling the
-    // dateRangePicker on function
-    datePicker.init(dateRangePickerContainer.node());
+    // required to init the USWDS date picker after page load before calling the dateRangePicker on function
+    datePicker.init(container.node());
     // required to init the USWDS date range picker after page load
-    dateRangePicker.on(dateRangePickerContainer.node());
+    dateRangePicker.on(container.node());
+};
+
+const drawDaysBeforeTodayForm = function(container, store) {
+    const initialTimeSpan = getSelectedTimeSpan(store.getState());
+    const hasDaysBeforeToday = isISODuration(initialTimeSpan);
+
+    const daysContainer = container.append('div')
+        .attr('class', 'days-before-container');
+    daysContainer.append('label')
+        .attr('class', 'usa-label')
+        .attr('for', 'days-before-today')
+        .text('Days before today: ');
+    daysContainer.append('input')
+        .attr('class', 'usa-input')
+        .attr('id', 'days-before-today')
+        .attr('name', 'days-before-today')
+        .attr('type', 'text')
+        .attr('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
+        .attr('maxlength', 5);
 };
 
 export const drawTimeSpanControls = function(container, store, siteno) {
     container.append('div')
         .attr('class', 'date-range-container')
         .call(drawDateRangeForm, store);
+    container.append('div')
+        .text('Or');
+    container.append('div')
+        .attr('class', 'time-before-today-container')
+        .call(drawDaysBeforeTodayForm, store);
 };

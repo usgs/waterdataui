@@ -10,8 +10,15 @@
 #change-time-span-container {
   @include u-padding(2);
   .date-range-container {
-    div {
+    span {
+      @include u-margin-right(1);
+    }
+
+    .usa-date-range-picker, .usa-form-group {
       display: inline-block;
+    }
+    .usa-form-group:first-child {
+      @include u-margin-right(2);
     }
     .usa-date-picker {
       width: 11rem;
@@ -20,6 +27,25 @@
     .usa-date-picker__calendar {
       width: units($theme-input-max-width);
     }
+  }
+  div:nth-child(2) {
+    @include u-font('ui', 'lg');
+    @include u-text('bold');
+  }
+  .time-before-today-container {
+    .days-before-container {
+      label {
+        display: inline-block;
+        @include u-margin-right(2);
+        @include u-margin-top('auto');
+      }
+      input {
+        width: 5rem;
+        display: inline-block;
+        @include u-margin-top('auto');
+      }
+    }
+
   }
 }
 
