@@ -51,7 +51,7 @@ export const getAvailableParameters = createSelector(
                     if (measuredParameterCode === parameterCode) {
                         waterAlertDisplayText = 'Subscribe to Alerts';
                     } else {
-                        waterAlertDisplayText = 'Subscribe to Alerts in C';
+                        waterAlertDisplayText = 'Subscribe to Alerts in Celsius';
                     }
                 } else {
                     waterAlertDisplayText = 'N/A';
