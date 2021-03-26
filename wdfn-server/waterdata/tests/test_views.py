@@ -20,16 +20,28 @@ class TestHasFeedbackLink(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
 
-    def monitoring_location_page_has_feedback_link(self):
+    def test_page_has_feedback_link(self):
         with app.test_request_context('/monitoring-location/0000000/'):
             self.assertTrue(has_feedback_link())
-
-    def network_page_has_feedback_link(self):
         with app.test_request_context('/networks/RTS/'):
             self.assertTrue(has_feedback_link())
 
-    def questions_comments_page_has_no_feedback_link(self):
+    def test_no_feedback_link(self):
         with app.test_request_context('/questions-comments/some-email-address/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/provisional-data-statement/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/questions-comments/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/iv-data-availability-statement/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/hydrological-unit/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/hydrological-unit/0000/monitoring-locations/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/states/'):
+            self.assertFalse(has_feedback_link())
+        with app.test_request_context('/states/01/counties/23/monitoring-locations/'):
             self.assertFalse(has_feedback_link())
 
 
@@ -60,7 +72,7 @@ class TestFeedbackSubmitted(TestCase):
 
     def test_successful_view(self):
         email_send_result = 'success'
-        response = self.app_client.get('/feedback-submitted/{}'.format(email_send_result))
+        response = self.app_client.get('/feedback-submitted/{}/'.format(email_send_result))
         self.assertEqual(200, response.status_code)
 
 
@@ -69,7 +81,7 @@ class TestProvisionalDataStatementView(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        response = self.app_client.get('/provisional-data-statement')
+        response = self.app_client.get('/provisional-data-statement/')
 
         self.assertEqual(response.status_code, 200)
 
@@ -79,7 +91,7 @@ class TestIvDataAvailabilityStatementView(TestCase):
         self.app_client = app.test_client()
 
     def test_successful_view(self):
-        response = self.app_client.get('/iv-data-availability-statement')
+        response = self.app_client.get('/iv-data-availability-statement/')
 
         self.assertEqual(response.status_code, 200)
 
