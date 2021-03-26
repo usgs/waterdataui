@@ -33,7 +33,7 @@ $row-border-color: 'black';
         @include grid-col(1);
       }
       @include at-media('tablet') {
-        display: none;
+        @include u-display('none');
       }
     }
 
@@ -55,7 +55,6 @@ $row-border-color: 'black';
         @include grid-col;
         @include grid-offset(1);
       }
-
       .usa-radio__label {
         @include u-margin-top(0);
         @include u-margin-bottom(0);
@@ -73,16 +72,16 @@ $row-border-color: 'black';
 
     .period-of-record__param-select {
       @include grid-col;
-      display: none;
+      @include u-display('none');
       @include at-media('tablet') {
-        display: inline;
+        @include u-display('inline');
       }
     }
 
     #period-of-record-and-toggle-container {
-      display: none;
+      @include u-display('none');
       @include at-media('tablet') {
-        @include u-flex;
+        @include u-display('flex');
         justify-content: space-between;
       }
     }
