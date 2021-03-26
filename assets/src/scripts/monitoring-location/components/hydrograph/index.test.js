@@ -125,7 +125,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
-                    selectedDateRange: 'P7D',
+                    selectedTimeSpan: 'P7D',
                     showCompareIVData: false,
                     selectedIVMethodID: undefined
                 });
@@ -146,7 +146,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
-                    selectedDateRange: 'P45D',
+                    selectedTimeSpan: 'P45D',
                     showCompareIVData: false,
                     selectedIVMethodID: undefined
                 });
@@ -168,8 +168,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
-                    selectedDateRange: 'custom',
-                    selectedCustomDateRange: {
+                    selectedTimeSpan: {
                         start: '2020-02-01',
                         end: '2020-02-15'
                     },
@@ -193,7 +192,7 @@ describe('monitoring-location/components/hydrograph module', () => {
                 });
                 expect(store.getState().hydrographState).toEqual({
                     selectedParameterCode: '72019',
-                    selectedDateRange: 'P7D',
+                    selectedTimeSpan: 'P7D',
                     showCompareIVData: true,
                     selectedIVMethodID: undefined
                 });
@@ -226,7 +225,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             });
             expect(store.getState().hydrographState).toEqual({
                 selectedParameterCode: '72019',
-                selectedDateRange: 'P7D',
+                selectedTimeSpan: 'P7D',
                 showCompareIVData: false
             });
             expect(retrieveWaterwatchDataSpy).toHaveBeenCalled();
@@ -317,6 +316,10 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should have date control form', () => {
             expect(selectAll('#change-time-span-container').size()).toBe(1);
         });
+
+        it('should have download data form', () => {
+            expect(selectAll('#download-graph-data-container').size()).toBe(1);
+        })
 
         it('should have method select element', () => {
             expect(selectAll('#ts-method-select-container').size()).toBe(1);
@@ -410,9 +413,12 @@ describe('monitoring-location/components/hydrograph module', () => {
             expect(selectAll('.cursor-slider-svg').size()).toBe(0);
         });
 
-        it('should not have date control elements', () => {
-            expect(selectAll('#ts-daterange-select-container').size()).toBe(0);
-            expect(selectAll('#ts-customdaterange-select-container').size()).toBe(0);
+        it('should not have time span elements', () => {
+            expect(selectAll('#change-time-span-container').size()).toBe(0);
+        });
+
+        it('should not have the download data element', () => {
+            expect(selectAll('#download-graph-data-container').size()).toBe(0);
         });
 
         it('should not have method select element', () => {

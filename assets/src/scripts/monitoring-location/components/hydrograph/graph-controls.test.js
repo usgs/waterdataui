@@ -6,7 +6,7 @@ import * as utils from 'ui/utils';
 
 import {configureStore} from 'ml/store';
 import * as hydrographData from 'ml/store/hydrograph-data';
-import {setSelectedDateRange} from 'ml/store/hydrograph-state';
+import {setSelectedTimeSpan} from 'ml/store/hydrograph-state';
 
 import * as dataIndicator from './data-indicator';
 import {drawGraphControls} from './graph-controls';
@@ -35,7 +35,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
                 },
                 hydrographState: {
                     showCompareIVData: false,
-                    selectedDateRange: 'P7D',
+                    selectedTimeSpan: 'P7D',
                     showMedianData: false,
                     selectedParameterCode: '72019'
                 }
@@ -89,8 +89,11 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(showDataIndicatorSpy.mock.calls[1][0]).toBe(false);
         });
 
-        it('Should change the checkbox to disabled if the selectedDateRange is set to custom', () => {
-            store.dispatch(setSelectedDateRange('custom'));
+        it('Should change the checkbox to disabled if the selectedTimeSpan is set is a date range', () => {
+            store.dispatch(setSelectedTimeSpan({
+                start: '2020-02-05',
+                end: '2020-02-10'
+            }));
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     const checkbox = select('#last-year-checkbox');
@@ -101,8 +104,8 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             });
         });
 
-        it('Should change the checkbox to disabled if the selectedDateRange is a custom period', () => {
-            store.dispatch(setSelectedDateRange('P45D'));
+        it('Should change the checkbox to disabled if the selectedTimeSpan is a custom period', () => {
+            store.dispatch(setSelectedTimeSpan('P45D'));
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     const checkbox = select('#last-year-checkbox');

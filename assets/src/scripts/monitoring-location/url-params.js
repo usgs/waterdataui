@@ -34,11 +34,13 @@ export const renderTimeSeriesUrlParams = function(store) {
         if (Object.keys(methods).length > 1) {
             params.set('timeSeriesId', methodId);
         }
-        if (timeSpanIsDuration) {
-            params.set('period', timeSpan);
-        } else {
-            params.set('startDT', timeSpan.start);
-            params.set('endDT', timeSpan.end);
+        if (timeSpan) {
+            if (timeSpanIsDuration) {
+                params.set('period', timeSpan);
+            } else {
+                params.set('startDT', timeSpan.start);
+                params.set('endDT', timeSpan.end);
+            }
         }
 
         if (compare) {

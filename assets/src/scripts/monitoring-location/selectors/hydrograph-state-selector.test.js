@@ -38,14 +38,14 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
         });
     });
 
-    describe('getSelectedDateRange', () => {
-       it('Returns null if no selected date range', () => {
+    describe('getSelectedTimeSpan', () => {
+       it('Returns null if no selected time span', () => {
            expect(getSelectedTimeSpan({
                hydrographState: {}
            })).toBeNull();
        });
 
-       it('Returns selected date range', () => {
+       it('Returns selected time span', () => {
            expect(getSelectedTimeSpan({
                hydrographState: {
                    selectedTimeSpan: 'P45D'
@@ -126,7 +126,7 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
 
 
     describe('getInputsForRetrieval', () => {
-        it('Return expected inputs when selectedDateRange is not custom', () => {
+        it('Return expected inputs when selectedTimeSpan is for days before today', () => {
             expect(getInputsForRetrieval({
                 hydrographState: {
                     showCompareIVData: false,
@@ -143,7 +143,7 @@ describe('monitoring-location/selectors/hydrograph-state-selector', () => {
                 loadMedian: true
             });
         });
-        it('Return expects inputs when selectedDateRange is custom', () => {
+        it('Return expects inputs when selectedTimeSpan is a date range', () => {
             expect(getInputsForRetrieval({
                 hydrographState: {
                     showCompareIVData: true,

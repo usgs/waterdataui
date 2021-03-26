@@ -18,8 +18,7 @@ describe('monitoring-location/components/hydrograph/select-actions', () => {
             groundwaterLevels: TEST_GW_LEVELS
         },
         hydrographState: {
-            selectedDateRange: 'P7D',
-            selectedCustomDateRange: null,
+            selectedTimeSpan: 'P7D',
             selectedIVMethodID: '90649'
         }
     };

@@ -182,7 +182,7 @@ export const drawTimeSpanControls = function(container, store, siteno) {
     inputContainer.append('div')
         .text('Or');
     inputContainer.append('div')
-        .attr('class', 'time-before-today-container')
+        .attr('class', 'days-before-today-container')
         .call(drawDaysBeforeTodayForm, store);
     container.append('button')
         .attr('class', 'usa-button')

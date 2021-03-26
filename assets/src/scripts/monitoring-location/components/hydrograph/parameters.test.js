@@ -17,7 +17,7 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
     const TEST_STATE = {
        hydrographParameters: TEST_HYDROGRAPH_PARAMETERS,
        hydrographState: {
-           selectedDateRange: 'P7D',
+           selectedTimeSpan: 'P7D',
            selectedParameterCode: '72019'
        }
     };

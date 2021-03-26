@@ -1,5 +1,5 @@
 import {configureStore} from 'ml/store';
-import {setSelectedDateRange} from './store/hydrograph-state';
+import {setSelectedTimeSpan} from './store/hydrograph-state';
 import {getParamString, renderTimeSeriesUrlParams} from 'ml/url-params';
 
 describe('monitoring-location/url-params module', () => {
@@ -34,8 +34,7 @@ describe('monitoring-location/url-params module', () => {
             hydrographState: {
                 showCompareIVData: false,
                 selectedParameterCode: '00010',
-                selectedDateRange: 'P7D',
-                selectedCustomDateRange: null,
+                selectedTimeSpan: 'P7D',
                 selectedIVMethodID: '69928'
             }
         };
@@ -52,7 +51,7 @@ describe('monitoring-location/url-params module', () => {
             renderTimeSeriesUrlParams(store);
             expect(window.location.hash).toContain('parameterCode=00010');
             expect(window.location.hash).not.toContain('compare=true');
-            expect(window.location.hash).not.toContain('period');
+            expect(window.location.hash).toContain('period');
             expect(window.location.hash).not.toContain('startDT');
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
@@ -70,7 +69,7 @@ describe('monitoring-location/url-params module', () => {
 
             expect(window.location.hash).toContain('parameterCode=00010');
             expect(window.location.hash).toContain('compare=true');
-            expect(window.location.hash).not.toContain('period');
+            expect(window.location.hash).toContain('period');
             expect(window.location.hash).not.toContain('startDT');
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
@@ -81,7 +80,7 @@ describe('monitoring-location/url-params module', () => {
                 ...TEST_STATE,
                 hydrographState: {
                     ...TEST_STATE.hydrographState,
-                    selectedDateRange: 'P30D'
+                    selectedTimeSpan: 'P30D'
                 }
             });
             renderTimeSeriesUrlParams(store);
@@ -93,7 +92,7 @@ describe('monitoring-location/url-params module', () => {
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).not.toContain('timeSeriesId');
 
-            store.dispatch(setSelectedDateRange('P20D'));
+            store.dispatch(setSelectedTimeSpan('P20D'));
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     expect(window.location.hash).toContain('period=P20D');
@@ -102,39 +101,12 @@ describe('monitoring-location/url-params module', () => {
             });
         });
 
-        it('does not add period if current date range is P7D', () => {
+        it('Contains startDT and endDT in url if time span is a date range in store', () => {
             let store = configureStore({
                 ...TEST_STATE,
                 hydrographState: {
                     ...TEST_STATE.hydrographState,
-                    selectedDateRange: 'P7D'
-                }
-            });
-            renderTimeSeriesUrlParams(store);
-
-            expect(window.location.hash).toContain('parameterCode=00010');
-            expect(window.location.hash).not.toContain('compare=true');
-            expect(window.location.hash).not.toContain('period=P7D');
-            expect(window.location.hash).not.toContain('startDT');
-            expect(window.location.hash).not.toContain('endDT');
-            expect(window.location.hash).not.toContain('timeSeriesId');
-
-            store.dispatch(setSelectedDateRange('P365D'));
-            return new Promise(resolve => {
-                window.requestAnimationFrame(() => {
-                    expect(window.location.hash).toContain('period=P365D');
-                    resolve();
-                });
-            });
-        });
-
-        it('Contains startDT and endDT in url if selectedCustomDateRange is set in store', () => {
-            let store = configureStore({
-                ...TEST_STATE,
-                hydrographState: {
-                    ...TEST_STATE.hydrographState,
-                    selectedDateRange: 'custom',
-                    selectedCustomDateRange: {
+                    selectedTimeSpan:  {
                         'start': '2020-03-01',
                         'end': '2020-03-15'
                     }
@@ -172,7 +144,7 @@ describe('monitoring-location/url-params module', () => {
 
             expect(window.location.hash).toContain('parameterCode=00010');
             expect(window.location.hash).not.toContain('compare=true');
-            expect(window.location.hash).not.toContain('period');
+            expect(window.location.hash).toContain('period');
             expect(window.location.hash).not.toContain('startDT');
             expect(window.location.hash).not.toContain('endDT');
             expect(window.location.hash).toContain('timeSeriesId=69928');
