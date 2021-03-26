@@ -48,6 +48,14 @@ $row-border-color: 'black';
     }
 
     .grid-row-inner {
+      @include u-padding-right(0);
+      @include u-padding-left(0);
+
+      .wateralert-row {
+        @include grid-col;
+        @include grid-offset(1);
+      }
+
       .usa-radio__label {
         @include u-margin-top(0);
         @include u-margin-bottom(0);
@@ -63,16 +71,6 @@ $row-border-color: 'black';
       }
     }
 
-    .grid-row-inner {
-      @include u-padding-right(0);
-      @include u-padding-left(0);
-
-      .wateralert-row {
-        @include grid-col;
-        @include grid-offset(1);
-      }
-    }
-
     .period-of-record__param-select {
       @include grid-col;
       display: none;
@@ -84,7 +82,7 @@ $row-border-color: 'black';
     #period-of-record-and-toggle-container {
       display: none;
       @include at-media('tablet') {
-        display: flex;
+        @include u-flex;
         justify-content: space-between;
       }
     }

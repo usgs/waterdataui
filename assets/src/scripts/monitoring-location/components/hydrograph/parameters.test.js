@@ -105,7 +105,7 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         });
     });
 
-    it('Expects clicking on a row will expand and contact the correct rows', function() {
+    it('Expects clicking on a row will expand and contract the correct rows', function() {
         store = configureStore(TEST_STATE);
         drawSelectionList(div, store, '11112222');
 
@@ -113,9 +113,11 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         const secondTargetRow = div.select('#container-row-72019');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe('true');
+
         firstTargetRow.dispatch('click');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe(null);
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe('true');
+
         secondTargetRow.dispatch('click');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe(null);
@@ -130,14 +132,17 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         expect(firstToggleTarget.attr('aria-expanded')).toBe('false');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe('true');
+
         firstToggleTarget.dispatch('click');
         expect(firstToggleTarget.attr('aria-expanded')).toBe('true');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe(null);
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe('true');
+
         secondToggleTarget.dispatch('click');
         expect(secondToggleTarget.attr('aria-expanded')).toBe('true');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe(null);
+
         secondToggleTarget.dispatch('click'); // click same target a second time
         expect(secondToggleTarget.attr('aria-expanded')).toBe('false');
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');

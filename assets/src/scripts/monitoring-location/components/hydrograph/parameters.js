@@ -128,10 +128,10 @@ const drawTopPeriodOfRecordRow = function(container, parameter) {
     gridRowInnerTopPeriodOfRecord.append('div')
         .attr('class', 'grid-row-period-of-record-text')
         .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
-    const TopPeriodOfRecordRowExpansionControlDiv = gridRowInnerTopPeriodOfRecord.append('div')
+    const topPeriodOfRecordRowExpansionControlDiv = gridRowInnerTopPeriodOfRecord.append('div')
         .attr('class', 'toggle-for-top-period-of-record');
 
-    drawRowExpansionControl(TopPeriodOfRecordRowExpansionControlDiv, parameter, 'mobile');
+    drawRowExpansionControl(topPeriodOfRecordRowExpansionControlDiv, parameter, 'mobile');
 };
 
 /*
@@ -146,7 +146,7 @@ const drawRadioButtonRow = function(container, parameter, store) {
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
         .attr('class', 'grid-col-1 radio-button__param-select')
         .append('div')
-        .attr('class', 'usa-radio');
+            .attr('class', 'usa-radio');
     radioButtonDiv.append('input')
         .attr('class', 'usa-radio__input')
         .attr('id', `radio-${parameter.parameterCode}`)
