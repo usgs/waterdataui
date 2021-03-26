@@ -49,9 +49,9 @@ export const getAvailableParameters = createSelector(
                 if (hasWaterAlert) {
                     waterAlertTooltipText = 'Subscribe to text or email alerts based on thresholds that you set';
                     if (measuredParameterCode === parameterCode) {
-                        waterAlertDisplayText = 'Subscribe';
+                        waterAlertDisplayText = 'Subscribe to Alerts';
                     } else {
-                        waterAlertDisplayText = 'Alerts in C';
+                        waterAlertDisplayText = 'Subscribe to Alerts in C';
                     }
                 } else {
                     waterAlertDisplayText = 'N/A';
