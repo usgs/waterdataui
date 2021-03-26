@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Reworked the Download data section to use checkboxes rather than links. Clicking download opens separate tabs for each data type. Data types reflect those that are currently shown on the graph.
+- Reworked Parameter Selection Table--removed tooltips, WaterAlert subscribe, changed from table to UWSD grid, added expandable inner row.
 
 ## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) 2021-03-17
 ### Changed
