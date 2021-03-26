@@ -1,9 +1,11 @@
 import {select} from 'd3-selection';
-import {DateTime, Duration} from 'luxon';
+import {DateTime} from 'luxon';
 // required to make the USWDS component JS available to init after page load
 import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
+
+import {drawErrorAlert} from 'd3render/alerts';
 
 import {getInputsForRetrieval, getSelectedTimeSpan} from 'ml/selectors/hydrograph-state-selector';
 
@@ -14,89 +16,6 @@ import {showDataIndicators} from './data-indicator';
 
 const isISODuration = function(timeSpan) {
     return typeof timeSpan === 'string';
-};
-
-/*
- * Render the custom "days before today" container
- * @param {D3 selection} container
- * @param {Redux store} store
- * @param {String} siteno
- * @param {String} initialDateRange - Either in the form of P<some number>P(or Y). Used to set the initial contents of the text field.
- */
-const drawCustomDaysBeforeForm = function(container, store, siteno, initialDateRange) {
-    const formContainer = container.append('div')
-        .attr('id', 'ts-custom-days-before-today-select-container')
-        .attr('class', 'usa-form')
-        .attr('aria-label', 'Custom date by days before today specification')
-        .attr('hidden', !isCustomPeriod(initialDateRange) ? true : null);
-
-    const daysBeforeContainer = formContainer.append('div')
-            .attr('class', 'usa-character-count')
-            .append('div')
-            .attr('class', 'usa-form-group');
-    daysBeforeContainer.append('label')
-        .attr('class', 'usa-label')
-        .attr('for', 'with-hint-input-days-from-today' )
-        .text('Days');
-    daysBeforeContainer.append('span')
-        .attr('id', 'with-hint-input-days-from-today-hint')
-        .attr('class', 'usa-hint')
-        .text('Timespan in days before today');
-    daysBeforeContainer.append('input')
-        .attr('class', 'usa-input usa-character-count__field')
-        .attr('type', 'text')
-        .attr('id', 'with-hint-input-days-from-today')
-        .attr('maxlength', `${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY}`)
-        .attr('name', 'with-hint-input-days-from-today')
-        .property('value', isCustomPeriod(initialDateRange) ? initialDateRange.slice(1, -1) : '')
-        .attr('aria-describedby', 'with-hint-input-days-from-today-info with-hint-input-days-from-today-hint');
-
-    daysBeforeContainer.append('span')
-        .text(`${config.MAX_DIGITS_FOR_DAYS_FROM_TODAY} digits allowed`)
-        .attr('id', 'with-hint-input-days-from-today-info')
-        .attr('class', 'usa-hint usa-character-count__message')
-        .attr('aria-live', 'polite');
-    // Create a validation alert for user selection of number of days before today
-    const daysBeforeValidationContainer = daysBeforeContainer.append('div')
-        .attr('class', 'usa-alert usa-alert--warning usa-alert--validation')
-        .attr('id', 'custom-days-before-today-alert-container')
-        .attr('hidden', true);
-    const daysBeforeAlertBody = daysBeforeValidationContainer.append('div')
-        .attr('class', 'usa-alert__body')
-        .attr('id', 'custom-days-before-today-alert');
-    daysBeforeAlertBody.append('h3')
-        .attr('class', 'usa-alert__heading')
-        .text('Requirements');
-
-    // Adds controls for the 'days before today' submit button
-    const daysBeforeSubmitContainer = daysBeforeContainer.append('div')
-        .attr('class', 'submit-button');
-    daysBeforeSubmitContainer.append('button')
-        .attr('class', 'usa-button')
-        .attr('id', 'custom-date-submit-days')
-        .attr('ga-on', 'click')
-        .attr('ga-event-category', 'TimeSeriesGraph')
-        .attr('ga-event-action', 'customDaysSubmit')
-        .text('Display data on graph')
-        .on('click', function() {
-            const daysBefore = daysBeforeContainer.select('#with-hint-input-days-from-today').property('value');
-            // Validate user input for things not a number and blank entries
-            if (isNaN(daysBefore) || daysBefore.length === 0) {
-                daysBeforeAlertBody.selectAll('p').remove();
-                daysBeforeAlertBody.append('p')
-                    .text('Entry must be a number.');
-                daysBeforeValidationContainer.attr('hidden', null);
-            } else {
-                daysBeforeValidationContainer.attr('hidden', true);
-                store.dispatch(clearGraphBrushOffset());
-                //store.dispatch(setSelectedDateRange(`P${parseInt(daysBefore)}D`));
-                showDataIndicators(true, store);
-                store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
-                    .then(() => {
-                        showDataIndicators(false, store);
-                    });
-            }
-        });
 };
 
 /*
@@ -114,7 +33,7 @@ const drawDatePicker = function(container, id, ariaLabel, initialDate) {
         .attr('id', `${id}-hint`)
         .text('mm/dd/yyyy');
     formGroup.append('div')
-        .attr('class', 'usa-date-picker time-span-date-range-picker')
+        .attr('class', 'usa-date-picker')
         .attr('data-min-date', '1900-01-01')
         .attr('data-max-date', DateTime.now().toISODate())
         .attr('data-default-value', initialDate ? initialDate : '')
@@ -151,6 +70,11 @@ const drawDateRangeForm = function(container, store) {
     dateRangePicker.on(container.node());
 };
 
+/*
+ * Render the days before today form
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ */
 const drawDaysBeforeTodayForm = function(container, store) {
     const initialTimeSpan = getSelectedTimeSpan(store.getState());
     const hasDaysBeforeToday = isISODuration(initialTimeSpan);
@@ -170,13 +94,103 @@ const drawDaysBeforeTodayForm = function(container, store) {
         .attr('maxlength', 5);
 };
 
+/*
+ * Retrieve the time span inputs from the form, validate the data and if valid
+ * dispatch actions to the store to update the retrieved data
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ */
+const updateSelectedTimeSpan = function(container, store, siteno) {
+    const startDateStr = select('#start-date').property('value');
+    const endDateStr = select('#end-date').property('value');
+    const daysBeforeToday = select('#days-before-today').property('value');
+    // Remove old error messages
+    container.call(drawErrorAlert, {});
+
+    let newTimeSpan;
+
+    if (!startDateStr && !endDateStr && !daysBeforeToday) {
+        container.select('.time-span-input-container')
+            .call(drawErrorAlert, {
+                body: 'Please enter either a date range or days before today',
+                useSlim: true
+            });
+    } else if (startDateStr || endDateStr) {
+        //Validate start and end dates
+        const startDate = DateTime.fromFormat(startDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone});
+        const endDate = DateTime.fromFormat(endDateStr, 'LL/dd/yyyy', {zone: config.locationTimeZone});
+        let dateRangeError;
+        if (!startDate.isValid && !endDate.isValid) {
+            dateRangeError = 'Please enter valid start and end dates';
+        } else if (!startDate.isValid) {
+            dateRangeError = 'Please enter a valid start date';
+        } else if (!endDate.isValid) {
+            dateRangeError = 'Please enter a valid end date';
+        } else if (startDate > endDate) {
+            dateRangeError = 'Please enter a start date that is before the end date';
+        }
+        if (dateRangeError) {
+            container.select('.date-range-container')
+                .call(drawErrorAlert, {
+                    body: dateRangeError,
+                    useSlim: true
+                });
+        } else {
+            newTimeSpan = {
+                start: startDate.toISODate(),
+                end: endDate.toISODate()
+            };
+        }
+    } else {
+        const integerDays = parseInt(daysBeforeToday);
+        if (isNaN(integerDays) || integerDays < 1) {
+            container.select('.days-before-today-container')
+                .call(drawErrorAlert, {
+                    body: 'Please enter a positive number of days',
+                    useSlim: true
+                });
+        } else {
+            newTimeSpan = `P${daysBeforeToday}D`;
+        }
+    }
+
+    if (newTimeSpan) {
+        showDataIndicators(true, store);
+        store.dispatch(clearGraphBrushOffset());
+        store.dispatch(setSelectedTimeSpan(newTimeSpan));
+        store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
+            .then(() => {
+                showDataIndicators(false, store);
+            });
+    }
+};
+
+/*
+ * Draw the time span control form on container, set up the appropriate event
+ * handlers and initialized the forms control from data in store.
+ * @param {D3 selection} container
+ * @param {Redux store} store
+ * @param {String} siteno
+ */
 export const drawTimeSpanControls = function(container, store, siteno) {
-    container.append('div')
+    const inputContainer = container.append('div')
+        .attr('class', 'time-span-input-container');
+    inputContainer.append('div')
         .attr('class', 'date-range-container')
         .call(drawDateRangeForm, store);
-    container.append('div')
+    inputContainer.append('div')
         .text('Or');
-    container.append('div')
+    inputContainer.append('div')
         .attr('class', 'time-before-today-container')
         .call(drawDaysBeforeTodayForm, store);
+    container.append('button')
+        .attr('class', 'usa-button')
+        .attr('ga-on', 'click')
+        .attr('ga-event-category', 'TimeSeriesGraph')
+        .attr('ga-event-action', 'timeSpanChange')
+        .text('Change time span')
+        .on('click', function() {
+            container.call(updateSelectedTimeSpan, store, siteno);
+        });
 };

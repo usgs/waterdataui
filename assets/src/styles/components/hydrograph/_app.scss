@@ -28,7 +28,7 @@
       width: units($theme-input-max-width);
     }
   }
-  div:nth-child(2) {
+  .time-span-input-container > div:nth-child(2) {
     @include u-font('ui', 'lg');
     @include u-text('bold');
   }
@@ -45,7 +45,7 @@
         @include u-margin-top('auto');
       }
     }
-
+    @include u-margin-bottom(2);
   }
 }
 
