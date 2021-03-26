@@ -46,20 +46,12 @@ export const getAvailableParameters = createSelector(
                 const hasWaterAlert = !!(isIVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
                 let waterAlertDisplayText;
                 let waterAlertTooltipText;
-                if (hasWaterAlert) {
-                    waterAlertTooltipText = 'Subscribe to text or email alerts based on thresholds that you set';
-                    if (measuredParameterCode === parameterCode) {
-                        waterAlertDisplayText = 'Subscribe';
-                    } else {
-                        waterAlertDisplayText = 'Alerts in C';
-                    }
+
+                waterAlertTooltipText = 'Subscribe to text or email alerts based on thresholds that you set';
+                if (measuredParameterCode === parameterCode) {
+                    waterAlertDisplayText = 'Subscribe to Alerts';
                 } else {
-                    waterAlertDisplayText = 'N/A';
-                    if (isIVParameterCode) {
-                        waterAlertTooltipText = `Sorry, there are no WaterAlerts for this parameter (${parameterCode})`;
-                    } else {
-                        waterAlertTooltipText = 'Sorry, WaterAlert is only available for parameters that have IV data';
-                    }
+                    waterAlertDisplayText = 'Subscribe to Alerts in Celsius';
                 }
 
                 return {

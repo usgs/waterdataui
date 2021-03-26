@@ -148,4 +148,25 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         expect(select('#expansion-container-row-00010').attr('hidden')).toBe('true');
         expect(select('#expansion-container-row-72019').attr('hidden')).toBe('true');
     });
+
+    it('Expects parameters listed in config as having a WaterAlert will have a link in parameter list', function() {
+        store = configureStore(TEST_STATE);
+        drawSelectionList(div, store, '11112222');
+
+        const container = div.select('#select-time-series');
+        expect(container.select('#wateralert-row-00010').size()).toBe(1);
+        expect(container.select('#wateralert-row-00010').select('span').select('a').attr('href')).toContain('00010');
+        expect(container.select('#wateralert-row-00010').select('span').select('a').attr('href')).not.toContain('00010F');
+    });
+
+    it('Expects Celsius temperature parameters will have correct WaterAlert link in parameter list for the calculated version', function() {
+        // Note - WaterAlert only accepts the standard five digit USGS parameter code (such as 00010) not the calculated version like ('00010F').
+        store = configureStore(TEST_STATE);
+        drawSelectionList(div, store, '11112222');
+
+        const container = div.select('#select-time-series');
+        expect(container.select('#wateralert-row-00010F').size()).toBe(1);
+        expect(container.select('#wateralert-row-00010F').select('span').select('a').attr('href')).toContain('00010');
+        expect(container.select('#wateralert-row-00010F').select('span').select('a').attr('href')).not.toContain('00010F');
+    });
 });

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 recent data is chosen. 
 - Floating feedback link is now centered on page (and networks page) and an additional link added to header.
 - Changed label order and label wording for the 'custom' option in time selection menu.
+- WaterAlert subscription is now in the expanded row of the parameter list. 
 
 ### Added
 - If the graph shows no data for the selected time range, a message will appear on top of the graph. In addition, if a particular kind of selected data isn't available (for instance if compare to last year is selected and there is no data for that time range)
