@@ -182,6 +182,14 @@ const drawRadioButtonRow = function(container, parameter, store) {
 * @param {D3 selection} parameter - Contains details about the current parameter code
 */
 const drawWaterAlertRow = function(container, siteno, parameter) {
+    // WaterAlert doesn't accept the calculated parameter for Fahrenheit (such as 00010F), so we need to adjust the
+    // parameter code back to the Celsius version (such as 00010).
+    const waterAlertURL = function() {
+        return parameter.parameterCode.includes(config.CALCULATED_TEMPERATURE_VARIABLE_CODE) ?
+            `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '')}` :
+            `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode}`;
+    };
+
     const gridRowInnerWaterAlert = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
 
@@ -189,7 +197,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
             .attr('id', `wateralert-row-${parameter.parameterCode}`)
             .attr('class', 'wateralert-row')
             .append('a')
-            .attr('href', `${config.WATERALERT_SUBSCRIPTION}/?site_no=${siteno}&parm=${parameter.parameterCode}`)
+            .attr('href', waterAlertURL())
             .attr('target', '_blank')
             .attr('class', 'water-alert-cell usa-tooltip')
             .attr('data-position', 'left')
