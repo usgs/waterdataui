@@ -29,10 +29,13 @@
     }
   }
   .time-span-input-container > div:nth-child(2) {
+    @include at-media('mobile') {
+      @include u-margin-top(1);
+    }
     @include u-font('ui', 'lg');
     @include u-text('bold');
   }
-  .time-before-today-container {
+  .days-before-today-container {
     .days-before-container {
       label {
         display: inline-block;
