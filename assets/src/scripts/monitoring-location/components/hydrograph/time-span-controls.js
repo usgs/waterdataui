@@ -109,11 +109,11 @@ const drawDaysBeforeTodayForm = function(container, store) {
         .attr('id', 'days-before-today')
         .attr('name', 'days-before-today')
         .attr('type', 'text')
-        .attr('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
+        .property('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
         .attr('maxlength', 5)
         .call(link(store, function(input, timeSpan) {
             if (isISODuration(timeSpan)) {
-                input.attr('value', timeSpan.slice(1, -1));
+                input.property('value', timeSpan.slice(1, -1));
             }
         }, getSelectedTimeSpan));
 };
