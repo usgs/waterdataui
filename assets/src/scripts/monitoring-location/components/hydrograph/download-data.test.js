@@ -47,20 +47,20 @@ describe('monitoring-location/components/hydrograph/download-data', () => {
             div.remove();
         });
 
-        it('Renders form with the appropriate checkboxes and download button', () => {
-            expect(div.selectAll('input[type="checkbox"]').size()).toBe(3);
+        it('Renders form with the appropriate radio buttons and download button', () => {
+            expect(div.selectAll('input[type="radio"]').size()).toBe(3);
             expect(div.selectAll('input[value="primary"]').size()).toBe(1);
             expect(div.selectAll('input[value="groundwater-levels"]').size()).toBe(1);
             expect(div.selectAll('input[value="site"]').size()).toBe(1);
             expect(div.selectAll('button.download-selected-data').size()).toBe(1);
         });
 
-        it('Rerenders the checkboxes if data visibility changes', () => {
+        it('Rerenders the radio buttons if data visibility changes', () => {
             store.dispatch(setCompareDataVisibility(true));
             store.dispatch(setMedianDataVisibility(true));
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
-                    expect(div.selectAll('input[type="checkbox"]').size()).toBe(5);
+                    expect(div.selectAll('input[type="radio"]').size()).toBe(5);
                     expect(div.selectAll('input[value="compare"]').size()).toBe(1);
                     expect(div.selectAll('input[value="median"]').size()).toBe(1);
                     resolve();
@@ -68,7 +68,7 @@ describe('monitoring-location/components/hydrograph/download-data', () => {
             });
         });
 
-        it('Shows an error message if the download button is clicked with no checkboxes checked', () => {
+        it('Shows an error message if the download button is clicked with no radio buttons checked', () => {
             const downloadButton = div.select('button.download-selected-data');
             downloadButton.dispatch('click');
             expect(div.select('.usa-alert--error').size()).toBe(1);
@@ -83,7 +83,6 @@ describe('monitoring-location/components/hydrograph/download-data', () => {
             expect(windowSpy.mock.calls).toHaveLength(1);
             expect(windowSpy.mock.calls[0][0]).toContain('/site/');
             expect(windowSpy.mock.calls[0][0]).toContain('sites=11112222');
-
         });
 
         it('Opens a window for each selected data', () => {
@@ -92,27 +91,26 @@ describe('monitoring-location/components/hydrograph/download-data', () => {
             return new Promise(resolve => {
                 window.requestAnimationFrame(() => {
                     div.select('input[value="primary"]').property('checked', true);
-                    div.select('input[value="groundwater-levels"]').property('checked', true);
-                    div.select('input[value="median"]').property('checked', true);
                     downloadButton.dispatch('click');
-
-                    expect(windowSpy.mock.calls).toHaveLength(3);
-
                     expect(windowSpy.mock.calls[0][0]).toContain('/iv/');
                     expect(windowSpy.mock.calls[0][0]).toContain('sites=11112222');
                     expect(windowSpy.mock.calls[0][0]).toContain('parameterCd=72019');
                     expect(windowSpy.mock.calls[0][0]).toContain('startDT=2020-02-24T10:15:00.000-06:00');
                     expect(windowSpy.mock.calls[0][0]).toContain('endDT=2020-09-20T11:45:00.000-05:00');
 
+                    div.select('input[value="median"]').property('checked', true);
+                    downloadButton.dispatch('click');
                     expect(windowSpy.mock.calls[1][0]).toContain('/stat/');
                     expect(windowSpy.mock.calls[1][0]).toContain('statTypeCd=median');
                     expect(windowSpy.mock.calls[1][0]).toContain('parameterCd=72019');
 
+                    div.select('input[value="groundwater-levels"]').property('checked', true);
+                    downloadButton.dispatch('click');
                     expect(windowSpy.mock.calls[2][0]).toContain('/gwlevels/');
                     expect(windowSpy.mock.calls[2][0]).toContain('sites=11112222');
-                    expect(windowSpy.mock.calls[0][0]).toContain('parameterCd=72019');
-                    expect(windowSpy.mock.calls[0][0]).toContain('startDT=2020-02-24T10:15:00.000-06:00');
-                    expect(windowSpy.mock.calls[0][0]).toContain('endDT=2020-09-20T11:45:00.000-05:00');
+                    expect(windowSpy.mock.calls[2][0]).toContain('parameterCd=72019');
+                    expect(windowSpy.mock.calls[2][0]).toContain('startDT=2020-02-24T10:15:00.000-06:00');
+                    expect(windowSpy.mock.calls[2][0]).toContain('endDT=2020-09-20T11:45:00.000-05:00');
 
                     resolve();
                 });

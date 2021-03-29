@@ -61,7 +61,7 @@ export const drawSelectActions = function(container, store, siteno) {
     });
     appendButton(listContainer, {
         faIcon: 'fa-file-download',
-        buttonLabel: 'Download data',
+        buttonLabel: 'Retrieve data',
         idOfDivToControl: 'download-graph-data-container'
     });
 
