@@ -89,7 +89,7 @@ describe('monitoring-location/components/hydrograph/graph-controls', () => {
             expect(showDataIndicatorSpy.mock.calls[1][0]).toBe(false);
         });
 
-        it('Should change the checkbox to disabled if the selectedTimeSpan is set is a date range', () => {
+        it('Should change the checkbox to disabled if the selectedTimeSpan is set to a date range', () => {
             store.dispatch(setSelectedTimeSpan({
                 start: '2020-02-05',
                 end: '2020-02-10'
