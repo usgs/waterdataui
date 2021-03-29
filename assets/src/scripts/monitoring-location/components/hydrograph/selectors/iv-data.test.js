@@ -16,7 +16,7 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
                     {value: 24.1, qualifiers: ['A'], dateTime: 1582561800000},
                     {value: null, qualifiers: ['A', 'ICE'], dateTime: 1582562700000},
                     {value: null, qualifiers: ['A', 'ICE'], dateTime: 1582569900000},
-                    {value: 25.2, qualifiers: ['E'], dateTime: 1582570800000},
+                    {value: 25.2, qualifiers: ['A', 'e'], dateTime: 1582570800000},
                     {value: 25.4, qualifiers: ['E'], dateTime: 1600617600000},
                     {value: 25.6, qualifiers: ['E'], dateTime: 1600618500000},
                     {value: 26.5, qualifiers: ['P'], dateTime: 1600619400000},

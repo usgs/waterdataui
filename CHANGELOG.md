@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Reworked Parameter Selection Table--removed tooltips, WaterAlert subscribe, changed from table to UWSD grid, added expandable inner row.
 - Reworked the Change time span section. The short cut radio buttons now appear above the select actions bar. The date range now appears first and will be used if filled in. Otherwise, the Days before Today section will be used.
 
+### Fixed
+- Estimated points are now the correct color, even when the data services return multiple qualifer codes.
+
 ## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) 2021-03-17
 ### Changed
 - The data loading indicator for the hydrograph now appears on top of the graph rather than with the date controls.
