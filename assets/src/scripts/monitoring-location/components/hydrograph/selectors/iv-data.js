@@ -101,7 +101,11 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
             let pointClass;
             const pointQualifiers = point.qualifiers.map(qualifier => qualifier.toLowerCase());
             const maskedQualifier = pointQualifiers.find(qualifier => qualifier in MASKED_QUALIFIERS);
-            const approvalQualifier = pointQualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
+            // The data services sometimes return more than one approval code per point,
+            // such as ["A", "e"]. In these cases, give priority to 'e', which is 'estimated'.
+            const approvalQualifier = pointQualifiers.includes('e') ? 'e':
+                pointQualifiers.find(qualifier => qualifier in APPROVAL_QUALIFIERS);
+
             if (maskedQualifier) {
                 label = MASKED_QUALIFIERS[maskedQualifier].label;
                 pointClass = MASKED_QUALIFIERS[maskedQualifier].class;
