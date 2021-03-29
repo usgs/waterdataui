@@ -49,6 +49,13 @@ const drawDatePicker = function(container, id, ariaLabel, initialDate) {
             .attr('aria-describedby', `${id}-hint`);
 };
 
+const clearDatePicker = function(input) {
+    const {datePickerEl, internalInputEl, externalInputEl} = datePicker.getDatePickerContext(input.node());
+    internalInputEl.value = '';
+    externalInputEl.value = '';
+    input.dispatch('change');
+}
+
 /*
  * Render the date range picker
  * @param {D3 selection} container
@@ -65,21 +72,21 @@ const drawDateRangeForm = function(container, store) {
         .call(drawDatePicker, 'start-date', 'Start date', hasInitialDateRange ? initialTimeSpan.start : '')
         .call(drawDatePicker, 'end-date', 'End date', hasInitialDateRange ? initialTimeSpan.end : '');
 
-    container.select('#start-date').call(link(store, function(input, timeSpan) {
-        if (typeof timeSpan === 'string') {
-            input.attr('value', '');
-        }
-    }, getSelectedTimeSpan));
-    container.select('#end-date').call(link(store, function(input, timeSpan) {
-        if (isISODuration(timeSpan)) {
-            input.attr('value', '');
-        }
-    }, getSelectedTimeSpan));
-
     // required to init the USWDS date picker after page load before calling the dateRangePicker on function
     datePicker.init(container.node());
     // required to init the USWDS date range picker after page load
     dateRangePicker.on(container.node());
+
+    container.select('#start-date').call(link(store, function(input, timeSpan) {
+        if (typeof timeSpan === 'string') {
+            clearDatePicker(input);
+        }
+    }, getSelectedTimeSpan));
+    container.select('#end-date').call(link(store, function(input, timeSpan) {
+        if (isISODuration(timeSpan)) {
+            clearDatePicker(input);
+        }
+    }, getSelectedTimeSpan));
 };
 
 /*
