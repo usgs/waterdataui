@@ -48,6 +48,7 @@ const getBundleConfig = function(src, dest) {
             }),
             buble(bubleConfig),
             replace({
+                preventAssignment: true,
                 'process.env.NODE_ENV': JSON.stringify(env)
             }),
             env === 'production' && terser({
