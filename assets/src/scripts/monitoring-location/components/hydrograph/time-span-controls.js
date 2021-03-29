@@ -4,6 +4,7 @@ import {DateTime} from 'luxon';
 import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
+import {link} from 'ui/lib/d3-redux';
 
 import {drawErrorAlert} from 'd3render/alerts';
 
@@ -64,6 +65,17 @@ const drawDateRangeForm = function(container, store) {
         .call(drawDatePicker, 'start-date', 'Start date', hasInitialDateRange ? initialTimeSpan.start : '')
         .call(drawDatePicker, 'end-date', 'End date', hasInitialDateRange ? initialTimeSpan.end : '');
 
+    container.select('#start-date').call(link(store, function(input, timeSpan) {
+        if (typeof timeSpan === 'string') {
+            input.attr('value', '');
+        }
+    }, getSelectedTimeSpan));
+    container.select('#end-date').call(link(store, function(input, timeSpan) {
+        if (isISODuration(timeSpan)) {
+            input.attr('value', '');
+        }
+    }, getSelectedTimeSpan));
+
     // required to init the USWDS date picker after page load before calling the dateRangePicker on function
     datePicker.init(container.node());
     // required to init the USWDS date range picker after page load
@@ -91,7 +103,12 @@ const drawDaysBeforeTodayForm = function(container, store) {
         .attr('name', 'days-before-today')
         .attr('type', 'text')
         .attr('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
-        .attr('maxlength', 5);
+        .attr('maxlength', 5)
+        .call(link(store, function(input, timeSpan) {
+            if (isISODuration(timeSpan)) {
+                input.attr('value', timeSpan.slice(1, -1));
+            }
+        }, getSelectedTimeSpan));
 };
 
 /*

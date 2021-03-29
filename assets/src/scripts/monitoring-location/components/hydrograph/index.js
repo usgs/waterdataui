@@ -28,6 +28,7 @@ import {drawTimeSeriesLegend} from './legend';
 import {drawMethodPicker} from './method-picker';
 import {drawSelectionList} from './parameters';
 import {drawSelectActions} from './select-actions';
+import {drawShortcutDaysBeforeButtons} from './days-before-shortcuts';
 import {drawTimeSeriesGraph} from './time-series-graph';
 import {drawTooltipCursorSlider} from './tooltip';
 
@@ -128,11 +129,12 @@ export const attachToNode = function(store,
             .call(drawTimeSeriesLegend, store);
 
         if (!thisShowOnlyGraph) {
+            nodeElem.select('.short-cut-days-before-container').call(drawShortcutDaysBeforeButtons, store, siteno);
+            nodeElem.select('.select-actions-container').call(drawSelectActions, store, siteno);
             nodeElem.select('#hydrograph-method-picker-container')
                 .call(drawMethodPicker, store);
 
             legendControlsContainer.call(drawGraphControls, store, siteno);
-            nodeElem.select('.select-actions-container').call(drawSelectActions, store, siteno);
 
             nodeElem.select('#iv-data-table-container')
                 .call(drawDataTables, store);
