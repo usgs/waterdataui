@@ -162,7 +162,8 @@ export const drawDownloadForm = function(container, store, siteno) {
             if (checkedInputs.size()) {
                 checkedInputs.each(function() {
                     let downloadUrl;
-                    switch (select(this).attr('value')) {
+                    let dataType = select(this).attr('value')
+                    switch (dataType) {
                         case 'primary':
                             downloadUrl = getIVDataURL(store, siteno, 'current');
                             break;
@@ -182,7 +183,7 @@ export const drawDownloadForm = function(container, store, siteno) {
                             console.log(`Unhandled value for downloading data: ${select(this).attr('value')}`);
                     }
                     if (downloadUrl) {
-                        window.open(downloadUrl, '_blank');
+                        window.open(downloadUrl, `${dataType}DownloadData`);
                     }
                 });
             } else {
