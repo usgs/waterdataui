@@ -1,7 +1,7 @@
 import config from 'ui/config';
 
-import {getTimeRange, getIVData, getMedianStatisticsData, getGroundwaterLevels, getIVValueRange,
-    getGroundwaterLevelsValueRange, getPrimaryParameter, getPrimaryMethods, getPrimaryMedianStatisticsData,
+import {getTimeRange, getIVData, getMedianStatisticsData, getGroundwaterLevels, getPrimaryParameter,
+    getPrimaryMethods, getPrimaryMedianStatisticsData,
     getPrimaryMedianStatisticsValueRange
 } from './hydrograph-data-selector';
 
@@ -147,42 +147,6 @@ describe('monitoring-location/selectors/hydrograph-data-selectors', () => {
                     groundwaterLevels: TEST_GROUNDWATER_LEVELS
                 }
             })).toEqual(TEST_GROUNDWATER_LEVELS);
-        });
-    });
-
-    describe('getIVValueRange', () => {
-        it('Returns null if no iv data', () => {
-            expect(getIVValueRange('primary')({
-                hydrographData: {}
-            })).toBeNull();
-        });
-
-        it('Returns value range of the iv data selected', () => {
-            const testState = {
-                'hydrographData': {
-                    primaryIVData: TEST_PRIMARY_IV_DATA,
-                    compareIVData: TEST_COMPARE_IV_DATA
-                }
-            };
-
-            expect(getIVValueRange('primary')(testState)).toEqual([18.2, 20.2]);
-            expect(getIVValueRange('compare')(testState)).toEqual([12.9, 15.2]);
-        });
-    });
-
-    describe('getGroundwaterLevelsValueRange', () => {
-        it('Returns null if no groundwater levels are defined', () => {
-            expect(getGroundwaterLevelsValueRange({
-                hydrographData: {}
-            })).toBeNull();
-        });
-
-        it('Returns value range of the groundwater data', () => {
-            expect(getGroundwaterLevelsValueRange({
-                hydrographData: {
-                    groundwaterLevels: TEST_GROUNDWATER_LEVELS
-                }
-            })).toEqual([26.2, 27.33]);
         });
     });
 

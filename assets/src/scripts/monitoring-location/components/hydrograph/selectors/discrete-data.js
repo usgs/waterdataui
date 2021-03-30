@@ -54,6 +54,20 @@ export const getGroundwaterLevelPoints = createSelector(
     }
 );
 
+export const getGroundwaterLevelDataRange = createSelector(
+    getGroundwaterLevelPoints,
+    points => {
+        if (!points) {
+            return null;
+        }
+
+        const values = points.filter(data => data.value !== null).map(data => data.value);
+        if (values.length) {
+            return [Math.min(...values), Math.max(...values)];
+        }
+    }
+)
+
 /*
  * Returns a selector function which returns the unique classes/label/radius for the gw level points
  * @return {Function} which returns an {Array of Object} with the following properties:

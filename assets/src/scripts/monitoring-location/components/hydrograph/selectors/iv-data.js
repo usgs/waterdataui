@@ -136,7 +136,7 @@ export const getIVDataRange = memoize(dataKind => createSelector(
             return null;
         }
 
-        const sortedValues = points.filter(point => point.value)
+        let sortedValues = points.filter(point => point.value !== null)
             .map(point => point.value)
             .sort((a, b) => a - b);
         if (sortedValues.length) {

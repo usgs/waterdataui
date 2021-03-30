@@ -6,11 +6,11 @@ import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 
 import {
-    getGroundwaterLevelsValueRange,
     getPrimaryMedianStatisticsValueRange,
     getPrimaryParameter
 } from 'ml/selectors/hydrograph-data-selector';
 
+import {getGroundwaterLevelDataRange} from './discrete-data';
 import {getIVDataRange} from './iv-data';
 import {isVisible} from './time-series-data';
 
@@ -141,8 +141,9 @@ export const getRoundedTickValues = function(additionalTickValues, yDomain) {
 /**
  *  Helper function that, when negative values are present on the y-axis, adds additional negative values to the set of
  *  tick values used to fill tick mark value gaps on the y-axis on some log scale graphs
- * @param {array} tickValues, a set of tick mark values
- * @returns {array} additionalTickValues, a set of tick mark values with (when needed) additional negative values
+ * @param {Array} tickValues, a set of tick mark values
+ * @param {Array} additionalTickValues, a set of tick mark values with (when needed) additional negative values
+ * @retirm {Array}
  */
 export const generateNegativeTicks = function(tickValues, additionalTickValues) {
     if (tickValues.some(value => value < 0)) {
@@ -184,7 +185,7 @@ export const getPrimaryValueRange = createSelector(
     getIVDataRange('primary'),
     getIVDataRange('compare'),
     getPrimaryMedianStatisticsValueRange,
-    getGroundwaterLevelsValueRange,
+    getGroundwaterLevelDataRange,
     getPrimaryParameter,
     (showCompare, showMedian, primaryRange, compareRange, medianRange, gwLevelsRange, parameter) => {
         const valueExtent = [];
