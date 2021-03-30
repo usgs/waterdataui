@@ -94,6 +94,7 @@ const drawRadioButton = function(container, inputID, label, value) {
         .attr('class', 'usa-radio__input')
         .attr('id', inputID)
         .attr('type', 'radio')
+        .attr('name', 'retrieve-value')
         .attr('value', value);
     radioContainer.append('label')
         .attr('class', 'usa-radio__label')
@@ -137,7 +138,7 @@ const drawRadioButtons = function(container, {
  */
 export const drawDownloadForm = function(container, store, siteno) {
     const downloadContainer = container.append('div');
-    const formContainer = downloadContainer.append('form')
+    const formContainer = downloadContainer.append('div')
         .attr('class', 'usa-form')
         .append('fieldset')
             .attr('class', 'usa-fieldset');
@@ -158,7 +159,8 @@ export const drawDownloadForm = function(container, store, siteno) {
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'download-selected-data')
         .attr('ga-event-action', 'download')
-        .on('click', function() {
+        .on('click', function(event) {
+            event.stopPropagation();
             formContainer.selectAll('.alert-error-container').remove();
             const radioInput = formContainer.select('input[type="radio"]:checked');
             if (radioInput.size()) {
