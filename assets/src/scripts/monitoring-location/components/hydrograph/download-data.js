@@ -185,7 +185,7 @@ export const drawDownloadForm = function(container, store, siteno) {
                         console.log(`Unhandled value for downloading data: ${dataType}`);
                 }
                 if (downloadUrl) {
-                    window.open(downloadUrl, '_blank');
+                    window.open(downloadUrl, '_blank', 'noreferrer');
                 }
 
             } else {
