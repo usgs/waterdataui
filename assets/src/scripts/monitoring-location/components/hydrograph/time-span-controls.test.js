@@ -272,5 +272,26 @@ describe('monitoring-location/components/hydrograph/time-span-controls', () => {
             expect(getSelectedTimeSpan(state)).toEqual('P45D');
             expect(getGraphBrushOffset(state)).toBeNull();
         });
+
+        it('Should clear the time span if the selected time span is changed to days before today', () => {
+            const startDate = div.select('#start-date');
+            const endDate = div.select('#end-date');
+            startDate.property('value', '02/05/2020');
+            endDate.property('value', '02/28/2020');
+            button.dispatch('click');
+
+            expect(startDate.property('value')).toEqual('');
+            expect(endDate.property('value')).toEqual('');
+        });
+
+        it('Should update the days before if selecteTimeSpan is updated to a new days before value', () => {
+            store.dispatch(setSelectedTimeSpan('P30D'));
+            return new Promise(resolve => {
+                window.requestAnimationFrame(() => {
+                    expect(div.select('days-before-today').property('value')).toEqual('30');
+                    resolve();
+                });
+            });
+        });
     });
 });
