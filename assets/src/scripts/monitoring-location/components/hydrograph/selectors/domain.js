@@ -6,12 +6,12 @@ import config from 'ui/config';
 import {mediaQuery} from 'ui/utils';
 
 import {
-    getIVValueRange,
     getGroundwaterLevelsValueRange,
     getPrimaryMedianStatisticsValueRange,
     getPrimaryParameter
 } from 'ml/selectors/hydrograph-data-selector';
 
+import {getIVDataRange} from './iv-data';
 import {isVisible} from './time-series-data';
 
 const Y_TICK_COUNT = 5;
@@ -181,8 +181,8 @@ export const getFullArrayOfAdditionalTickMarks = function(tickValues, yDomain) {
 export const getPrimaryValueRange = createSelector(
     isVisible('compare'),
     isVisible('median'),
-    getIVValueRange('primary'),
-    getIVValueRange('compare'),
+    getIVDataRange('primary'),
+    getIVDataRange('compare'),
     getPrimaryMedianStatisticsValueRange,
     getGroundwaterLevelsValueRange,
     getPrimaryParameter,

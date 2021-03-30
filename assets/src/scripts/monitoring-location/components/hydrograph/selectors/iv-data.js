@@ -129,6 +129,24 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
     }
 ));
 
+export const getIVDataRange = memoize(dataKind => createSelector(
+    getIVDataPoints(dataKind),
+    points => {
+        if (!points) {
+            return null;
+        }
+
+        const sortedValues = points.filter(point => point.value)
+            .map(point => point.value)
+            .sort((a, b) => a - b);
+        if (sortedValues.length) {
+            return [sortedValues[0], sortedValues[sortedValues.length - 1]];
+        } else {
+            return null;
+        }
+    }
+));
+
 /*
  * Returns a selector function which returns an Array of Objects suitable for describing the
  * IV data in a table.
