@@ -1,7 +1,7 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
 import {tooltip} from 'uswds-components';
 
-import {select} from 'd3-selection';
+import {select, selectAll} from 'd3-selection';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
@@ -49,17 +49,27 @@ const drawRowExpansionControl = function(container, parameter, type) {
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
 
-                // If the icon is open, close it and vice versa
+
+                // Set all icons to closed except the clicked icon(s).
+                const toggleList = document.querySelectorAll('.expansion-toggle');
+                toggleList.forEach(toggle => {
+                    if (!toggle.id.includes(parameter.parameterCode)) {
+                        toggle.setAttribute('class', ROW_TOGGLE_CLOSED_CLASS);
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                // If the icon clicked is open, close it and vice versa
                 // Note - there are two open/close icons for each parameter, but only one will show at a time at
                 // any given screen size. Both icons need to be synced.
                 ROW_TOGGLE_ICON_TYPES.forEach(typeOfIcon => {
-                    const rowToggle = select(`#expansion-toggle-${typeOfIcon}-${parameter.parameterCode}`);
-                    rowToggle.attr('aria-expanded') === 'true' ?
-                        rowToggle.attr('class',  ROW_TOGGLE_CLOSED_CLASS) :
-                        rowToggle.attr('class', ROW_TOGGLE_OPENED_CLASS);
-                    rowToggle.attr('aria-expanded') === 'true' ?
-                        rowToggle.attr('aria-expanded', 'false') :
-                        rowToggle.attr('aria-expanded', 'true');
+                  const clickedToggle = select(`#expansion-toggle-${typeOfIcon}-${parameter.parameterCode}`);
+                    if (clickedToggle.attr('aria-expanded') === 'true') {
+                        clickedToggle.attr('class',  ROW_TOGGLE_CLOSED_CLASS);
+                        clickedToggle.attr('aria-expanded', 'false');
+                    } else {
+                        clickedToggle.attr('aria-expanded', 'true');
+                        clickedToggle.attr('class', ROW_TOGGLE_OPENED_CLASS);
+                    }
                 });
             });
     }
