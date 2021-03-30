@@ -25,25 +25,31 @@ export const getAvailableParameters = createSelector(
             .map((parameter) => {
                 const parameterCode = parameter.parameterCode;
                 const measuredParameterCode = parameterCode.replace(config.CALCULATED_TEMPERATURE_VARIABLE_CODE, '');
-                const isIVParameterCode = config.ivPeriodOfRecord && measuredParameterCode in config.ivPeriodOfRecord;
-                const isGWParameterCode = config.gwPeriodOfRecord && measuredParameterCode in config.gwPeriodOfRecord;
-                const ivPeriodOfRecord = isIVParameterCode ? config.ivPeriodOfRecord[measuredParameterCode] : null;
-                const gwPeriodOfRecord = isGWParameterCode ? config.gwPeriodOfRecord[measuredParameterCode] : null;
+                const ivPeriodOfRecord = parameter.hasIVData && measuredParameterCode in config.ivPeriodOfRecord ?
+                    config.ivPeriodOfRecord[measuredParameterCode] : null;
+                const gwPeriodOfRecord = parameter.hasGWLevelsData && measuredParameterCode in config.gwPeriodOfRecord ?
+                    config.gwPeriodOfRecord[measuredParameterCode] : null ;
                 let periodOfRecord;
-                if (!ivPeriodOfRecord) {
-                    periodOfRecord = gwPeriodOfRecord;
-                } else if (!gwPeriodOfRecord) {
-                    periodOfRecord = ivPeriodOfRecord;
-                } else {
+
+                if (ivPeriodOfRecord && gwPeriodOfRecord) {
                     periodOfRecord = {
                         begin_date: DateTime.fromISO(ivPeriodOfRecord.begin_date) < DateTime.fromISO(gwPeriodOfRecord.begin_date) ?
                             ivPeriodOfRecord.begin_date : gwPeriodOfRecord.begin_date,
                         end_date: DateTime.fromISO(ivPeriodOfRecord.end_date) > DateTime.fromISO(gwPeriodOfRecord.end_date) ?
                             ivPeriodOfRecord.end_date : gwPeriodOfRecord.end_date
                     };
+                } else if (ivPeriodOfRecord) {
+                    periodOfRecord = ivPeriodOfRecord;
+                } else if (gwPeriodOfRecord) {
+                    periodOfRecord = gwPeriodOfRecord;
+                } else {
+                    periodOfRecord = {
+                        begin_date: '',
+                        end_date: ''
+                    };
                 }
 
-                const hasWaterAlert = !!(isIVParameterCode && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
+                const hasWaterAlert = !!(parameter.hasIVData && config.WATER_ALERT_PARAMETER_CODES.includes(measuredParameterCode));
                 let waterAlertDisplayText;
                 let waterAlertTooltipText;
 
