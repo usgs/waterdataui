@@ -159,7 +159,7 @@ export const drawDownloadForm = function(container, store, siteno) {
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'download-selected-data')
         .attr('ga-event-action', 'download')
-        .on('click', function(event) {
+        .on('click', function() {
             formContainer.selectAll('.alert-error-container').remove();
             const radioInput = formContainer.select('input[type="radio"]:checked');
             if (radioInput.size()) {
