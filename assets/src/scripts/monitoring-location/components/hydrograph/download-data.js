@@ -116,7 +116,7 @@ const drawRadioButtons = function(container, {
     container.select('.download-radio-container').remove();
     const radioContainer = container.append('div')
         .attr('class', 'download-radio-container');
-    if (!isCalculatedTemperature(primaryParameter.parameterCode)) {
+    if (primaryParameter && !isCalculatedTemperature(primaryParameter.parameterCode)) {
         if (hasVisiblePrimaryIVData) {
             radioContainer.call(drawRadioButton, 'download-primary-iv-data', 'Current time-series data', 'primary');
         }
