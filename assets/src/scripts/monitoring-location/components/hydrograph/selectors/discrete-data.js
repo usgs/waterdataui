@@ -54,6 +54,11 @@ export const getGroundwaterLevelPoints = createSelector(
     }
 );
 
+/*
+ * Returns a selector function which returns a two element Array for the
+ * value range for the groundwater levels.
+ * @return {Function} return an {Array of Number} - [min, max]
+ */
 export const getGroundwaterLevelDataRange = createSelector(
     getGroundwaterLevelPoints,
     points => {
@@ -64,9 +69,11 @@ export const getGroundwaterLevelDataRange = createSelector(
         const values = points.filter(data => data.value !== null).map(data => data.value);
         if (values.length) {
             return [Math.min(...values), Math.max(...values)];
+        } else {
+            return null;
         }
     }
-)
+);
 
 /*
  * Returns a selector function which returns the unique classes/label/radius for the gw level points

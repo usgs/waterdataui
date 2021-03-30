@@ -129,6 +129,11 @@ export const getIVDataPoints = memoize(dataKind => createSelector(
     }
 ));
 
+/*
+ * Returns a selector function which returns a two element Array for the
+ * value range for the IV data.
+ * @return {Function} return an {Array of Number} - [min, max]
+ */
 export const getIVDataRange = memoize(dataKind => createSelector(
     getIVDataPoints(dataKind),
     points => {

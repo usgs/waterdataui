@@ -1,7 +1,8 @@
 import config from 'ui/config';
 
-import {getGroundwaterLevelPoints, getUniqueGWKinds, getGroundwaterLevelsTableData,
-    anyVisibleGroundwaterLevels} from './discrete-data';
+import {getGroundwaterLevelPoints, getGroundwaterLevelDataRange, getUniqueGWKinds,
+    getGroundwaterLevelsTableData
+} from './discrete-data';
 
 describe('monitoring-location/components/hydrograph/selectors/discrete-data', () => {
     config.locationTimeZone = 'America/Chicago';
@@ -57,6 +58,18 @@ describe('monitoring-location/components/hydrograph/selectors/discrete-data', ()
             expect(points[3].classes).toContain('revised');
             expect(points[3].label).toEqual('Revised');
             expect(points[3].radius).toBeDefined();
+        });
+    });
+
+    describe('getGroundwaterLevelDataRange', () => {
+        it('Return null if no ground water levels data', () => {
+            expect(getGroundwaterLevelDataRange({
+                hydrographData: {}
+            })).toBeNull();
+        });
+
+        it('Return groundwater range if there is data', () => {
+            expect(getGroundwaterLevelDataRange(TEST_STATE)).toEqual([26.1, 27.2])
         });
     });
 
