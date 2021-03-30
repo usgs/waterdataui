@@ -82,64 +82,6 @@
   }
 }
 
-#select-time-series {
-  label {
-    @include u-text('bold');
-  }
-
-  table {
-    display: block;
-    overflow: auto;
-    margin-top: 0;
-    height: 250px;
-    @include at-media($theme-site-max-width) {
-      height: auto;
-    }
-
-    thead {
-      th {
-        font-size: size('body', 'sm');
-      }
-
-      th:last-child {
-        background-color: color('blue-cool-40');
-        color: color('white');
-        text-align: center;
-      }
-
-      th, td {
-        background-color: white;
-      }
-    }
-
-    tbody {
-      tr {
-        cursor: pointer;
-        background-color: $highlight;
-
-        th, td {
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
-        }
-
-        &:hover {
-          th, td {
-            background-color: $highlight;
-          }
-        }
-
-        &.selected {
-          cursor: default;
-
-          th, td {
-            background-color: $selected;
-          }
-        }
-      }
-    }
-  }
-}
-
 #hydrograph-wrapper {
   position: relative;
 
