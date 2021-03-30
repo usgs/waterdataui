@@ -14,8 +14,6 @@ $row-border-color: 'black';
 
   #select-time-series {
     @include grid-container;
-    @include u-margin(0);
-    @include u-padding(0);
   }
 
   .main-parameter-selection-container {
@@ -86,4 +84,9 @@ $row-border-color: 'black';
       }
     }
   }
+}
+
+.select-time-series-container #select-time-series {
+  @include u-padding(0);
+  @include u-margin(0);
 }
