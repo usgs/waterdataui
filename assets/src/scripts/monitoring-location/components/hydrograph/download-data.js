@@ -94,7 +94,7 @@ const drawRadioButton = function(container, inputID, label, value) {
         .attr('class', 'usa-radio__input')
         .attr('id', inputID)
         .attr('type', 'radio')
-        .attr('name', 'retrieve-kind')
+        .attr('name', 'retrieve-value')
         .attr('value', value);
     radioContainer.append('label')
         .attr('class', 'usa-radio__label')
@@ -138,7 +138,7 @@ const drawRadioButtons = function(container, {
  */
 export const drawDownloadForm = function(container, store, siteno) {
     const downloadContainer = container.append('div');
-    const formContainer = downloadContainer.append('form')
+    const formContainer = downloadContainer.append('div')
         .attr('class', 'usa-form')
         .append('fieldset')
             .attr('class', 'usa-fieldset');
@@ -185,7 +185,7 @@ export const drawDownloadForm = function(container, store, siteno) {
                         console.log(`Unhandled value for downloading data: ${dataType}`);
                 }
                 if (downloadUrl) {
-                    window.open(downloadUrl, '_blank', 'noreferrer');
+                    window.open(downloadUrl, '_blank');
                 }
 
             } else {
