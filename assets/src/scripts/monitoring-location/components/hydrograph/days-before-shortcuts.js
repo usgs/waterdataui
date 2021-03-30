@@ -14,7 +14,7 @@ const SHORTCUT_BUTTONS = [
     {timeSpan: 'P365D', label: '1 year'}
 ];
 
-const drawShortcutRadioButton = function (container, store, siteno, {timeSpan, label}) {
+const drawShortcutRadioButton = function(container, store, siteno, {timeSpan, label}) {
     const buttonContainer = container.append('div')
         .attr('class', 'usa-radio');
     buttonContainer.append('input')
@@ -23,7 +23,7 @@ const drawShortcutRadioButton = function (container, store, siteno, {timeSpan, l
         .attr('type', 'radio')
         .attr('name', 'time-span')
         .attr('value', timeSpan)
-        .on('click', function () {
+        .on('click', function() {
             if (this.checked) {
                 store.dispatch(setSelectedTimeSpan(timeSpan));
                 showDataIndicators(true, store);
@@ -38,13 +38,13 @@ const drawShortcutRadioButton = function (container, store, siteno, {timeSpan, l
         .attr('class', 'usa-radio__label')
         .attr('for', `${timeSpan}-input`)
         .text(label);
-    buttonContainer.call(link(store, function (thisContainer, selectedTimeSpan) {
+    buttonContainer.call(link(store, function(thisContainer, selectedTimeSpan) {
         const thisButton = thisContainer.select('input');
-        thisButton.attr('checked', selectedTimeSpan === thisButton.attr('value') ? true : null);
+        thisButton.property('checked', selectedTimeSpan === thisButton.attr('value'));
     }, getSelectedTimeSpan));
 };
 
-export const drawShortcutDaysBeforeButtons = function (container, store, siteno) {
+export const drawShortcutDaysBeforeButtons = function(container, store, siteno) {
     const formContainer = container.append('div')
         .attr('class', 'usa-form');
     SHORTCUT_BUTTONS.forEach(shortcut => drawShortcutRadioButton(formContainer, store, siteno, shortcut));
