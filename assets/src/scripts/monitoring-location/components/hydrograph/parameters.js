@@ -1,7 +1,7 @@
 // Required to initialize USWDS components after page load (WaterAlert ToolTips)
 import {tooltip} from 'uswds-components';
 
-import {select, selectAll} from 'd3-selection';
+import {select} from 'd3-selection';
 
 import config from 'ui/config';
 import {link} from 'ui/lib/d3-redux';
