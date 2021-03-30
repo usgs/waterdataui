@@ -169,4 +169,23 @@ describe('monitoring-location/components/hydrograph/parameters module', () => {
         expect(container.select('#wateralert-row-00010F').select('span').select('a').attr('href')).toContain('00010');
         expect(container.select('#wateralert-row-00010F').select('span').select('a').attr('href')).not.toContain('00010F');
     });
+
+    it('Expects that clicking a row toggle icon will set the icon to open and all others closed', function() {
+        store = configureStore(TEST_STATE);
+        drawSelectionList(div, store, '11112222');
+        const container = div.select('#select-time-series');
+        const clickedIconToggleOne = div.select('#expansion-toggle-desktop-72019');
+        const clickedIconToggleTwo = div.select('#expansion-toggle-desktop-00010F');
+
+        expect(container.selectAll('.fa-chevron-up').size()).toBe(0);
+        expect(container.selectAll('.fa-chevron-down').size()).toBe(8);
+
+        clickedIconToggleOne.dispatch('click');
+        expect(container.selectAll('.fa-chevron-up').size()).toBe(2);
+        expect(container.selectAll('.fa-chevron-down').size()).toBe(6);
+
+        clickedIconToggleTwo.dispatch('click'); // test that a second click closes all previously selected icons
+        expect(container.selectAll('.fa-chevron-up').size()).toBe(2);
+        expect(container.selectAll('.fa-chevron-down').size()).toBe(6);
+    });
 });
