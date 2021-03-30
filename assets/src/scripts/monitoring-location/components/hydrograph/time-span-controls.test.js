@@ -25,7 +25,6 @@ const TEST_STATE = {
     }
 };
 
-
 describe('monitoring-location/components/hydrograph/time-span-controls', () => {
     utils.mediaQuery = jest.fn().mockReturnValue(true);
 
