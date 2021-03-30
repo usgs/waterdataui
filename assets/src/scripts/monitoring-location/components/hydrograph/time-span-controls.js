@@ -50,11 +50,11 @@ const drawDatePicker = function(container, id, ariaLabel, initialDate) {
 };
 
 const clearDatePicker = function(input) {
-    const {datePickerEl, internalInputEl, externalInputEl} = datePicker.getDatePickerContext(input.node());
+    const {internalInputEl, externalInputEl} = datePicker.getDatePickerContext(input.node());
     internalInputEl.value = '';
     externalInputEl.value = '';
     input.dispatch('change');
-}
+};
 
 /*
  * Render the date range picker
