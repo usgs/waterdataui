@@ -4,6 +4,7 @@ import {DateTime} from 'luxon';
 import {datePicker, dateRangePicker} from 'uswds-components';
 
 import config from 'ui/config';
+import {link} from 'ui/lib/d3-redux';
 
 import {drawErrorAlert} from 'd3render/alerts';
 
@@ -48,6 +49,13 @@ const drawDatePicker = function(container, id, ariaLabel, initialDate) {
             .attr('aria-describedby', `${id}-hint`);
 };
 
+const clearDatePicker = function(input) {
+    const {datePickerEl, internalInputEl, externalInputEl} = datePicker.getDatePickerContext(input.node());
+    internalInputEl.value = '';
+    externalInputEl.value = '';
+    input.dispatch('change');
+}
+
 /*
  * Render the date range picker
  * @param {D3 selection} container
@@ -68,6 +76,17 @@ const drawDateRangeForm = function(container, store) {
     datePicker.init(container.node());
     // required to init the USWDS date range picker after page load
     dateRangePicker.on(container.node());
+
+    container.select('#start-date').call(link(store, function(input, timeSpan) {
+        if (typeof timeSpan === 'string') {
+            clearDatePicker(input);
+        }
+    }, getSelectedTimeSpan));
+    container.select('#end-date').call(link(store, function(input, timeSpan) {
+        if (isISODuration(timeSpan)) {
+            clearDatePicker(input);
+        }
+    }, getSelectedTimeSpan));
 };
 
 /*
@@ -90,8 +109,13 @@ const drawDaysBeforeTodayForm = function(container, store) {
         .attr('id', 'days-before-today')
         .attr('name', 'days-before-today')
         .attr('type', 'text')
-        .attr('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
-        .attr('maxlength', 5);
+        .property('value', hasDaysBeforeToday ? initialTimeSpan.slice(1, -1) : '')
+        .attr('maxlength', 5)
+        .call(link(store, function(input, timeSpan) {
+            if (isISODuration(timeSpan)) {
+                input.property('value', timeSpan.slice(1, -1));
+            }
+        }, getSelectedTimeSpan));
 };
 
 /*

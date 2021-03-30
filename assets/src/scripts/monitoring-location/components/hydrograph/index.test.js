@@ -71,6 +71,7 @@ describe('monitoring-location/components/hydrograph module', () => {
             .append('div')
                 .attr('id', 'hydrograph-loading-indicator-container')
                 .attr('class', 'loading-indicator-container');
+        component.append('div').attr('class', 'short-cut-days-before-container');
         component.append('div').attr('class', 'select-actions-container');
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('id', 'iv-data-table-container');

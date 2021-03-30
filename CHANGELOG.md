@@ -6,14 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...master)
 ### Added
-- Created a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the download data and change time span sections.
+- Created a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the retrieve data and change time span sections.
 
 ### Changed
-- Reworked the Download data section to use checkboxes rather than links. Clicking download opens separate tabs for each data type. Data types reflect those that are currently shown on the graph.
+- Reworked the Download data section to use radio buttons rather than links. Clicking Retrieve opens a separate tab for the selected data type. Data types reflect those that are currently shown on the graph.
 - Reworked Parameter Selection Table--removed tooltips, WaterAlert subscribe, changed from table to UWSD grid, added expandable inner row.
-- Reworked the Change time span section, eliminating the short cut radio buttons for 7/30/365 days. The
-date range now appears first and will be used if filled in. Otherwise, the Days before Today section will be used.
-  
+- Reworked the Change time span section. The short cut radio buttons now appear above the select actions bar. The date range now appears first and will be used if filled in. Otherwise, the Days before Today section will be used.
+
 ### Fixed
 - Estimated points are now the correct color, even when the data services return multiple qualifer codes.
 

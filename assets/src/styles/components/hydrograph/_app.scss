@@ -7,8 +7,19 @@
   @include u-margin-bottom(2);
 }
 
+.short-cut-days-before-container {
+  div {
+    display: inline-block;
+    .usa-radio {
+      display: inline-block;
+      @include u-margin-right(1);
+    }
+  }
+}
+
 #change-time-span-container {
   @include u-padding(2);
+  @include u-flex('fill');
   .date-range-container {
     span {
       @include u-margin-right(1);

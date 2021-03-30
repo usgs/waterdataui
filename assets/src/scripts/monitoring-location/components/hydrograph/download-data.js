@@ -2,7 +2,6 @@
  *  Module with functions for processing and structuring download link URLs
  */
 
-import {select} from 'd3-selection';
 import {DateTime} from 'luxon';
 import {createStructuredSelector} from 'reselect';
 
@@ -19,6 +18,9 @@ import {getTimeRange, getPrimaryParameter} from 'ml/selectors/hydrograph-data-se
 import {hasVisibleIVData, hasVisibleMedianStatisticsData, hasVisibleGroundwaterLevels} from './selectors/time-series-data';
 
 const INFO_TEXT = `
+<div>
+    A separate tab will open with the requested data.
+</div>
 <div>
     All data is in 
     <a href="https://waterdata.usgs.gov/nwis/?tab_delimited_format_info" target="_blank">RDB</a> format.
@@ -70,8 +72,8 @@ const getGroundwaterLevelURL = function(store, siteno) {
     return getGroundwaterServiceURL({
         siteno,
         parameterCode: getPrimaryParameter(currentState).parameterCode,
-        startDT: toISO(timeRange.start),
-        endDT: toISO(timeRange.end),
+        startTime: toISO(timeRange.start),
+        endTime: toISO(timeRange.end),
         format: 'rdb'
     });
 };
@@ -85,16 +87,17 @@ const getSiteMetaDataURL = function(siteno) {
 /*
  * Helper function to render a single checkbox in container.
  */
-const drawCheckbox = function(container, inputID, label, value) {
-    const checkboxContainer = container.append('div')
-        .attr('class', 'usa-checkbox');
-    checkboxContainer.append('input')
-        .attr('class', 'usa-checkbox__input')
+const drawRadioButton = function(container, inputID, label, value) {
+    const radioContainer = container.append('div')
+        .attr('class', 'usa-radio');
+    radioContainer.append('input')
+        .attr('class', 'usa-radio__input')
         .attr('id', inputID)
-        .attr('type', 'checkbox')
+        .attr('type', 'radio')
+        .attr('name', 'retrieve-kind')
         .attr('value', value);
-    checkboxContainer.append('label')
-        .attr('class', 'usa-checkbox__label')
+    radioContainer.append('label')
+        .attr('class', 'usa-radio__label')
         .attr('for', inputID)
         .text(label);
 };
@@ -102,28 +105,28 @@ const drawCheckbox = function(container, inputID, label, value) {
 /*
  * Helper function to remove existing checkboxes and then render the checkboxes for the visible data.
  */
-const drawCheckboxes = function(container, {
+const drawRadioButtons = function(container, {
     hasVisiblePrimaryIVData,
     hasVisibleCompareIVData,
     hasVisibleMedianData,
     hasVisibleGroundwaterLevels
 }) {
-    container.select('.download-checkbox-container').remove();
-    const checkboxContainer = container.append('div')
-        .attr('class', 'download-checkbox-container');
+    container.select('.download-radio-container').remove();
+    const radioContainer = container.append('div')
+        .attr('class', 'download-radio-container');
     if (hasVisiblePrimaryIVData) {
-        checkboxContainer.call(drawCheckbox, 'download-primary-iv-data', 'Current time-series data', 'primary');
+        radioContainer.call(drawRadioButton, 'download-primary-iv-data', 'Current time-series data', 'primary');
     }
     if (hasVisibleCompareIVData) {
-        checkboxContainer.call(drawCheckbox, 'download-compare-iv-data', 'Prior year time-series data', 'compare');
+        radioContainer.call(drawRadioButton, 'download-compare-iv-data', 'Prior year time-series data', 'compare');
     }
     if (hasVisibleMedianData) {
-        checkboxContainer.call(drawCheckbox, 'download-median-data', 'Median', 'median');
+        radioContainer.call(drawRadioButton, 'download-median-data', 'Median', 'median');
     }
     if (hasVisibleGroundwaterLevels) {
-        checkboxContainer.call(drawCheckbox, 'download-field-visits', 'Field visits', 'groundwater-levels');
+        radioContainer.call(drawRadioButton, 'download-field-visits', 'Field visits', 'groundwater-levels');
     }
-    checkboxContainer.call(drawCheckbox, 'download-site-meta-data', 'About this location', 'site');
+    radioContainer.call(drawRadioButton, 'download-site-meta-data', 'About this location', 'site');
 };
 
 /*
@@ -144,7 +147,7 @@ export const drawDownloadForm = function(container, store, siteno) {
         .text('Select data to be downloaded');
     formContainer.append('div')
         .attr('class', 'select-data-input-container')
-        .call(link(store, drawCheckboxes, createStructuredSelector({
+        .call(link(store, drawRadioButtons, createStructuredSelector({
             hasVisiblePrimaryIVData: hasVisibleIVData('primary'),
             hasVisibleCompareIVData: hasVisibleIVData('compare'),
             hasVisibleMedianData: hasVisibleMedianStatisticsData,
@@ -158,39 +161,38 @@ export const drawDownloadForm = function(container, store, siteno) {
         .attr('ga-event-action', 'download')
         .on('click', function() {
             formContainer.selectAll('.alert-error-container').remove();
-            const checkedInputs = formContainer.selectAll('input[type="checkbox"]:checked');
-            if (checkedInputs.size()) {
-                checkedInputs.each(function() {
-                    let downloadUrl;
-                    let dataType = select(this).attr('value')
-                    switch (dataType) {
-                        case 'primary':
-                            downloadUrl = getIVDataURL(store, siteno, 'current');
-                            break;
-                        case 'compare':
-                            downloadUrl = getIVDataURL(store, siteno, 'prioryear');
-                            break;
-                        case 'median':
-                            downloadUrl = getMedianDataURL(store, siteno);
-                            break;
-                        case 'groundwater-levels':
-                            downloadUrl = getGroundwaterLevelURL(store, siteno);
-                            break;
-                        case 'site':
-                            downloadUrl = getSiteMetaDataURL(siteno);
-                            break;
-                        default:
-                            console.log(`Unhandled value for downloading data: ${select(this).attr('value')}`);
-                    }
-                    if (downloadUrl) {
-                        window.open(downloadUrl, `${dataType}DownloadData`);
-                    }
-                });
+            const radioInput = formContainer.select('input[type="radio"]:checked');
+            if (radioInput.size()) {
+                let downloadUrl;
+                let dataType = radioInput.attr('value');
+                switch (dataType) {
+                    case 'primary':
+                        downloadUrl = getIVDataURL(store, siteno, 'current');
+                        break;
+                    case 'compare':
+                        downloadUrl = getIVDataURL(store, siteno, 'prioryear');
+                        break;
+                    case 'median':
+                        downloadUrl = getMedianDataURL(store, siteno);
+                        break;
+                    case 'groundwater-levels':
+                        downloadUrl = getGroundwaterLevelURL(store, siteno);
+                        break;
+                    case 'site':
+                        downloadUrl = getSiteMetaDataURL(siteno);
+                        break;
+                    default:
+                        console.log(`Unhandled value for downloading data: ${dataType}`);
+                }
+                if (downloadUrl) {
+                    window.open(downloadUrl, '_blank');
+                }
+
             } else {
                 formContainer.insert('div', 'button')
                     .attr('class', 'alert-error-container')
                     .call(drawErrorAlert, {
-                        body:'Please select one or more checkboxes',
+                        body:'Please select one of the radio buttons',
                         useSlim: true
                     });
             }
@@ -199,7 +201,7 @@ export const drawDownloadForm = function(container, store, siteno) {
         .attr('class', 'fas fa-file-download')
         .attr('aria-hidden', true)
         .attr('role', 'img');
-    downloadButton.append('span').text('Download');
+    downloadButton.append('span').text('Retrieve');
 
     downloadContainer.append('div')
         .attr('class', 'download-info')

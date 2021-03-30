@@ -2,6 +2,10 @@
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
          data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
          data-parameter-code="{{ default_parameter_code }}">
+        <div id="time-download-graph-controls">
+            <div class="short-cut-days-before-container"></div>
+            <div class="select-actions-container"></div>
+        </div>
         <div id="hydrograph-method-picker-container"></div>
         <div id="hydrograph-wrapper">
             <div class="graph-container"></div>
@@ -19,7 +23,6 @@
                 </a>
             </p>
         </div>
-        <div class="select-actions-container"></div>
         <div class="select-time-series-container"></div>
         <div class="wdfn-accordion graph-data usa-accordion">
             <h2 class="usa-accordion__heading">

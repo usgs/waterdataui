@@ -134,10 +134,19 @@ export const hydrographStateReducer = function(hydrographState=INITIAL_STATE, ac
             };
 
         case 'SET_SELECTED_TIME_SPAN':
-            return {
-                ...hydrographState,
-                selectedTimeSpan: action.timeSpan
-            };
+            if (typeof action.timeSpan === 'string') {
+                return {
+                    ...hydrographState,
+                    selectedTimeSpan: action.timeSpan
+                };
+            } else {
+                return {
+                    ...hydrographState,
+                    selectedTimeSpan: {
+                        ...action.timeSpan
+                    }
+                };
+            }
 
         case 'SET_GRAPH_CURSOR_OFFSET':
             return {
