@@ -13,6 +13,7 @@ import {getGroundwaterServiceURL} from 'ui/web-services/groundwater-levels';
 
 import {drawErrorAlert} from 'd3render/alerts';
 
+import {isCalculatedTemperature} from 'ml/iv-data-utils';
 import {getTimeRange, getPrimaryParameter} from 'ml/selectors/hydrograph-data-selector';
 
 import {hasVisibleIVData, hasVisibleMedianStatisticsData, hasVisibleGroundwaterLevels} from './selectors/time-series-data';
@@ -109,22 +110,25 @@ const drawRadioButtons = function(container, {
     hasVisiblePrimaryIVData,
     hasVisibleCompareIVData,
     hasVisibleMedianData,
-    hasVisibleGroundwaterLevels
+    hasVisibleGroundwaterLevels,
+    primaryParameter
 }) {
     container.select('.download-radio-container').remove();
     const radioContainer = container.append('div')
         .attr('class', 'download-radio-container');
-    if (hasVisiblePrimaryIVData) {
-        radioContainer.call(drawRadioButton, 'download-primary-iv-data', 'Current time-series data', 'primary');
-    }
-    if (hasVisibleCompareIVData) {
-        radioContainer.call(drawRadioButton, 'download-compare-iv-data', 'Prior year time-series data', 'compare');
-    }
-    if (hasVisibleMedianData) {
-        radioContainer.call(drawRadioButton, 'download-median-data', 'Median', 'median');
-    }
-    if (hasVisibleGroundwaterLevels) {
-        radioContainer.call(drawRadioButton, 'download-field-visits', 'Field visits', 'groundwater-levels');
+    if (!isCalculatedTemperature(primaryParameter.parameterCode)) {
+        if (hasVisiblePrimaryIVData) {
+            radioContainer.call(drawRadioButton, 'download-primary-iv-data', 'Current time-series data', 'primary');
+        }
+        if (hasVisibleCompareIVData) {
+            radioContainer.call(drawRadioButton, 'download-compare-iv-data', 'Prior year time-series data', 'compare');
+        }
+        if (hasVisibleMedianData) {
+            radioContainer.call(drawRadioButton, 'download-median-data', 'Median', 'median');
+        }
+        if (hasVisibleGroundwaterLevels) {
+            radioContainer.call(drawRadioButton, 'download-field-visits', 'Field visits', 'groundwater-levels');
+        }
     }
     radioContainer.call(drawRadioButton, 'download-site-meta-data', 'About this location', 'site');
 };
@@ -151,7 +155,8 @@ export const drawDownloadForm = function(container, store, siteno) {
             hasVisiblePrimaryIVData: hasVisibleIVData('primary'),
             hasVisibleCompareIVData: hasVisibleIVData('compare'),
             hasVisibleMedianData: hasVisibleMedianStatisticsData,
-            hasVisibleGroundwaterLevels: hasVisibleGroundwaterLevels
+            hasVisibleGroundwaterLevels: hasVisibleGroundwaterLevels,
+            primaryParameter: getPrimaryParameter
         })));
 
     const downloadButton = formContainer.append('button')

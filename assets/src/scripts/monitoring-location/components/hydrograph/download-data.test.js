@@ -126,4 +126,49 @@ describe('monitoring-location/components/hydrograph/download-data', () => {
             expect(div.select('.usa-alert--error').size()).toBe(0);
         });
     });
+
+    describe('Tests for calculated primary parameter', () => {
+        const TEST_STATE_TWO = {
+            hydrographData: {
+                currentTimeRange: TEST_CURRENT_TIME_RANGE,
+                primaryIVData: {
+                    parameter: {
+                        parameterCode: '00010F'
+                    },
+                    values: {
+                        '11111': {
+                            points: [{value: 26.0, qualifiers: ['A'], dateTime: 1582560900000}],
+                            method: {
+                                methodID: '11111'
+                            }
+                        }
+                    }
+                }
+            },
+            hydrographState: {
+                showCompareIVData: false,
+                showMedianData: false,
+                selectedMethodID: '1111'
+            }
+        };
+
+        let div;
+        let store;
+        beforeEach(() => {
+            div = select('body').append('div');
+            store = configureStore(TEST_STATE_TWO);
+            drawDownloadForm(div, store, '11112222');
+        });
+
+        afterEach(() => {
+            div.remove();
+        });
+
+        it('Expect to render only the site radio button', () => {
+            expect(div.selectAll('input[type="radio"]').size()).toBe(1);
+            expect(div.selectAll('input[value="primary"]').size()).toBe(0);
+            expect(div.selectAll('input[value="groundwater-levels"]').size()).toBe(0);
+            expect(div.selectAll('input[value="site"]').size()).toBe(1);
+        });
+    });
 });
