@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Estimated points are now the correct color, even when the data services return multiple qualifer codes.
+- Precipitation scale is now correctly determined.
 
 ## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) 2021-03-17
 ### Changed
