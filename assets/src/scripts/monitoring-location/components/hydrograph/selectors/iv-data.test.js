@@ -1,6 +1,6 @@
 import config from 'ui/config';
 
-import {getIVDataPoints, getIVTableData, getIVDataSegments, getIVUniqueDataKinds} from './iv-data';
+import {getIVDataPoints, getIVDataRange, getIVTableData, getIVDataSegments, getIVUniqueDataKinds} from './iv-data';
 
 describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
     config.locationTimeZone = 'America/Chicago';
@@ -100,6 +100,17 @@ describe('monitoring-location/components/hydrograph/selectors/iv-data', () => {
             });
         });
     });
+
+    describe('getIVDataRange', () => {
+        it('Return null if no iv data', () => {
+            expect(getIVDataRange('compare')(TEST_STATE)).toBeNull();
+        });
+
+        it('Return the value range if IV Data', () => {
+            expect(getIVDataRange('primary')(TEST_STATE)).toEqual([24.1, 26.5]);
+        });
+    });
+
 
     describe('getIVTableData', () => {
         it('Expect to return an empty array if no IV data', () => {

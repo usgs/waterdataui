@@ -31,59 +31,6 @@ export const getMedianStatisticsData = state => state.hydrographData.medianStati
  * @return {Function}
  */
 export const getGroundwaterLevels = state => state.hydrographData.groundwaterLevels ||  null;
-
-/*
- * Returns a selector which returns an Array [min, max] where min and max represent the value range for the IV data of dataKind
- * @param {String} dataKind - 'primary' or 'compare'
- * @return {Function}
- */
-export const getIVValueRange = memoize(dataKind => createSelector(
-    getIVData(dataKind),
-    ivData => {
-        if (!ivData) {
-            return null;
-        }
-
-        const result = Object.values(ivData.values).reduce((minMaxAccumulator, byMethodID) => {
-            const sortedValues = byMethodID.points
-                .map(point => point.value)
-                .filter(pointValue => pointValue !== null)
-                .sort((a, b) => a - b);
-            if (minMaxAccumulator.length && sortedValues && sortedValues.length) {
-                minMaxAccumulator[0] = Math.min(minMaxAccumulator[0], sortedValues[0]);
-                minMaxAccumulator[1] = Math.max(minMaxAccumulator[1], sortedValues[sortedValues.length - 1]);
-            } else if (sortedValues && sortedValues.length) {
-                minMaxAccumulator = [sortedValues[0], sortedValues[sortedValues.length - 1]];
-            }
-            return minMaxAccumulator;
-        }, []);
-        if (result.length) {
-            return result;
-        } else {
-            return null;
-        }
-    }
-));
-
-/*
- * Returns a selector which returns an Array [min, max] representing the value range of the groundwater
- * levels data
- * @return {Function}
- */
-export const getGroundwaterLevelsValueRange = createSelector(
-    getGroundwaterLevels,
-    gwLevels => {
-        if (!gwLevels) {
-            return null;
-        }
-
-        const values = gwLevels.values.filter(data => data.value !== null).map(data => data.value);
-        if (values.length) {
-            return [Math.min(...values), Math.max(...values)];
-        }
-    }
-);
-
 /*
  * Returns a selector function which returns the parameter that the hydrographData is representing
  * an is an Object containing the parameter code, name, description, and unit
