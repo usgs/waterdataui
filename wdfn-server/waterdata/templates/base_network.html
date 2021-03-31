@@ -6,13 +6,14 @@
 {% endblock %}
 
 {% block page_script %}
-    <script src="{{ 'network-bundle.js' | asset_url }}"></script>
-    {% if request.user_agent.browser == 'msie' %}
-        <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
-    {% endif %}
 {% endblock %}
 
 {% block body %}
+    {% if request.user_agent.browser == 'msie' %}
+        <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
+    {% else %}
+        <script async src="{{ 'network-bundle.js' | asset_url }}"></script>
+    {% endif %}
     {% include 'partials/header.html' %}
     <main id="main-content" class="grid-container content-container usa-prose">
         {% block content %}{% endblock %}
