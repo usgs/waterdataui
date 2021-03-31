@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...master)
+
+## [0.45.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...waterdataui-0.45.0) - 2021-03-31
 ### Added
 - Created a new "select actions" element which appears above the parameter selection list. Allows quick show/hide of the retrieve data and change time span sections.
 
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Estimated points are now the correct color, even when the data services return multiple qualifer codes.
 - Precipitation scale is now correctly determined.
 
-## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) 2021-03-17
+## [0.44.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.43.0...waterdataui-0.44.0) - 2021-03-17
 ### Changed
 - The data loading indicator for the hydrograph now appears on top of the graph rather than with the date controls.
 - Cleaned up hydrograph rendering and made changes to make it possible to determine when rendering of the hydrograph is complete.
