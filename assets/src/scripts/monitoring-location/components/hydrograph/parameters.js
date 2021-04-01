@@ -13,7 +13,8 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
 
-import {drawSamplingMethodRow} from './method-selection'
+import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
+import {drawSamplingMethodRow} from './method-selection';
 import {showDataIndicators} from './data-indicator';
 
 const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
@@ -86,42 +87,52 @@ const drawRowExpansionControl = function(container, parameter, type) {
 * @param {Object} container - The target element on which to append the row
 * @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* @param {D3 selection} parameter - Contains details about the current parameter code
+* @param {String} parameter - USGS five digit parameter code
 */
-const drawContainingRow = function(container, store, siteno, parameter) {
+const drawContainingRow = function(container, store, siteno, parameterCode) {
     return container.append('div')
-        .attr('id', `container-row-${parameter.parameterCode}`)
+        .attr('id', `container-row-${parameterCode}`)
         .attr('class', 'grid-row-container-row')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
-        .attr('ga-event-action', `time-series-parmcd-${parameter.parameterCode}`)
+        .attr('ga-event-action', `time-series-parmcd-${parameterCode}`)
         .call(link(store, (container, selectedParameterCode) => {
-            container.classed('selected', parameter.parameterCode === selectedParameterCode)
-                .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
+            container.classed('selected', parameterCode === selectedParameterCode)
+                .attr('aria-selected', parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
         .on('click', function() {
             select('#select-time-series').selectAll('.fa-chevron-up')
                 .attr('class', ROW_TOGGLE_CLOSED_CLASS)
                 .attr('aria-expanded', 'false');
-            select(`#expansion-toggle-desktop-${parameter.parameterCode}`)
+            select(`#expansion-toggle-desktop-${parameterCode}`)
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
-            select(`#expansion-toggle-mobile-${parameter.parameterCode}`)
+            select(`#expansion-toggle-mobile-${parameterCode}`)
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
 
             select('#select-time-series').selectAll('.expansion-container-row')
                 .attr('hidden', 'true');
-            select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden', null);
+            select(`#expansion-container-row-${parameterCode}`).attr('hidden', null);
+
+
+
 
             const thisClass = select(this)
                 .attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
-                store.dispatch(setSelectedParameterCode(parameter.parameterCode));
+                store.dispatch(setSelectedParameterCode(parameterCode));
                 showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
                         showDataIndicators(false, store);
+
+                        const primarySamplingMethods = getPrimaryMethods(store.getState());
+                        console.log('primarySamplingMethods', primarySamplingMethods.length)
+                        select('#primary-sampling-method-row').remove;
+                        if (primarySamplingMethods.length > 1) {
+                            drawSamplingMethodRow(select(`#expansion-container-row-${parameterCode}`), parameterCode, primarySamplingMethods, store);
+                        }
                     });
             }
         });
@@ -240,7 +251,7 @@ export const drawSelectionList = function(container, store, siteno) {
 
     parameters.forEach(parameter => {
         // Add the main grid rows
-        const containerRow = drawContainingRow(selectionList, store, siteno, parameter);
+        const containerRow = drawContainingRow(selectionList, store, siteno, parameter.parameterCode);
         // Add the nested grid rows
         drawTopPeriodOfRecordRow(containerRow, parameter);
         drawRadioButtonRow(containerRow, parameter, store);
@@ -253,7 +264,6 @@ export const drawSelectionList = function(container, store, siteno) {
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
-        drawSamplingMethodRow(expansionContainerRow, parameter.parameterCode, store);
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
