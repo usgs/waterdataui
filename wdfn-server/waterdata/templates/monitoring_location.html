@@ -39,13 +39,16 @@
             CONFIG.gwPeriodOfRecord = {{ gw_period_of_record | tojson }};
         {% endif %}
     </script>
-    <script src="{{ 'bundle.js' | asset_url }}"></script>
     {% if json_ld %}
         <script type="application/ld+json">
             {{ json_ld }}
         </script>
     {% endif %}
+{% endblock page_script %}
 
+{% set body_id = 'monitoring-location' %}
+
+{% block body %}
     {% if request.user_agent.browser == 'msie' %}
         <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
         <script type="application/javascript">
@@ -99,13 +102,10 @@
                 }
             });
         </script>
-
+    {% else %}
+        <script async src="{{ 'bundle.js' | asset_url }}"></script>
     {% endif %}
-{% endblock page_script %}
 
-{% set body_id = 'monitoring-location' %}
-
-{% block body %}
     {% include 'partials/monitoring_location_header.html' %}
 
     <main id="main-content" class="grid-container content-container usa-prose">
