@@ -117,7 +117,7 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
 
 
 
-
+            select('#primary-sampling-method-row').remove;
             const thisClass = select(this)
                 .attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
@@ -128,8 +128,6 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
                         showDataIndicators(false, store);
 
                         const primarySamplingMethods = getPrimaryMethods(store.getState());
-                        console.log('primarySamplingMethods', primarySamplingMethods.length)
-                        select('#primary-sampling-method-row').remove;
                         if (primarySamplingMethods.length > 1) {
                             drawSamplingMethodRow(select(`#expansion-container-row-${parameterCode}`), parameterCode, primarySamplingMethods, store);
                         }

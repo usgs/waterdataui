@@ -150,3 +150,29 @@ export const getPreferredIVMethodID = createSelector(
         return methodMetaData[methodMetaData.length - 1].methodID;
     }
 );
+
+export const getSortedIVMethodID = createSelector(
+    getIVData('primary'),
+    (ivData) => {
+        if (!ivData || !Object.keys(ivData.values).length) {
+            return null;
+        }
+        const methodMetaData = Object.values(ivData.values)
+            .map(methodValues => {
+                return {
+                    pointCount: methodValues.points.length,
+                    lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
+                    methodID: methodValues.method.methodID,
+                    methodDescription: methodValues.method.methodDescription
+                };
+            })
+            .sort((a, b) => {
+                if (a.pointCount === b.pointCount) {
+                    return a.pointCount ? a.lastPoint.dateTime - b.lastPoint.dateTime : 0;
+                } else {
+                    return a.pointCount - b.pointCount;
+                }
+            });
+        return methodMetaData.reverse();
+    }
+);
