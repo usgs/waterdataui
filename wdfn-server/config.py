@@ -21,6 +21,7 @@ GROUNDWATER_LEVELS_ENABLED = True
 DEBUG = False
 
 SITE_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/site' #Only used server side so does not need to be a public URL
+PUBLIC_SITE_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/site'
 IV_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/iv'
 PAST_IV_DATA_ENDPOINT = 'https://nwis.waterservices.usgs.gov/nwis/iv'
 STATISTICS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/stat'
