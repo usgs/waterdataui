@@ -22,10 +22,12 @@
         {% block page_css %}{% endblock %}
         <script type="text/javascript">
             var CONFIG = {
-                'SERVICE_ROOT': '{{ config.SERVICE_ROOT }}/nwis',
-                'PAST_SERVICE_ROOT': '{{ config.PAST_SERVICE_ROOT }}/nwis',
-                'NWIS_INVENTORY_PAGE_URL': '{{ config.NWIS_PAGE_URLS.INVENTORY }}',
-                'OBSERVATIONS_ENDPOINT': '{{ config.OBSERVATIONS_ENDPOINT }}',
+                'IV_DATA_ENDPOINT': '{{ config.IV_DATA_ENDPOINT }}',
+                'PAST_IV_DATA_ENDPOINT': '{{ config.PAST_IV_DATA_ENDPOINT }}',
+                'SITE_DATA_ENDPOINT': '{{ config.SITE_DATA_ENDPOINT }}',
+                'STATISTICS_ENDPOINT': '{{ config.STATISTICS_ENDPOINT }}',
+                'NWISWEB_INVENTORY_ENDPOINT': '{{ config.NWISWEB_ENDPOINTS.INVENTORY }}',
+                'MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT': '{{ config.MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT }}',
                 'GROUNDWATER_LEVELS_ENDPOINT': '{{ config.GROUNDWATER_LEVELS_ENDPOINT }}',
                 'HYDRO_ENDPOINT': '{{ config.HYDRO_ENDPOINT }}',
                 'TNM_USGS_TOPO_ENDPOINT' : '{{ config.TNM_USGS_TOPO_ENDPOINT }}',
@@ -34,17 +36,13 @@
                 'TNM_HYDRO_ENDPOINT': '{{ config.TNM_HYDRO_ENDPOINT }}',
                 'FIM_GIS_ENDPOINT': '{{ config.FIM_GIS_ENDPOINT }}',
                 'FIM_ENDPOINT': '{{ config.FIM_ENDPOINT }}',
-                'STATIC_URL': '{{ config.STATIC_ROOT }}',
-                'TIMESERIES_AUDIO_ENABLED': '{{ config.TIMESERIES_AUDIO_ENABLED}}' === 'True' ? true : false,
-                'WEATHER_SERVICE_ROOT': '{{ config.WEATHER_SERVICE_ROOT }}',
                 'CITIES_ENDPOINT': '{{ config.CITIES_ENDPOINT }}',
                 'NLDI_SERVICES_ENDPOINT': '{{ config.NLDI_SERVICES_ENDPOINT }}',
                 'NLDI_SERVICES_DISTANCE': '{{ config.NLDI_SERVICES_DISTANCE }}',
                 'WATERWATCH_ENDPOINT': '{{ config.WATERWATCH_ENDPOINT }}',
                 'GRAPH_SERVER_ENDPOINT': '{{ config.GRAPH_SERVER_ENDPOINT }}',
-                'WATERALERT_SUBSCRIPTION': '{{ config.WATERALERT_SUBSCRIPTION }}',
-                'RDB_FORMAT_INFORMATION': '{{ config.RDB_FORMAT_INFORMATION }}',
-                'DATA_RETRIEVAL_PACKAGE_INFORMATION': '{{ config.DATA_RETRIEVAL_PACKAGE_INFORMATION }}'
+                'STATIC_URL': '{{ config.STATIC_ROOT }}',
+                'WATERALERT_SUBSCRIPTION': '{{ config.WATERALERT_SUBSCRIPTION }}'
             };
         </script>
         <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>

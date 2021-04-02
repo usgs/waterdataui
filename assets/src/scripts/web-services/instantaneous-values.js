@@ -7,8 +7,8 @@ import config from 'ui/config';
 /*
  * Return the past service root if the start dt is more than 120 days from now
  */
-function tsServiceRoot(dateTime) {
-    return DateTime.local().diff(dateTime).as('days') > 120 ? config.PAST_SERVICE_ROOT : config.SERVICE_ROOT;
+function ivDataEndpoint(dateTime) {
+    return DateTime.local().diff(dateTime).as('days') > 120 ? config.PAST_IV_DATA_ENDPOINT : config.IV_DATA_ENDPOINT;
 }
 
 function getNumberOfDays(period) {
@@ -26,7 +26,7 @@ function getNumberOfDays(period) {
 * @param {Boolean} isExpanded - if the meta data has additional information
 */
 export const getSiteMetaDataServiceURL = function({siteno,  isExpanded}) {
-    return `${config.SERVICE_ROOT}/site/?format=rdb&sites=${siteno}${isExpanded ? '&siteOutput=expanded' : ''}&siteStatus=all`;
+    return `${config.SITE_DATA_ENDPOINT}/?format=rdb&sites=${siteno}${isExpanded ? '&siteOutput=expanded' : ''}&siteStatus=all`;
 };
 
 /*
@@ -48,25 +48,25 @@ export const getIVServiceURL = function({
                                              format = null
                                          }) {
     let timeParams;
-    let serviceRoot;
+    let dataEndpoint;
 
     if (period) {
         const timePeriod = period;
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
-        serviceRoot = dayCount && dayCount < 120 ? config.SERVICE_ROOT : config.PAST_SERVICE_ROOT;
+        dataEndpoint = dayCount && dayCount < 120 ? config.IV_DATA_ENDPOINT: config.PAST_IV_DATA_ENDPOINT;
     } else if (startTime && endTime) {
         const startDateTime =  DateTime.fromISO(startTime);
         timeParams = `startDT=${startTime}&endDT=${endTime}`;
-        serviceRoot = tsServiceRoot(startDateTime);
+        dataEndpoint = ivDataEndpoint(startDateTime);
     } else {
         timeParams = '';
-        serviceRoot = config.SERVICE_ROOT;
+        dataEndpoint = config.IV_DATA_ENDPOINT;
     }
 
     let parameterCodeQuery = parameterCode ? `&parameterCd=${parameterCode}` : '';
 
-    return  `${serviceRoot}/iv/?sites=${siteno}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
+    return  `${dataEndpoint}/?sites=${siteno}${parameterCodeQuery}&${timeParams}&siteStatus=all&format=${format}`;
 };
 
 /**

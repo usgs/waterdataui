@@ -21,7 +21,7 @@ from .services.timezone import get_iana_time_zone
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
 
-NWIS = NwisWebServices(app.config['SERVER_SERVICE_ROOT'], app.config['SITE_SERVICE_CATALOG_ROOT'])
+NWIS = NwisWebServices(app.config['SITE_DATA_ENDPOINT'], app.config['SITE_DATA_ENDPOINT'])
 
 
 def has_feedback_link():
