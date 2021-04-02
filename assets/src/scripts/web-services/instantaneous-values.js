@@ -8,7 +8,7 @@ import config from 'ui/config';
  * Return the past service root if the start dt is more than 120 days from now
  */
 function ivDataEndpoint(dateTime) {
-    return DateTime.local().diff(dateTime).as('days') > 120 ? config.PAST_IV_DATA_ENDPOINT : config.IV_DATA_ENDPOINT;
+    return DateTime.local().diff(dateTime).as('days') > 120 ? config.HISTORICAL_IV_DATA_ENDPOINT : config.IV_DATA_ENDPOINT;
 }
 
 function getNumberOfDays(period) {
@@ -54,7 +54,7 @@ export const getIVServiceURL = function({
         const timePeriod = period;
         const dayCount = getNumberOfDays(timePeriod);
         timeParams = `period=${timePeriod}`;
-        dataEndpoint = dayCount && dayCount < 120 ? config.IV_DATA_ENDPOINT: config.PAST_IV_DATA_ENDPOINT;
+        dataEndpoint = dayCount && dayCount < 120 ? config.IV_DATA_ENDPOINT: config.HISTORICAL_IV_DATA_ENDPOINT;
     } else if (startTime && endTime) {
         const startDateTime =  DateTime.fromISO(startTime);
         timeParams = `startDT=${startTime}&endDT=${endTime}`;

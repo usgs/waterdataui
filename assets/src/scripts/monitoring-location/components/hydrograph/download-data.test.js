@@ -12,7 +12,7 @@ import {TEST_CURRENT_TIME_RANGE, TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW
 describe('monitoring-location/components/hydrograph/download-data', () => {
     config.SITE_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwis/site';
     config.IV_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwis/iv';
-    config.PAST_IV_DATA_ENDPOINT = 'https://fakeserviceroot-more-than-120-days.com/nwis/iv';
+    config.HISTORICAL_IV_DATA_ENDPOINT = 'https://fakeserviceroot-more-than-120-days.com/nwis/iv';
     config.STATISTICS_ENDPOINT = 'https://fakeserviceroot.com/nwis/stat';
     config.GROUNDWATER_LEVELS_ENDPOINT = 'https://fakegroundwater.org/gwlevels/';
     config.locationTimeZone = 'America/Chicago';

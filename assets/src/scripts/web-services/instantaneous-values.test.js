@@ -11,7 +11,7 @@ describe('web-services/instantaneous-values', () => {
     let fakeServer;
     let restoreConsole;
     config.IV_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwis/iv';
-    config.PAST_IV_DATA_ENDPOINT = 'https://pastfakeserviceroot.com/nwis/iv';
+    config.HISTORICAL_IV_DATA_ENDPOINT = 'https://pastfakeserviceroot.com/nwis/iv';
     config.SITE_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwi/site';
 
     beforeEach(() => {
@@ -83,14 +83,14 @@ describe('web-services/instantaneous-values', () => {
             expect(result).not.toContain('endDT');
         });
 
-        it('Expects if period is over 120 days PAST_IV_DATA_ENDPOINT will be used', () => {
+        it('Expects if period is over 120 days HISTORICAL_IV_DATA_ENDPOINT will be used', () => {
             const result = getIVServiceURL({
                 siteno: '11112222',
                 parameterCode: '72019',
                 period: 'P120D',
                 format: 'json'
             });
-            expect(result).toContain(`${config.PAST_IV_DATA_ENDPOINT}`);
+            expect(result).toContain(`${config.HISTORICAL_IV_DATA_ENDPOINT}`);
             expect(result).toContain('period=P120D');
             expect(result).not.toContain('startDT');
             expect(result).not.toContain('endDT');
@@ -127,7 +127,7 @@ describe('web-services/instantaneous-values', () => {
             expect(result).toContain(`endDT=${endTime}`);
         });
 
-        it('Expects if no period, but startTime and endTime are defined and more than 120 days in the past, the PAST_SERVICE_ROOT is used', () => {
+        it('Expects if no period, but startTime and endTime are defined and more than 120 days in the past, the HISTORICAL_IV_DATA_ENDPOINT is used', () => {
             const startTime = DateTime.local().minus({days: 121}).toISO();
             const endTime = DateTime.local().minus({days: 10}).toISO();
             const result = getIVServiceURL({
@@ -137,7 +137,7 @@ describe('web-services/instantaneous-values', () => {
                 endTime: endTime,
                 format: 'json'
             });
-            expect(result).toContain(`${config.PAST_IV_DATA_ENDPOINT}`);
+            expect(result).toContain(`${config.HISTORICAL_IV_DATA_ENDPOINT}`);
             expect(result).not.toContain('period');
             expect(result).toContain(`startDT=${startTime}`);
             expect(result).toContain(`endDT=${endTime}`);
