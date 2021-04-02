@@ -52,6 +52,10 @@ $row-border-color: 'black';
       .method-selection-row {
         @include grid-col;
         @include grid-offset(1);
+
+        .radio-method-selection {
+          @include u-padding-top(1);
+        }
       }
 
       .wateralert-row {

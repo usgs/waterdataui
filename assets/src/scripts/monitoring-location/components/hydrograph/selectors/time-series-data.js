@@ -151,7 +151,7 @@ export const getPreferredIVMethodID = createSelector(
     }
 );
 
-export const getSortedIVMethodID = createSelector(
+export const getSortedIVMethods = createSelector(
     getIVData('primary'),
     (ivData) => {
         if (!ivData || !Object.keys(ivData.values).length) {

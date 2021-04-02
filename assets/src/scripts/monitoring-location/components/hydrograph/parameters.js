@@ -51,7 +51,6 @@ const drawRowExpansionControl = function(container, parameter, type) {
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
 
-
                 // Set all icons to closed except the clicked icon(s).
                 const toggleList = document.querySelectorAll('.expansion-toggle');
                 toggleList.forEach(toggle => {
