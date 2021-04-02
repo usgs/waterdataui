@@ -23,7 +23,7 @@ DEBUG = False
 SITE_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/site' #Only used server side so does not need to be a public URL
 IV_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/iv'
 PAST_IV_DATA_ENDPOINT = 'https://nwis.waterservices.usgs.gov/nwis/iv'
-STATISTICS_ENDPOINT ='https://waterservices.usgs.gov/nwis/stat'
+STATISTICS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/stat'
 GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
 MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/'
 
