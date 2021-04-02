@@ -12,7 +12,7 @@ import config from 'ui/config';
  * @param {String} format - The format of the data returned from the water services API, such as 'json' or 'rdb'
  * @return {String} The URL used to contact waterservices.usgs.gov
  */
-export const getGroundwaterServiceURL = function ({
+export const getGroundwaterServiceURL = function({
                                                       siteno,
                                                       parameterCode = null,
                                                       period = null,
@@ -34,6 +34,7 @@ export const getGroundwaterServiceURL = function ({
  * Fetch the groundwater levels for site, parameterCode, and period
  * @param {String} sites
  * @param {String} parameterCode
+ * @param {String} period - ISO-8601 Duration in days.
  * @param {String} startTime - ISO-8601 time format
  * @param {String} endTime - ISO-8601 time format
  * @return {Promise} resolves to Object that is retrieved with ground water levels
