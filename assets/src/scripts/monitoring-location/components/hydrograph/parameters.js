@@ -99,7 +99,16 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
             container.classed('selected', parameterCode === selectedParameterCode)
                 .attr('aria-selected', parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
-        .on('click', function() {
+        .on('click', function(event) {
+            console.log('row event', event.target.getAttribute('class'))
+            // Only respond to clicks on 'this' (the containing row) element, and ignore any click bubbling up from children
+            // if (event.target !== this.target) {
+            //     return;
+            // }
+            // Remove the sampling method selections if they exist
+            select('#primary-sampling-method-row').remove();
+
+            // Get all of the open/close icons into the correct orientation.
             select('#select-time-series').selectAll('.fa-chevron-up')
                 .attr('class', ROW_TOGGLE_CLOSED_CLASS)
                 .attr('aria-expanded', 'false');
@@ -110,13 +119,12 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
 
+            // Hide or show the correct expansion row.
             select('#select-time-series').selectAll('.expansion-container-row')
                 .attr('hidden', 'true');
             select(`#expansion-container-row-${parameterCode}`).attr('hidden', null);
 
-
-
-            select('#primary-sampling-method-row').remove;
+            // Change to the newly selected parameter both in the selection list ond on the graph.
             const thisClass = select(this)
                 .attr('class');
             if (!thisClass || !thisClass.includes('selected')) {
@@ -257,9 +265,16 @@ export const drawSelectionList = function(container, store, siteno) {
             .attr('id', `expansion-container-row-${parameter.parameterCode}`)
             .attr('class', 'expansion-container-row')
             .attr('hidden', 'true');
+
         // Add the rows nested in the expansion container
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
+        }
+
+        // Add the sampling method selection list to the parameter loaded when the page is first opened
+        const primaryMethods = getPrimaryMethods(store.getState());
+        if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
+            drawSamplingMethodRow(select(`#expansion-container-row-${parameter.parameterCode}`), parameter.parameterCode, primaryMethods, store);
         }
     });
 

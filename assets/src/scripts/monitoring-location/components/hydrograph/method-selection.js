@@ -10,8 +10,6 @@ import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 import {showDataIndicators} from './data-indicator';
 
 export const drawSamplingMethodRow = function(container, parameterCode, primarySamplingMethods, store) {
-    console.log('ran method ')
-
     let selectedMethodID = getSelectedIVMethodID(store.getState());
     const availableMethodIDs = primarySamplingMethods.map(data => data.methodID);
     if (!selectedMethodID || selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
@@ -26,32 +24,33 @@ export const drawSamplingMethodRow = function(container, parameterCode, primaryS
         .attr('class', 'grid-row method-selection-row')
         .append('form')
             .attr('class', 'usa-form');
-    const checkboxFieldset = methodSelectionContainer.append('fieldset')
+    const methodSelectionFieldset = methodSelectionContainer.append('fieldset')
                 .attr('class', 'usa-fieldset');
-    checkboxFieldset.append('legend')
+    methodSelectionFieldset.append('legend')
                     .attr('class', 'usa-legend')
                     .text('Sampling Methods:');
 
     const sortedMethods = getSortedIVMethods(store.getState());
-    console.log('sortedMethods ', sortedMethods)
     sortedMethods.forEach((method, index) => {
-        const checkboxDiv = checkboxFieldset.append('div')
-            .attr('class', 'usa-radio radio-method-selection');
-       checkboxDiv.append('input')
+        const methodSelectionDiv = methodSelectionFieldset.append('div')
+            .attr('class', 'usa-radio radio-method-selection')
+            .on('click', function(event) {
+                event.stopPropagation();
+                console.log('radio event', event.target.getAttribute('class'))
+                store.dispatch(setSelectedIVMethodID(method.methodID));
+                showDataIndicators(false, store);
+            });
+       methodSelectionDiv.append('input')
             .attr('id', `radio-method-select-${method.methodID}`)
-            .attr('class', 'usa-radio__input')
+            .attr('class', 'usa-radio__input method-selection-input')
             .attr('type', 'radio')
             .attr('name', 'method-selection')
             .property('checked', index === 0 && method.pointCount > 0 ? true : null)
             .property('disabled', method.pointCount < 1 ? true : null)
-            .attr('value', method.methodID)
-            .on('change', function() {
-                console.log('changed ', select(this).property('value'))
-                store.dispatch(setSelectedIVMethodID(select(this).property('value')));
-                showDataIndicators(false, store);
-            });
-            checkboxDiv.append('label')
-                .attr('class', 'usa-radio__label')
+            .attr('value', method.methodID);
+
+            methodSelectionDiv.append('label')
+                .attr('class', 'usa-radio__label radio-method-selection-label')
                 .attr('for', `radio-method-select-${method.methodID}`)
                 .text(`${method.methodDescription} ${method.pointCount < 1 ? '(no data points in selected time span)' : ''}`);
     });

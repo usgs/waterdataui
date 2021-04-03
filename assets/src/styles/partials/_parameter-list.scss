@@ -53,6 +53,10 @@ $row-border-color: 'black';
         @include grid-col;
         @include grid-offset(1);
 
+        .usa-radio__input:disabled + .usa-radio__label {
+          @include u-color('black');
+        }
+
         .radio-method-selection {
           @include u-padding-top(1);
         }
