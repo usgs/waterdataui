@@ -30,6 +30,7 @@ const updateAvailableMethods = function(selectElem, methods, store) {
     methods.forEach((method) => {
         selectElem.append('option')
             .text(method.methodDescription ? `${method.methodDescription}` : 'None')
+            .attr('class', 'method-option sampling-method-selection')
             .attr('selected', method.methodID === selectedMethodID ? true : null)
             .node().value = method.methodID;
         });
@@ -39,26 +40,35 @@ const updateAvailableMethods = function(selectElem, methods, store) {
  * Draw the method picker. It will be set initially to the preferred method id if not already
  * set to a specific, available method id. The picker will be hidden if only one method
  * is available for the IV data.
- * @param {D3 selection} elem
+ * @param {D3 selection} container
  * @param {Redux store} store
  */
-export const drawMethodPicker = function(elem, store) {
-    const pickerContainer = elem.append('div')
+export const drawMethodPicker = function(container, parameterCode, store) {
+
+    const gridRowSamplingMethodSelection = container.append('div')
+        .attr('id', 'primary-sampling-method-row')
+        .attr('class', 'grid-container grid-row-inner sampling-method-selection');
+    const methodSelectionContainer = gridRowSamplingMethodSelection.append('div')
+        .attr('id', `method-selection-container-${parameterCode}`)
+        .attr('class', 'grid-row method-selection-row sampling-method-selection');
+    const pickerContainer = methodSelectionContainer.append('div')
         .attr('id', 'ts-method-select-container')
-        .call(link(store, (elem, methods) => {
-            elem.attr('hidden', methods && methods.length > 1 ? null : true);
+        .call(link(store, (container, methods) => {
+            container.attr('hidden', methods && methods.length > 1 ? null : true);
         },
         getPrimaryMethods));
 
     pickerContainer.append('label')
-        .attr('class', 'usa-label')
+        .attr('class', 'usa-label sampling-method-selection')
         .attr('for', 'method-picker')
-        .text('Description');
+        .text('Sampling Methods:');
     pickerContainer.append('select')
-        .attr('class', 'usa-select')
+        .attr('class', 'usa-select sampling-method-selection')
         .attr('id', 'method-picker')
         .call(link(store, updateAvailableMethods, getPrimaryMethods, store))
-        .on('change', function() {
+    .on('change', function(event) {
+            console.log('ran change click', event.target)
+            // event.stopPropagation();
             store.dispatch(setSelectedIVMethodID(select(this).property('value')));
             showDataIndicators(false, store);
         });

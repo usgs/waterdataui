@@ -3,10 +3,6 @@
  */
 @import './variables';
 
-#ts-method-select-container {
-  @include u-margin-bottom(2);
-}
-
 .short-cut-days-before-container {
   div {
     display: inline-block;

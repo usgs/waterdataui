@@ -1,7 +1,6 @@
 /*
 *  Functions related to the selection of data sampling methods
 */
-import {select} from 'd3-selection';
 
 import {getPreferredIVMethodID, getSortedIVMethods} from './selectors/time-series-data';
 import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
@@ -34,9 +33,9 @@ export const drawSamplingMethodRow = function(container, parameterCode, primaryS
     sortedMethods.forEach((method, index) => {
         const methodSelectionDiv = methodSelectionFieldset.append('div')
             .attr('class', 'usa-radio radio-method-selection')
+            .property('disabled', method.pointCount < 1 ? true : null)
             .on('click', function(event) {
                 event.stopPropagation();
-                console.log('radio event', event.target.getAttribute('class'))
                 store.dispatch(setSelectedIVMethodID(method.methodID));
                 showDataIndicators(false, store);
             });

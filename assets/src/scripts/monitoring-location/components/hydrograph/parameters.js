@@ -16,6 +16,7 @@ import {getAvailableParameters} from './selectors/parameter-data';
 import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
 import {drawSamplingMethodRow} from './method-selection';
 import {showDataIndicators} from './data-indicator';
+import {drawMethodPicker} from './method-picker';
 
 const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
 const ROW_TOGGLE_OPENED_CLASS = 'fas fa-chevron-up expansion-toggle';
@@ -77,6 +78,17 @@ const drawRowExpansionControl = function(container, parameter, type) {
 };
 
 /*
+ * Helper function that checks the classes of the element on which the user clicked
+ * @param eventTarget - The classes of the element the user clicked.
+ * @returns {boolean} - True, if the click target has specific classes
+ */
+const isMethodSelectionClick = function(eventTarget) {
+    if (eventTarget.getAttribute('class')) {
+        return !! eventTarget.getAttribute('class').includes('sampling-method-selection');
+    }
+};
+
+/*
 * Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid.
 * The grid has one 'container row' for each parameter (this function creates the 'container rows' for each parameter).
 * As a side note - each container row will eventually contain three internal rows.
@@ -100,12 +112,11 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
                 .attr('aria-selected', parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
         .on('click', function(event) {
-            console.log('row event', event.target.getAttribute('class'))
-            // Only respond to clicks on 'this' (the containing row) element, and ignore any click bubbling up from children
-            // if (event.target !== this.target) {
-            //     return;
-            // }
-            // Remove the sampling method selections if they exist
+            // Don't let clicks on the sampling method selections trigger a parameter reload.
+            if (isMethodSelectionClick(event.target)) {
+                return;
+            }
+
             select('#primary-sampling-method-row').remove();
 
             // Get all of the open/close icons into the correct orientation.
@@ -136,7 +147,8 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
 
                         const primarySamplingMethods = getPrimaryMethods(store.getState());
                         if (primarySamplingMethods.length > 1) {
-                            drawSamplingMethodRow(select(`#expansion-container-row-${parameterCode}`), parameterCode, primarySamplingMethods, store);
+                            // select(`#expansion-container-row-${parameterCode}`).call(drawSamplingMethodRow, parameterCode, primarySamplingMethods, store);
+                            select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
                         }
                     });
             }
@@ -238,7 +250,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
 * @param {Object} container - The target element to append the selection list
 * @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* */
+*/
 export const drawSelectionList = function(container, store, siteno) {
     const parameters = getAvailableParameters(store.getState());
 
@@ -274,7 +286,8 @@ export const drawSelectionList = function(container, store, siteno) {
         // Add the sampling method selection list to the parameter loaded when the page is first opened
         const primaryMethods = getPrimaryMethods(store.getState());
         if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
-            drawSamplingMethodRow(select(`#expansion-container-row-${parameter.parameterCode}`), parameter.parameterCode, primaryMethods, store);
+            // select(`#expansion-container-row-${parameter.parameterCode}`).call(drawSamplingMethodRow, parameter.parameterCode, primaryMethods, store);
+            select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);
         }
     });
 

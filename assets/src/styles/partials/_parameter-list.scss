@@ -50,15 +50,17 @@ $row-border-color: 'black';
       @include u-padding-left(0);
 
       .method-selection-row {
-        @include grid-col;
-        @include grid-offset(1);
-
-        .usa-radio__input:disabled + .usa-radio__label {
-          @include u-color('black');
+        #ts-method-select-container {
+          @include grid-col(11);
+          @include grid-offset(1);
         }
 
-        .radio-method-selection {
-          @include u-padding-top(1);
+        #method-picker {
+          background-color: white;
+          .usa-select {
+            background-color: #00bde3;
+            width: auto;
+          }
         }
       }
 
