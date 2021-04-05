@@ -138,6 +138,11 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
             // Change to the newly selected parameter both in the selection list ond on the graph.
             const thisClass = select(this)
                 .attr('class');
+            // Show the sampling method selection if user clicks the currently selected row, but don't reload the graph data.
+            if (thisClass) {
+                select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
+            }
+
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(parameterCode));
                 showDataIndicators(true, store);
@@ -147,6 +152,7 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
 
                         const primarySamplingMethods = getPrimaryMethods(store.getState());
                         if (primarySamplingMethods.length > 1) {
+                            select('#primary-sampling-method-row').remove();
                             select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
                         }
                     });
