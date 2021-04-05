@@ -147,7 +147,6 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
 
                         const primarySamplingMethods = getPrimaryMethods(store.getState());
                         if (primarySamplingMethods.length > 1) {
-                            // select(`#expansion-container-row-${parameterCode}`).call(drawSamplingMethodRow, parameterCode, primarySamplingMethods, store);
                             select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
                         }
                     });

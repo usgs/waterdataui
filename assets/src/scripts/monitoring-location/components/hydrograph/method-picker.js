@@ -12,7 +12,7 @@ import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 
 import {showDataIndicators} from './data-indicator';
-import {getPreferredIVMethodID} from './selectors/time-series-data';
+import {getPreferredIVMethodID, getSortedIVMethods} from './selectors/time-series-data';
 
 const updateAvailableMethods = function(selectElem, methods, store) {
     selectElem.selectAll('option').remove();
@@ -27,11 +27,14 @@ const updateAvailableMethods = function(selectElem, methods, store) {
         showDataIndicators(false, store);
     }
 
-    methods.forEach((method) => {
+    const sortedMethods = getSortedIVMethods(store.getState());
+    sortedMethods.forEach((method) => {
+        const hasPointsInTimeSpan = method.pointCount > 0;
         selectElem.append('option')
             .text(method.methodDescription ? `${method.methodDescription}` : 'None')
             .attr('class', 'method-option sampling-method-selection')
             .attr('selected', method.methodID === selectedMethodID ? true : null)
+            .property('disabled', !hasPointsInTimeSpan ? true : null)
             .node().value = method.methodID;
         });
 };
@@ -66,9 +69,7 @@ export const drawMethodPicker = function(container, parameterCode, store) {
         .attr('class', 'usa-select sampling-method-selection')
         .attr('id', 'method-picker')
         .call(link(store, updateAvailableMethods, getPrimaryMethods, store))
-    .on('change', function(event) {
-            console.log('ran change click', event.target)
-            // event.stopPropagation();
+    .on('change', function() {
             store.dispatch(setSelectedIVMethodID(select(this).property('value')));
             showDataIndicators(false, store);
         });
