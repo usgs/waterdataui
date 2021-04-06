@@ -151,13 +151,18 @@ export const getPreferredIVMethodID = createSelector(
     }
 );
 
+
+/**
+ * Returns a array of methods sorted from most to least points in the selected time span.
+ * @return {Array} Array of objects with details about the sampling methods available for the primary parameter.
+ */
 export const getSortedIVMethods = createSelector(
     getIVData('primary'),
     (ivData) => {
         if (!ivData || !Object.keys(ivData.values).length) {
             return null;
         }
-        const methodMetaData = Object.values(ivData.values)
+        const methodsForPrimarySelection = Object.values(ivData.values)
             .map(methodValues => {
                 return {
                     pointCount: methodValues.points.length,
@@ -173,6 +178,6 @@ export const getSortedIVMethods = createSelector(
                     return a.pointCount - b.pointCount;
                 }
             });
-        return methodMetaData.reverse();
+        return methodsForPrimarySelection.reverse();
     }
 );
