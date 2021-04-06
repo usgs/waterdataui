@@ -13,12 +13,18 @@ import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 import {showDataIndicators} from './data-indicator';
 import {getPreferredIVMethodID, getSortedIVMethods} from './selectors/time-series-data';
 
-const updateAvailableMethods = function(selectElem, methods, store) {
-    selectElem.selectAll('option').remove();
+/**
+ * Changes the list of methods when the parameter changes
+ * @param {D3 selection} container- An HTML element to serve as the base for attaching other elements.
+ * @param {Object} methods - The complete list of sampling methods available for the selected parameter.
+ * @param {Redux store} store - A complex JavaScript object that maps the current state of the application.
+ */
+const updateAvailableMethods = function(container, methods, store) {
+    container.selectAll('option').remove();
     if (!methods || !methods.length) {
         return;
     }
-    console.log('store.getState() ', store.getState())
+
     let selectedMethodID = getSelectedIVMethodID(store.getState());
     const availableMethodIDs = methods.map(data => data.methodID);
     if (!selectedMethodID || selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
@@ -29,7 +35,7 @@ const updateAvailableMethods = function(selectElem, methods, store) {
 
     methods.forEach((method) => {
         const hasPointsInTimeSpan = method.pointCount > 0;
-        selectElem.append('option')
+        container.append('option')
             .text(`${method.methodDescription}`)
             .attr('class', 'method-option sampling-method-selection')
             .attr('selected', method.methodID === selectedMethodID ? true : null)
@@ -38,15 +44,15 @@ const updateAvailableMethods = function(selectElem, methods, store) {
         });
 };
 
-/*
+/**
  * Draw the method picker. It will be set initially to the preferred method id if not already
  * set to a specific, available method id. The picker will be hidden if only one method
  * is available for the IV data.
- * @param {D3 selection} container
- * @param {Redux store} store
+ * @param {D3 selection} container - An HTML element to serve as the base for attaching other elements.
+ * @param {String} parameterCode - The five digit USGS that is unique for each parameter.
+ * @param {Redux store} store - A complex JavaScript object that maps the current state of the application.
  */
 export const drawMethodPicker = function(container, parameterCode, store) {
-
     const gridRowSamplingMethodSelection = container.append('div')
         .attr('id', 'primary-sampling-method-row')
         .attr('class', 'grid-container grid-row-inner sampling-method-selection');

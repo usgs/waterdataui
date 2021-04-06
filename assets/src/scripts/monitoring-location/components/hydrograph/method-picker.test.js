@@ -32,14 +32,16 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
         });
 
         it('Creates a picker and sets the currentMethodID to the hydrographState\'s selectedIVMethodID', () => {
+            const parameterCode = '72019';
             let store = configureStore(TEST_STATE);
-            div.call(drawMethodPicker, store);
+            div.call(drawMethodPicker, parameterCode, store);
 
             expect(div.select('#ts-method-select-container').attr('hidden')).toBeNull();
             expect(div.select('select').property('value')).toEqual('252055');
         });
 
         it('Creates a picker and if selectedIVMethodID not set set to the preferred method id', () => {
+            const parameterCode = '72019';
             let store = configureStore({
                 ...TEST_STATE,
                 hydrographState: {
@@ -47,7 +49,7 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
                     selectedIVMethodID: null
                 }
             });
-            div.call(drawMethodPicker, store);
+            div.call(drawMethodPicker, parameterCode, store);
 
             expect(div.select('#ts-method-select-container').attr('hidden')).toBeNull();
             expect(div.select('select').property('value')).toEqual('90649');
@@ -55,7 +57,8 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
 
         it('selecting a different method updates the store and updates the no data available indicator', () => {
             let store = configureStore(TEST_STATE);
-            div.call(drawMethodPicker, store);
+            const parameterCode = '72019';
+            div.call(drawMethodPicker, parameterCode, store);
 
             const newOption = div.select('option[value="90649"]');
             newOption.attr('selected', true);
@@ -68,6 +71,7 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
         });
 
         it('Expects if the data has only one method then the picker will be hidden', () => {
+            const parameterCode = '72019';
             let store = configureStore({
                 ...TEST_STATE,
                 hydrographData: {
@@ -81,7 +85,7 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
                     }
                 }
             });
-            div.call(drawMethodPicker, store);
+            div.call(drawMethodPicker, parameterCode, store);
 
             expect(div.select('#ts-method-select-container').attr('hidden')).toBe('true');
         });
