@@ -6,7 +6,6 @@ import {select} from 'd3-selection';
 
 import{link}  from 'ui/lib/d3-redux';
 
-import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
 import {getSelectedIVMethodID} from 'ml/selectors/hydrograph-state-selector';
 
 import {setSelectedIVMethodID} from 'ml/store/hydrograph-state';
@@ -69,7 +68,7 @@ export const drawMethodPicker = function(container, parameterCode, store) {
                 if(hasMethodsWithNoPointsInTimeRange) {
                     container.append('span')
                         .attr('id', 'no-data-points-note')
-                        .text(' note - some methods are disabled. There are no data points in time span selected');
+                        .text(' note - some methods are disabled, because there are no data points for these methods in your selected time span');
                 }
             }
         }, getSortedIVMethods));

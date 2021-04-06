@@ -51,14 +51,11 @@ $row-border-color: 'black';
 
       .method-selection-row {
         #ts-method-select-container {
-          @include grid-col(11);
+          @include grid-col(7);
           @include grid-offset(1);
         }
-
-        #method-picker {
-          .method-option {
-            background-color: #00bde3;
-          }
+        #no-data-points-note {
+          font-weight: lighter;
         }
       }
 
