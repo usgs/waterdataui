@@ -18,6 +18,7 @@ const updateAvailableMethods = function(selectElem, methods, store) {
     if (!methods || !methods.length) {
         return;
     }
+    console.log('store.getState() ', store.getState())
     let selectedMethodID = getSelectedIVMethodID(store.getState());
     const availableMethodIDs = methods.map(data => data.methodID);
     if (!selectedMethodID || selectedMethodID && !availableMethodIDs.includes(selectedMethodID)) {
