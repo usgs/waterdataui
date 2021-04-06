@@ -14,7 +14,6 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 import {getAvailableParameters} from './selectors/parameter-data';
 
 import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
-import {drawSamplingMethodRow} from './method-selection';
 import {showDataIndicators} from './data-indicator';
 import {drawMethodPicker} from './method-picker';
 
@@ -291,7 +290,6 @@ export const drawSelectionList = function(container, store, siteno) {
         // Add the sampling method selection list to the parameter loaded when the page is first opened
         const primaryMethods = getPrimaryMethods(store.getState());
         if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
-            // select(`#expansion-container-row-${parameter.parameterCode}`).call(drawSamplingMethodRow, parameter.parameterCode, primaryMethods, store);
             select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);
         }
     });
