@@ -27,15 +27,14 @@ const updateAvailableMethods = function(selectElem, methods, store) {
         showDataIndicators(false, store);
     }
 
-    const sortedMethods = getSortedIVMethods(store.getState());
-    sortedMethods.forEach((method) => {
+    methods.forEach((method) => {
         const hasPointsInTimeSpan = method.pointCount > 0;
         selectElem.append('option')
-            .text(method.methodDescription ? `${method.methodDescription}` : 'None')
+            .text(`${method.methodDescription}`)
             .attr('class', 'method-option sampling-method-selection')
             .attr('selected', method.methodID === selectedMethodID ? true : null)
-            .property('disabled', !hasPointsInTimeSpan ? true : null)
-            .node().value = method.methodID;
+            .attr('value', method.methodID)
+            .property('disabled', !hasPointsInTimeSpan ? true : null);
         });
 };
 
@@ -58,17 +57,27 @@ export const drawMethodPicker = function(container, parameterCode, store) {
         .attr('id', 'ts-method-select-container')
         .call(link(store, (container, methods) => {
             container.attr('hidden', methods && methods.length > 1 ? null : true);
-        },
-        getPrimaryMethods));
+        }, getSortedIVMethods));
 
     pickerContainer.append('label')
         .attr('class', 'usa-label sampling-method-selection')
-        .attr('for', 'method-picker')
-        .text('Sampling Methods:');
+        .attr('for', 'method-picker');
+    pickerContainer.text('Sampling Methods:')
+        .call(link(store, (container, methods) => {
+            if (methods !== null) {
+                const hasMethodsWithNoPointsInTimeRange = methods.filter(method => method.pointCount === 0).length !== 0;
+                if(hasMethodsWithNoPointsInTimeRange) {
+                    container.append('span')
+                        .attr('id', 'no-data-points-note')
+                        .text(' note - some methods are disabled. There are no data points in time span selected');
+                }
+            }
+        }, getSortedIVMethods));
+
     pickerContainer.append('select')
         .attr('class', 'usa-select sampling-method-selection')
         .attr('id', 'method-picker')
-        .call(link(store, updateAvailableMethods, getPrimaryMethods, store))
+        .call(link(store, updateAvailableMethods, getSortedIVMethods, store))
     .on('change', function() {
             store.dispatch(setSelectedIVMethodID(select(this).property('value')));
             showDataIndicators(false, store);
