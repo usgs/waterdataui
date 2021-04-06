@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...master)
+### Changed
+- Moved sampling method selection into the parameter selection list
 
 ## [0.45.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...waterdataui-0.45.0) - 2021-03-31
 ### Added
