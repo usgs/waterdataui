@@ -89,5 +89,16 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
 
             expect(div.select('#ts-method-select-container').attr('hidden')).toBe('true');
         });
+
+        it('Expects the methods will be in order from most to least points', () => {
+            const parameterCode = '72019';
+            let store = configureStore({
+                ...TEST_STATE
+            });
+            div.call(drawMethodPicker, parameterCode, store);
+            const allOptionElements = div.selectAll('option');
+            expect(allOptionElements['_groups'][0][0].getAttribute('value')).toBe('90649');
+            expect(allOptionElements['_groups'][0][1].getAttribute('value')).toBe('252055');
+        });
     });
 });
