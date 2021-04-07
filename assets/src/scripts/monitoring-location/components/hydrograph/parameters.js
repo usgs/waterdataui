@@ -13,7 +13,6 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
 
-import {drawSamplingMethodRow} from './method-selection'
 import {showDataIndicators} from './data-indicator';
 
 const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
@@ -155,7 +154,7 @@ const drawRadioButtonRow = function(container, parameter, store) {
     const gridRowInnerWithRadioButton = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
-        .attr('class', 'radio-button__param-select')
+        .attr('class', 'grid-col-1 radio-button__param-select')
         .append('div')
             .attr('class', 'usa-radio');
     radioButtonDiv.append('input')
@@ -253,7 +252,6 @@ export const drawSelectionList = function(container, store, siteno) {
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
-        drawSamplingMethodRow(expansionContainerRow, parameter.parameterCode, store);
     });
 
     // Activate the USWDS toolTips for WaterAlert subscriptions

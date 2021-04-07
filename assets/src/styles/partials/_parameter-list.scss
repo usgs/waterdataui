@@ -49,11 +49,6 @@ $row-border-color: 'black';
       @include u-padding-right(0);
       @include u-padding-left(0);
 
-      .method-selection-row {
-        @include grid-col;
-        @include grid-offset(1);
-      }
-
       .wateralert-row {
         @include grid-col;
         @include grid-offset(1);
@@ -71,10 +66,6 @@ $row-border-color: 'black';
           @include u-font-weight('normal');
         }
       }
-    }
-
-    .radio-button__param-select {
-      @include grid-col(1);
     }
 
     .period-of-record__param-select {
