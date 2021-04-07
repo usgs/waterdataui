@@ -120,12 +120,12 @@ describe('monitoring-location/selectors/flood-data-selector', () => {
                     floodLevels: {
                         site_no: '07144100',
                         action_stage: '20',
-                        flood_stage: '22',
+                        flood_stage: '22.5',
                         moderate_flood_stage: '25',
                         major_flood_stage: '26'
                     }
                 }
-            }))).toEqual([20, 22, 25, 26]);
+            }))).toEqual([20, 22.5, 25, 26]);
         });
     });
 
