@@ -1,7 +1,8 @@
 const autoprefixerOptions = [
-    '>2%',
+    '> 2%',
     'Last 2 versions',
-    'IE 11'
+    'IE 11',
+    'not dead'
 ];
 
 module.exports = ctx => ({

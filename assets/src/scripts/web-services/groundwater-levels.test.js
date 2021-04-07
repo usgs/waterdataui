@@ -4,7 +4,6 @@ import sinon from 'sinon';
 import {MOCK_GWLEVEL_DATA} from 'ui/mock-service-data';
 
 import {getGroundwaterServiceURL, fetchGroundwaterLevels} from './groundwater-levels';
-import {get} from "../ajax";
 
 describe('web-services/groundwater-levels', () => {
     let fakeServer;

@@ -11,7 +11,7 @@ def get_iana_time_zone(latitude, longitude):
     :param longitude: str
     :return str
     """
-    resp = execute_get_request(app.config['WEATHER_SERVICE_ROOT'], f'points/{latitude},{longitude}')
+    resp = execute_get_request(app.config['WEATHER_SERVICE_ENDPOINT'], f'points/{latitude},{longitude}')
     if resp.status_code != 200:
         return None
 

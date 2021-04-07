@@ -5,12 +5,8 @@
     <link rel="stylesheet" href="{{ 'main.css' | asset_url }}">
 {% endblock %}
 
-{% block page_script %}
-    <script src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
-{% endblock %}
-
 {% block body %}
-
+    <script async src="{{ 'scripts/wdfnviz.js' | asset_url }}"></script>
     {% include 'partials/header.html' %}
 
     <main id="main-content" class="grid-container content-container usa-prose">

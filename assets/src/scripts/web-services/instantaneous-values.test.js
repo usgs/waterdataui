@@ -10,8 +10,9 @@ import {getSiteMetaDataServiceURL, getIVServiceURL, fetchTimeSeries} from './ins
 describe('web-services/instantaneous-values', () => {
     let fakeServer;
     let restoreConsole;
-    config.SERVICE_ROOT = 'https://fakeserviceroot.com';
-    config.PAST_SERVICE_ROOT = 'https://pastfakeserviceroot.com';
+    config.IV_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwis/iv';
+    config.HISTORICAL_IV_DATA_ENDPOINT = 'https://pastfakeserviceroot.com/nwis/iv';
+    config.SITE_DATA_ENDPOINT = 'https://fakeserviceroot.com/nwi/site';
 
     beforeEach(() => {
         fakeServer = sinon.createFakeServer();
@@ -28,7 +29,7 @@ describe('web-services/instantaneous-values', () => {
            const result = getSiteMetaDataServiceURL({
                siteno: '11112222'
            });
-           expect(result).toContain(`${config.SERVICE_ROOT}/site`);
+           expect(result).toContain(config.SITE_DATA_ENDPOINT);
            expect(result).toContain('sites=11112222');
            expect(result).not.toContain('siteOutput=expanded');
        });
@@ -38,7 +39,7 @@ describe('web-services/instantaneous-values', () => {
                siteno: '11112222',
                isExpanded: true
            });
-           expect(result).toContain(`${config.SERVICE_ROOT}/site`);
+           expect(result).toContain(`${config.SITE_DATA_ENDPOINT}`);
            expect(result).toContain('sites=11112222');
            expect(result).toContain('siteOutput=expanded');
        });
@@ -50,7 +51,7 @@ describe('web-services/instantaneous-values', () => {
                siteno: '11112222',
                format: 'json'
            });
-           expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+           expect(result).toContain(`${config.IV_DATA_ENDPOINT}`);
            expect(result).toContain('sites=1111222');
            expect(result).toContain('format=json');
            expect(result).not.toContain('parameterCd');
@@ -65,31 +66,31 @@ describe('web-services/instantaneous-values', () => {
                 parameterCode: '72019',
                 format: 'json'
             });
-            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.IV_DATA_ENDPOINT}`);
             expect(result).toContain('parameterCd=72019');
         });
 
-        it('Expects if period is under 120 days SERVICE_ROOT will be used', () => {
+        it('Expects if period is under 120 days IV_DATA_ENDPOINT will be used', () => {
             const result = getIVServiceURL({
                 siteno: '11112222',
                 parameterCode: '72019',
                 period: 'P119D',
                 format: 'json'
             });
-            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.IV_DATA_ENDPOINT}`);
             expect(result).toContain('period=P119D');
             expect(result).not.toContain('startDT');
             expect(result).not.toContain('endDT');
         });
 
-        it('Expects if period is over 120 days PAST_SERVICE_ROOT will be used', () => {
+        it('Expects if period is over 120 days HISTORICAL_IV_DATA_ENDPOINT will be used', () => {
             const result = getIVServiceURL({
                 siteno: '11112222',
                 parameterCode: '72019',
                 period: 'P120D',
                 format: 'json'
             });
-            expect(result).toContain(`${config.PAST_SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.HISTORICAL_IV_DATA_ENDPOINT}`);
             expect(result).toContain('period=P120D');
             expect(result).not.toContain('startDT');
             expect(result).not.toContain('endDT');
@@ -104,7 +105,7 @@ describe('web-services/instantaneous-values', () => {
                 endTime: '2020-01-31',
                 format: 'json'
             });
-            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.IV_DATA_ENDPOINT}`);
             expect(result).toContain('period=P7D');
             expect(result).not.toContain('startDT');
             expect(result).not.toContain('endDT');
@@ -120,13 +121,13 @@ describe('web-services/instantaneous-values', () => {
                 endTime: endTime,
                 format: 'json'
             });
-            expect(result).toContain(`${config.SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.IV_DATA_ENDPOINT}`);
             expect(result).not.toContain('period');
             expect(result).toContain(`startDT=${startTime}`);
             expect(result).toContain(`endDT=${endTime}`);
         });
 
-        it('Expects if no period, but startTime and endTime are defined and more than 120 days in the past, the PAST_SERVICE_ROOT is used', () => {
+        it('Expects if no period, but startTime and endTime are defined and more than 120 days in the past, the HISTORICAL_IV_DATA_ENDPOINT is used', () => {
             const startTime = DateTime.local().minus({days: 121}).toISO();
             const endTime = DateTime.local().minus({days: 10}).toISO();
             const result = getIVServiceURL({
@@ -136,7 +137,7 @@ describe('web-services/instantaneous-values', () => {
                 endTime: endTime,
                 format: 'json'
             });
-            expect(result).toContain(`${config.PAST_SERVICE_ROOT}/iv`);
+            expect(result).toContain(`${config.HISTORICAL_IV_DATA_ENDPOINT}`);
             expect(result).not.toContain('period');
             expect(result).toContain(`startDT=${startTime}`);
             expect(result).toContain(`endDT=${endTime}`);
