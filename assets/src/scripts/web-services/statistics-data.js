@@ -12,7 +12,7 @@ import {parseRDB} from 'ui/utils';
  * @return {String} The URL used to contact waterservices.usgs.gov
  */
 export const getStatisticsServiceURL = function({siteno, parameterCode, statType, format}) {
-    return `${config.SERVICE_ROOT}/stat/?sites=${siteno}&statReportType=daily&statTypeCd=${statType}&parameterCd=${parameterCode}&format=${format}`;
+    return `${config.STATISTICS_ENDPOINT}/?sites=${siteno}&statReportType=daily&statTypeCd=${statType}&parameterCd=${parameterCode}&format=${format}`;
 };
 
 /*

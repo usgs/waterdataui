@@ -9,12 +9,7 @@ import os
 
 PROJECT_HOME = os.path.dirname(__file__)
 
-# controls environment specific behavior
-# acceptable values: 'local', 'development', 'staging', 'prod'
-DEPLOYMENT_ENVIRONMENT = 'development'
-
 # FEATURE FLAGS
-TIMESERIES_AUDIO_ENABLED = True
 HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
@@ -25,18 +20,20 @@ SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messag
 GROUNDWATER_LEVELS_ENABLED = True
 DEBUG = False
 
-SERVER_SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Used for webserver calls to waterservices.
-SERVICE_ROOT = 'https://waterservices.usgs.gov'  # Use for client side calls to waterservices. Most be a public url.
-PAST_SERVICE_ROOT = 'https://nwis.waterservices.usgs.gov'
-NWIS_PAGE_URLS = {
+SITE_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/site' #Only used server side so does not need to be a public URL
+PUBLIC_SITE_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/site'
+IV_DATA_ENDPOINT = 'https://waterservices.usgs.gov/nwis/iv'
+HISTORICAL_IV_DATA_ENDPOINT = 'https://nwis.waterservices.usgs.gov/nwis/iv'
+STATISTICS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/stat'
+GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
+MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/collections/'
+
+NWISWEB_ENDPOINTS = {
     'INVENTORY': 'https://waterdata.usgs.gov/nwis/inventory',
     'UV': 'https://waterdata.usgs.gov/nwis/uv'
 }
-WEATHER_SERVICE_ROOT = 'https://api.weather.gov'
 
-SITE_SERVICE_CATALOG_ROOT = 'https://waterservices.usgs.gov'
-OBSERVATIONS_ENDPOINT = 'https://labs.waterdata.usgs.gov/api/observations/'
-GROUNDWATER_LEVELS_ENDPOINT = 'https://waterservices.usgs.gov/nwis/gwlevels/'
+WEATHER_SERVICE_ENDPOINT = 'https://api.weather.gov'
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
@@ -61,10 +58,6 @@ TNM_USGS_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/U
 TNM_USGS_IMAGERY_ONLY_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer'
 TNM_USGS_IMAGERY_TOPO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer'
 TNM_HYDRO_ENDPOINT = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer'
-
-# Download Data related Links
-RDB_FORMAT_INFORMATION = 'https://waterdata.usgs.gov/nwis/?tab_delimited_format_info'
-DATA_RETRIEVAL_PACKAGE_INFORMATION = 'https://usgs-r.github.io/dataRetrieval/'
 
 MONITORING_LOCATION_CAMERA_ENDPOINT = 'https://apps.usgs.gov/sstl/'
 

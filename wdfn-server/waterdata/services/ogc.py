@@ -14,7 +14,7 @@ def get_networks(network_cd=''):
     a dictionary containing a list of collections.
 
     """
-    url = f"{app.config['OBSERVATIONS_ENDPOINT']}collections/{network_cd}"
+    url = f"{app.config['MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT']}{network_cd}"
 
     response = execute_get_request(url, params={'f': 'json'})
 

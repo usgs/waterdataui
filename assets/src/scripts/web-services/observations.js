@@ -15,7 +15,7 @@ const fetchObservationsData = function(queryUrl, parameters={}) {
         f: 'json'
     };
     const queryString = Object.keys(queryParameters).map((key) => `${key}=${queryParameters[key]}`).join('&');
-    const url = `${config.OBSERVATIONS_ENDPOINT}${queryUrl}?${queryString}`;
+    const url = `${config.MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT}${queryUrl}?${queryString}`;
     return get(url)
         .then(resp => JSON.parse(resp))
         .catch(reason => {
@@ -31,7 +31,7 @@ const fetchObservationsData = function(queryUrl, parameters={}) {
  * @return {Promise} resolves to an Array of feature Objects
  */
 export const fetchNetworkMonitoringLocations = function(networkCd, queryParameters={}) {
-    return fetchObservationsData(`collections/${networkCd}/items`, queryParameters)
+    return fetchObservationsData(`${networkCd}/items`, queryParameters)
        .then((response) => response.features ? response.features : []);
 };
 
@@ -43,7 +43,7 @@ export const fetchNetworkMonitoringLocations = function(networkCd, queryParamete
  * @returns {Promise}<Object>
  */
 export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
-    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series`);
+    return fetchObservationsData(`${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series`);
 };
 
 /*
@@ -54,7 +54,7 @@ export const fetchAvailableDVTimeSeries = function(monitoringLocationId) {
  * @return {Promise}<Object>
  */
 export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
-    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
+    return fetchObservationsData(`${NWIS_COLLECTION_ID}/items/${monitoringLocationId}/observations/statistical-time-series/${timeSeriesId}`);
 };
 
 /*
@@ -64,5 +64,5 @@ export const fetchDVTimeSeries = function(monitoringLocationId, timeSeriesId) {
  * @return {Promise}<Object>
  */
 export const fetchMonitoringLocationMetaData = function(monitoringLocationId) {
-    return fetchObservationsData(`collections/${NWIS_COLLECTION_ID}/items/USGS-${monitoringLocationId}`);
+    return fetchObservationsData(`${NWIS_COLLECTION_ID}/items/USGS-${monitoringLocationId}`);
 };

@@ -102,7 +102,7 @@ class TestMonitoringLocationView(TestCase):
     def setUp(self):
         self.app_client = app.test_client()
         self.test_site_number = '01630500'
-        self.test_url = '{0}/nwis/site/?site={1}'.format(app.config['SERVER_SERVICE_ROOT'], self.test_site_number)
+        self.test_url = '{0}/?site={1}'.format(app.config['SITE_DATA_ENDPOINT'], self.test_site_number)
         self.test_rdb_text = SITE_RDB
         self.test_rdb_lines = self.test_rdb_text.split('\n')
         self.headers = {'Accept': 'application/ld+json'}
@@ -187,7 +187,7 @@ class TestHydrologicalUnitView:
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
+            url = re.compile('{host}.*'.format(host=app.config['SITE_DATA_ENDPOINT']))
             req.get(url, text=PARAMETER_RDB)
             yield
 
@@ -217,7 +217,7 @@ class TestNetworkView(TestCase):
 
     def setUp(self):
         self.app_client = app.test_client()
-        self.test_url = '{0}/'.format(app.config['OBSERVATIONS_ENDPOINT'])
+        self.test_url = '{0}'.format(app.config['MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT'])
         self.network = 'monitoring-locations'
         self.format = 'json'
 
@@ -260,7 +260,7 @@ class TestCountryStateCountyView:
     def mock_site_call(self):
         """Return the same mock site list for each call to the site service"""
         with requests_mock.mock() as req:
-            url = re.compile('{host}/nwis/site/.*'.format(host=app.config['SERVER_SERVICE_ROOT']))
+            url = re.compile('{host}.*'.format(host=app.config['SITE_DATA_ENDPOINT']))
             req.get(url, text=PARAMETER_RDB)
             yield
 
