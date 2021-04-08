@@ -1,11 +1,11 @@
-{% macro TimeSeriesComponent(site_data, default_parameter_code) -%}
+{% macro TimeSeriesComponent(site_data, default_parameter_code, iv_period_of_record, gw_period_of_record) -%}
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
          data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
          data-parameter-code="{{ default_parameter_code }}">
         <div id="time-download-graph-controls">
             {% if iv_period_of_record or gw_period_of_record %}
                 <div class="short-cut-days-before-container"></div>
-            {% if iv_period_of_record or gw_period_of_record %}
+            {% endif %}
             <div class="select-actions-container"></div>
         </div>
         <div id="hydrograph-method-picker-container"></div>

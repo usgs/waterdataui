@@ -161,7 +161,7 @@
                         </div>
                     {% endif %}
                     {% if request.user_agent.browser != 'msie' %}
-                        {{ components.TimeSeriesComponent(stations[0], default_parameter_code) }}
+                        {{ components.TimeSeriesComponent(stations[0], default_parameter_code, iv_period_of_record, gw_period_of_record) }}
                         {% if cameras %}
                             {{ components.CameraComponent(cameras) }}
                         {% endif %}

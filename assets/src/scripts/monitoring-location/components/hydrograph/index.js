@@ -59,6 +59,7 @@ export const attachToNode = function(store,
     const nodeElem = select(node);
     if (!config.ivPeriodOfRecord && !config.gwPeriodOfRecord) {
         select(node).select('.graph-container').call(drawInfoAlert, {title: 'Hydrograph Alert', body: 'No IV or field visit data is available.'});
+        select(node).select('.select-actions-container').call(drawSelectActions, store, siteno);
         return;
     }
 
