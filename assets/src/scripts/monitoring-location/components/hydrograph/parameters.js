@@ -77,7 +77,8 @@ const drawRowExpansionControl = function(container, parameter, type) {
 };
 
 /*
- * Helper function that checks the classes of the element on which the user clicked
+ * Helper function that checks the classes of the element on which the user clicked.
+ * This allow any element related to the selection of the sampling methods to be excluded from other user initiated events.
  * @param eventTarget - The classes of the element the user clicked.
  * @returns {boolean} - True, if the click target has specific classes
  */
@@ -287,7 +288,8 @@ export const drawSelectionList = function(container, store, siteno) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
 
-        // Add the sampling method selection list to the parameter loaded when the page is first opened
+        // Add the sampling method selection list to the parameter loaded when the page is first opened if it has methods.
+        // This allows the user to use the row expansion toggle to see the methods when the row has never been physically clicked.
         const primaryMethods = getPrimaryMethods(store.getState());
         if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
             select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);

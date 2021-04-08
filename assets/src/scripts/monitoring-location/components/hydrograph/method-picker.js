@@ -34,13 +34,14 @@ const updateAvailableMethods = function(container, methods, store) {
     }
 
     methods.forEach((method) => {
-        const hasPointsInTimeSpan = method.pointCount > 0;
+        console.log(`${method.methodID} method.pointCount `, method.pointCount)
+        const hasNoPointsInTimeSpan = method.pointCount === 0;
         container.append('option')
             .text(`${method.methodDescription}`)
             .attr('class', 'method-option sampling-method-selection')
             .attr('selected', method.methodID === selectedMethodID ? true : null)
             .attr('value', method.methodID)
-            .property('disabled', !hasPointsInTimeSpan ? true : null);
+            .attr('disabled', hasNoPointsInTimeSpan ? true : null);
         });
 };
 
@@ -57,7 +58,6 @@ export const drawMethodPicker = function(container, parameterCode, store) {
         .attr('id', 'primary-sampling-method-row')
         .attr('class', 'grid-container grid-row-inner sampling-method-selection');
     const methodSelectionContainer = gridRowSamplingMethodSelection.append('div')
-        .attr('id', `method-selection-container-${parameterCode}`)
         .attr('class', 'grid-row method-selection-row sampling-method-selection');
     const pickerContainer = methodSelectionContainer.append('div')
         .attr('id', 'ts-method-select-container')

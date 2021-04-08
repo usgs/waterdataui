@@ -168,16 +168,16 @@ export const getSortedIVMethods = createSelector(
                     pointCount: methodValues.points.length,
                     lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
                     methodID: methodValues.method.methodID,
-                    methodDescription: methodValues.method.methodDescription
+                    methodDescription: methodValues.method.methodDescription === null ? 'No description available for this method' : methodValues.method.methodDescription
                 };
             })
             .sort((a, b) => {
                 if (a.pointCount === b.pointCount) {
-                    return a.pointCount ? a.lastPoint.dateTime - b.lastPoint.dateTime : 0;
+                    return a.pointCount ? b.lastPoint.dateTime - a.lastPoint.dateTime : 0;
                 } else {
-                    return a.pointCount - b.pointCount;
+                    return b.pointCount - a.pointCount;
                 }
             });
-        return methodsForPrimarySelection.reverse();
+        return methodsForPrimarySelection;
     }
 );
