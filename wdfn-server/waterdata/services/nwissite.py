@@ -107,7 +107,7 @@ class SiteService:
         """
         Get all sites within a county.
 
-        :param str state_county_cd: FIPS ID for a county
+        :param str state_county_cd: FIPS ID for a statecounty
         :returns: all sites in the specified county
             - status - status code from response
             - reason - string
