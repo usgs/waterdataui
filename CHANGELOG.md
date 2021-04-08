@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...master)
 ### Changed
-- Cleaned up the endpoint configuration names. Each distinct endpoint has it's own configuration parameter and the endpoints are given more descriptive names.
+- Cleaned up the endpoint configuration names. Each distinct endpoint has its own configuration parameter and the endpoints are given more descriptive names.
+
+### Fixed
+- Flood levels are no longer rounded to an integer and show now show the decimal received from web service.
 
 ## [0.45.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.44.0...waterdataui-0.45.0) - 2021-03-31
 ### Added
