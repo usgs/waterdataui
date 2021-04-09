@@ -75,6 +75,7 @@ describe('monitoring-location/components/hydrograph module', () => {
         component.append('div').attr('class', 'select-actions-container');
         component.append('div').attr('class', 'select-time-series-container');
         component.append('div').attr('id', 'iv-data-table-container');
+        component.append('div').attr('id', 'time-download-graph-controls');
 
         graphNode = document.getElementById('hydrograph');
         nodeElem = select(graphNode);
@@ -333,6 +334,11 @@ describe('monitoring-location/components/hydrograph module', () => {
         it('should have data tables for hydrograph data', () => {
             expect(select('#iv-hydrograph-data-table-container').size()).toBe(1);
             expect(select('#gw-hydrograph-data-table-container').size()).toBe(1);
+        });
+
+        it('should have a retrieve data button and a change time span button', () => {
+            // expect(select('#time-download-graph-controls').size()).toBe(1);
+            expect(select('#time-download-graph-controls')).toBe(1);
         });
     });
 
