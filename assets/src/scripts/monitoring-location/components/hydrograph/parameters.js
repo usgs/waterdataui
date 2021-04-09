@@ -168,7 +168,7 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
 */
 const drawTopPeriodOfRecordRow = function(container, parameter) {
     const gridRowInnerTopPeriodOfRecord = container.append('div')
-        .attr('class', 'grid-row-inner grid-row-period-of-record');
+        .attr('class', 'grid-row-period-of-record');
     gridRowInnerTopPeriodOfRecord.append('div')
         .attr('class', 'grid-row-period-of-record-text')
         .text(`${parameter.periodOfRecord.begin_date} to ${parameter.periodOfRecord.end_date}`);
@@ -186,7 +186,7 @@ const drawTopPeriodOfRecordRow = function(container, parameter) {
 */
 const drawRadioButtonRow = function(container, parameter, store) {
     const gridRowInnerWithRadioButton = container.append('div')
-        .attr('class', 'grid-row grid-row-inner');
+        .attr('class', 'grid-row');
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
         .attr('class', 'radio-button__param-select')
         .append('div')
@@ -235,7 +235,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
     };
 
     const gridRowInnerWaterAlert = container.append('div')
-        .attr('class', 'grid-row grid-row-inner');
+        .attr('class', 'grid-row');
 
         gridRowInnerWaterAlert.append('div')
             .attr('id', `wateralert-row-${parameter.parameterCode}`)
@@ -250,7 +250,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
             .text(parameter.waterAlert.displayText);
 };
 
-/*
+/**
 * A main function that creates the parameter selection list
 * @param {Object} container - The target element to append the selection list
 * @param {Object} store - The application Redux state
