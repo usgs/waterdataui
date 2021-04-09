@@ -45,7 +45,7 @@ $row-border-color: 'black';
       @include u-border-top(1px, $row-border-color);
     }
 
-    .grid-row-inner {
+    .grid-row {
       @include u-padding-right(0);
       @include u-padding-left(0);
 
