@@ -13,8 +13,9 @@ from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd, get_default_parameter_code
 from .utils import defined_when, set_cookie_for_banner_message, create_message
-from .services import sifta, ogc
+from .services import sifta
 from .services.camera import get_monitoring_location_camera_details
+from .services.ogc import MonitoringLocationNetworkService
 from .services.nwissite import SiteService
 from .services.timezone import get_iana_time_zone
 
@@ -22,6 +23,8 @@ from .services.timezone import get_iana_time_zone
 from .constants import STATION_FIELDS_D
 
 site_service = SiteService(app.config['SITE_DATA_ENDPOINT'])
+monitoring_location_network_service = \
+    MonitoringLocationNetworkService(app.config['MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT'])
 
 
 def has_feedback_link():
@@ -276,17 +279,21 @@ def networks(network_cd):
     Networks view
     :param network_cd: ID for this network or empty to show all networks
     """
-
     # Grab the Network info
-    network_data = ogc.get_networks(network_cd)
+    network_data = monitoring_location_network_service.get_networks(network_cd)
 
-    if network_cd:
-        collection = network_data
-        extent = network_data['extent']['spatial']['bbox'][0]
-        narrative = markdown(network_data['properties']['narrative'])\
-            if network_data['properties'].get('narrative') else None
+    if network_data:
+        if network_cd:
+            collection = network_data
+            extent = network_data['extent']['spatial']['bbox'][0]
+            narrative = markdown(network_data['properties']['narrative'])\
+                if network_data['properties'].get('narrative') else None
+        else:
+            collection = network_data.get('collections')
+            extent = None
+            narrative = None
     else:
-        collection = network_data.get('collections')
+        collection = None
         extent = None
         narrative = None
 

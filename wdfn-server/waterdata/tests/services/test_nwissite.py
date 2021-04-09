@@ -2,11 +2,12 @@
 Tests for NWISWeb service calls.
 
 """
-from requests_mock import Mocker
 from unittest import TestCase
 
+from requests_mock import Mocker
+
 from ...services.nwissite import SiteService
-from ..rdb_snippets import SITE_RDB, PARAMETER_RDB
+from ..mock_test_data import SITE_RDB, PARAMETER_RDB
 
 
 class TestSiteService(TestCase):

@@ -1,5 +1,5 @@
 """
-Classes and functions for calling NWIS services and working with
+Class and functions for calling NWIS services and working with
 the returned data.
 
 """
