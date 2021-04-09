@@ -2,6 +2,7 @@
 Class and functions for calling the observations OGC endpoint for monitoring location collections
 """
 from requests import exceptions as request_exceptions, Session
+
 from .. import app
 
 

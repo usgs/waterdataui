@@ -3,7 +3,6 @@ Tests for the cooperator service calls.
 """
 
 import json
-from unittest import mock
 
 from requests_mock import Mocker
 

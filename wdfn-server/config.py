@@ -13,7 +13,6 @@ PROJECT_HOME = os.path.dirname(__file__)
 HYDROLOGIC_PAGES_ENABLED = True
 STATE_COUNTY_PAGES_ENABLED = True
 EMBED_IMAGE_FEATURE_ENABLED = True
-COOPERATOR_LOOKUP_ENABLED = True  # may also be set to a list of district codes
 MONITORING_LOCATION_CAMERA_ENABLED = True
 DAILY_VALUE_HYDROGRAPH_ENABLED = True
 SET_COOKIE_TO_HIDE_BANNER_NOTICES = True  # set cookie set to hide banner messages for the life of the cookie
@@ -34,6 +33,9 @@ NWISWEB_ENDPOINTS = {
 }
 
 WEATHER_SERVICE_ENDPOINT = 'https://api.weather.gov'
+# For SIFTA cooperator site service - gives us the information needed to show the cooperator logos
+COOPERATOR_SERVICE_ENDPOINT = 'https://water.usgs.gov/customer/stories/'
+
 
 FIM_GIS_ENDPOINT = 'https://gis.wim.usgs.gov/arcgis/rest/services/FIMMapper/'
 FIM_ENDPOINT = 'https://fim.wim.usgs.gov/fim/'
@@ -75,9 +77,6 @@ ENABLE_USGS_GA = False
 
 # To use hashed assets, set this to the gulp-rev-all rev-manifest.json path
 ASSET_MANIFEST_PATH = None
-
-# For SIFTA cooperator site service - gives us the information needed to show the cooperator logos
-COOPERATOR_SERVICE_PATTERN = 'https://water.usgs.gov/customer/stories/{site_no}'
 
 # These messages below will be added to a dismissible panel below the main header. It is an array of strings. Markup
 # can be used to add things like links, bold text, etc.

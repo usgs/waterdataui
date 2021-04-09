@@ -13,11 +13,11 @@ from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd, get_default_parameter_code
 from .utils import defined_when, set_cookie_for_banner_message, create_message
-from .services import sifta
 from .services.camera import get_monitoring_location_camera_details
-from .services.ogc import MonitoringLocationNetworkService
 from .services.nwissite import SiteService
-from .services.timezone import get_iana_time_zone
+from .services.ogc import MonitoringLocationNetworkService
+from .services.sifta import SiftaService
+from .services.timezone import TimeZoneService
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
@@ -25,7 +25,8 @@ from .constants import STATION_FIELDS_D
 site_service = SiteService(app.config['SITE_DATA_ENDPOINT'])
 monitoring_location_network_service = \
     MonitoringLocationNetworkService(app.config['MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT'])
-
+time_zone_service = TimeZoneService(app.config['WEATHER_SERVICE_ENDPOINT'])
+sifta_service = SiftaService(app.config['COOPERATOR_SERVICE_ENDPOINT'])
 
 def has_feedback_link():
     """
@@ -167,8 +168,7 @@ def monitoring_location(site_no):
             except KeyError:
                 site_owner_state = None
 
-            # grab the cooperator information from json file so that the logos are added to page, if available
-            cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
+            cooperators = sifta_service.get_cooperators(site_no)
 
             if site_owner_state is not None:
                 email_for_data_questions = \
@@ -177,7 +177,7 @@ def monitoring_location(site_no):
                 email_for_data_questions = app.config['EMAIL_TARGET']['report']
 
             # Get the time zone for the location
-            time_zone = get_iana_time_zone(unique_site.get('dec_lat_va', ''), unique_site.get('dec_long_va', ''))
+            time_zone = time_zone_service.get_iana_time_zone(unique_site.get('dec_lat_va', ''), unique_site.get('dec_long_va', ''))
 
             context = {
                 'status_code': site_status,
