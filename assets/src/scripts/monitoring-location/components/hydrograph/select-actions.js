@@ -54,7 +54,6 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
  * @param {String} siteno
  */
 export const drawSelectActions = function(container, store, siteno) {
-    console.log('ran drawSelectActions')
     const listContainer = container.append('ul')
         .attr('class', 'select-actions-button-group usa-button-group');
     if (config.ivPeriodOfRecord || config.gwPeriodOfRecord) {
