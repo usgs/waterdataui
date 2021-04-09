@@ -250,7 +250,7 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
             .text(parameter.waterAlert.displayText);
 };
 
-/*
+/**
 * A main function that creates the parameter selection list
 * @param {Object} container - The target element to append the selection list
 * @param {Object} store - The application Redux state

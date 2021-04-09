@@ -79,10 +79,6 @@ $row-border-color: 'black';
       }
     }
 
-    .radio-button__param-select {
-      @include grid-col(1);
-    }
-
     .period-of-record__param-select {
       @include grid-col;
       @include u-display('none');
