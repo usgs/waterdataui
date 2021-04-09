@@ -34,7 +34,6 @@ const updateAvailableMethods = function(container, methods, store) {
     }
 
     methods.forEach((method) => {
-        console.log(`${method.methodID} method.pointCount `, method.pointCount)
         const hasNoPointsInTimeSpan = method.pointCount === 0;
         container.append('option')
             .text(`${method.methodDescription}`)
