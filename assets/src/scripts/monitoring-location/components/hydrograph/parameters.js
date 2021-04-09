@@ -13,7 +13,9 @@ import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
 
+import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
 import {showDataIndicators} from './data-indicator';
+import {drawMethodPicker} from './method-picker';
 
 const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
 const ROW_TOGGLE_OPENED_CLASS = 'fas fa-chevron-up expansion-toggle';
@@ -49,7 +51,6 @@ const drawRowExpansionControl = function(container, parameter, type) {
                 select(`#expansion-container-row-${parameter.parameterCode}`)
                     .attr('hidden', select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden') !== null ? null : 'true');
 
-
                 // Set all icons to closed except the clicked icon(s).
                 const toggleList = document.querySelectorAll('.expansion-toggle');
                 toggleList.forEach(toggle => {
@@ -76,6 +77,18 @@ const drawRowExpansionControl = function(container, parameter, type) {
 };
 
 /*
+ * Helper function that checks the classes of the element on which the user clicked.
+ * This allow any element related to the selection of the sampling methods to be excluded from other user initiated events.
+ * @param eventTarget - The classes of the element the user clicked.
+ * @returns {boolean} - True, if the click target has specific classes
+ */
+const isMethodSelectionClick = function(eventTarget) {
+    if (eventTarget.getAttribute('class')) {
+        return !! eventTarget.getAttribute('class').includes('sampling-method-selection');
+    }
+};
+
+/*
 * Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid.
 * The grid has one 'container row' for each parameter (this function creates the 'container rows' for each parameter).
 * As a side note - each container row will eventually contain three internal rows.
@@ -85,42 +98,63 @@ const drawRowExpansionControl = function(container, parameter, type) {
 * @param {Object} container - The target element on which to append the row
 * @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* @param {D3 selection} parameter - Contains details about the current parameter code
+* @param {String} parameter - USGS five digit parameter code
 */
-const drawContainingRow = function(container, store, siteno, parameter) {
+const drawContainingRow = function(container, store, siteno, parameterCode) {
     return container.append('div')
-        .attr('id', `container-row-${parameter.parameterCode}`)
+        .attr('id', `container-row-${parameterCode}`)
         .attr('class', 'grid-row-container-row')
         .attr('ga-on', 'click')
         .attr('ga-event-category', 'selectTimeSeries')
-        .attr('ga-event-action', `time-series-parmcd-${parameter.parameterCode}`)
+        .attr('ga-event-action', `time-series-parmcd-${parameterCode}`)
         .call(link(store, (container, selectedParameterCode) => {
-            container.classed('selected', parameter.parameterCode === selectedParameterCode)
-                .attr('aria-selected', parameter.parameterCode === selectedParameterCode);
+            container.classed('selected', parameterCode === selectedParameterCode)
+                .attr('aria-selected', parameterCode === selectedParameterCode);
         }, getSelectedParameterCode))
-        .on('click', function() {
+        .on('click', function(event) {
+            // Don't let clicks on the sampling method selections trigger a parameter reload.
+            if (isMethodSelectionClick(event.target)) {
+                return;
+            }
+
+            select('#primary-sampling-method-row').remove();
+
+            // Get all of the open/close icons into the correct orientation.
             select('#select-time-series').selectAll('.fa-chevron-up')
                 .attr('class', ROW_TOGGLE_CLOSED_CLASS)
                 .attr('aria-expanded', 'false');
-            select(`#expansion-toggle-desktop-${parameter.parameterCode}`)
+            select(`#expansion-toggle-desktop-${parameterCode}`)
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
-            select(`#expansion-toggle-mobile-${parameter.parameterCode}`)
+            select(`#expansion-toggle-mobile-${parameterCode}`)
                 .attr('class', 'fas fa-chevron-up expansion-toggle')
                 .attr('aria-expanded', 'true');
 
+            // Hide or show the correct expansion row.
             select('#select-time-series').selectAll('.expansion-container-row')
                 .attr('hidden', 'true');
-            select(`#expansion-container-row-${parameter.parameterCode}`).attr('hidden', null);
+            select(`#expansion-container-row-${parameterCode}`).attr('hidden', null);
 
+            // Change to the newly selected parameter both in the selection list ond on the graph.
             const thisClass = select(this)
                 .attr('class');
+            // Show the sampling method selection if user clicks the currently selected row, but don't reload the graph data.
+            if (thisClass) {
+                select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
+            }
+
             if (!thisClass || !thisClass.includes('selected')) {
-                store.dispatch(setSelectedParameterCode(parameter.parameterCode));
+                store.dispatch(setSelectedParameterCode(parameterCode));
                 showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
                         showDataIndicators(false, store);
+
+                        const primarySamplingMethods = getPrimaryMethods(store.getState());
+                        if (primarySamplingMethods.length > 1) {
+                            select('#primary-sampling-method-row').remove();
+                            select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
+                        }
                     });
             }
         });
@@ -154,7 +188,7 @@ const drawRadioButtonRow = function(container, parameter, store) {
     const gridRowInnerWithRadioButton = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
     const radioButtonDiv = gridRowInnerWithRadioButton.append('div')
-        .attr('class', 'grid-col-1 radio-button__param-select')
+        .attr('class', 'radio-button__param-select')
         .append('div')
             .attr('class', 'usa-radio');
     radioButtonDiv.append('input')
@@ -216,12 +250,12 @@ const drawWaterAlertRow = function(container, siteno, parameter) {
             .text(parameter.waterAlert.displayText);
 };
 
-/*
+/**
 * A main function that creates the parameter selection list
 * @param {Object} container - The target element to append the selection list
 * @param {Object} store - The application Redux state
 * @param {String} siteno - A unique identifier for the monitoring location
-* */
+*/
 export const drawSelectionList = function(container, store, siteno) {
     const parameters = getAvailableParameters(store.getState());
 
@@ -239,7 +273,7 @@ export const drawSelectionList = function(container, store, siteno) {
 
     parameters.forEach(parameter => {
         // Add the main grid rows
-        const containerRow = drawContainingRow(selectionList, store, siteno, parameter);
+        const containerRow = drawContainingRow(selectionList, store, siteno, parameter.parameterCode);
         // Add the nested grid rows
         drawTopPeriodOfRecordRow(containerRow, parameter);
         drawRadioButtonRow(containerRow, parameter, store);
@@ -248,9 +282,17 @@ export const drawSelectionList = function(container, store, siteno) {
             .attr('id', `expansion-container-row-${parameter.parameterCode}`)
             .attr('class', 'expansion-container-row')
             .attr('hidden', 'true');
+
         // Add the rows nested in the expansion container
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
+        }
+
+        // Add the sampling method selection list to the parameter loaded when the page is first opened if it has methods.
+        // This allows the user to use the row expansion toggle to see the methods when the row has never been physically clicked.
+        const primaryMethods = getPrimaryMethods(store.getState());
+        if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
+            select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);
         }
     });
 

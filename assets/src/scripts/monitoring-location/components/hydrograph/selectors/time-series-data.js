@@ -150,3 +150,34 @@ export const getPreferredIVMethodID = createSelector(
         return methodMetaData[methodMetaData.length - 1].methodID;
     }
 );
+
+
+/**
+ * Returns a array of methods sorted from most to least points in the selected time span.
+ * @return {Array} Array of objects with details about the sampling methods available for the primary parameter.
+ */
+export const getSortedIVMethods = createSelector(
+    getIVData('primary'),
+    (ivData) => {
+        if (!ivData || !Object.keys(ivData.values).length) {
+            return null;
+        }
+        const methodsForPrimarySelection = Object.values(ivData.values)
+            .map(methodValues => {
+                return {
+                    pointCount: methodValues.points.length,
+                    lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
+                    methodID: methodValues.method.methodID,
+                    methodDescription: methodValues.method.methodDescription === null ? 'No description available for this method' : methodValues.method.methodDescription
+                };
+            })
+            .sort((a, b) => {
+                if (a.pointCount === b.pointCount) {
+                    return a.pointCount ? b.lastPoint.dateTime - a.lastPoint.dateTime : 0;
+                } else {
+                    return b.pointCount - a.pointCount;
+                }
+            });
+        return methodsForPrimarySelection;
+    }
+);
