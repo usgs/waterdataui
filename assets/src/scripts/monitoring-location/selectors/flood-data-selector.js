@@ -83,10 +83,10 @@ export const getWaterwatchFloodLevels = createSelector(
     getFloodLevels,
     (floodLevels) => {
         return floodLevels ? {
-            actionStage: parseInt(floodLevels.action_stage),
-            floodStage: parseInt(floodLevels.flood_stage),
-            moderateFloodStage: parseInt(floodLevels.moderate_flood_stage),
-            majorFloodStage: parseInt(floodLevels.major_flood_stage)
+            actionStage: parseFloat(floodLevels.action_stage),
+            floodStage: parseFloat(floodLevels.flood_stage),
+            moderateFloodStage: parseFloat(floodLevels.moderate_flood_stage),
+            majorFloodStage: parseFloat(floodLevels.major_flood_stage)
         } : null;
     }
 );
