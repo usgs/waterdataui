@@ -12,17 +12,21 @@ from markdown import markdown
 from . import app, __version__
 from .location_utils import build_linked_data, get_disambiguated_values, rollup_dataseries, \
     get_period_of_record_by_parm_cd, get_default_parameter_code
-from .utils import defined_when, parse_rdb, set_cookie_for_banner_message, create_message
-from .services import sifta, ogc
+from .utils import defined_when, set_cookie_for_banner_message, create_message
 from .services.camera import get_monitoring_location_camera_details
-from .services.nwis import NwisWebServices
-from .services.timezone import get_iana_time_zone
+from .services.nwissite import SiteService
+from .services.ogc import MonitoringLocationNetworkService
+from .services.sifta import SiftaService
+from .services.timezone import TimeZoneService
 
 # Station Fields Mapping to Descriptions
 from .constants import STATION_FIELDS_D
 
-NWIS = NwisWebServices(app.config['SITE_DATA_ENDPOINT'], app.config['SITE_DATA_ENDPOINT'])
-
+site_service = SiteService(app.config['SITE_DATA_ENDPOINT'])
+monitoring_location_network_service = \
+    MonitoringLocationNetworkService(app.config['MONITORING_LOCATIONS_OBSERVATIONS_ENDPOINT'])
+time_zone_service = TimeZoneService(app.config['WEATHER_SERVICE_ENDPOINT'])
+sifta_service = SiftaService(app.config['COOPERATOR_SERVICE_ENDPOINT'])
 
 def has_feedback_link():
     """
@@ -38,6 +42,7 @@ def has_feedback_link():
 @app.context_processor
 def inject_has_feedback_link():
     return dict(has_feedback_link=has_feedback_link())
+
 
 @app.route('/')
 def home():
@@ -108,57 +113,48 @@ def monitoring_location(site_no):
     :param site_no: USGS site number
 
     """
-    agency_cd = request.args.get('agency_cd')
-    site_data_resp = NWIS.get_site(site_no, agency_cd)
-    status = site_data_resp.status_code
+    agency_cd = request.args.get('agency_cd', '')
+    site_status, site_status_reason, site_data = site_service.get_site_data(site_no, agency_cd)
     json_ld = None
 
-    if status == 200:
-        site_data = parse_rdb(site_data_resp.iter_lines(decode_unicode=True))
-        site_data_list = list(site_data)
-
+    if site_status == 200:
         template = 'monitoring_location.html'
-
         context = {
-            'status_code': status,
-            'stations': site_data_list,
+            'status_code': site_status,
+            'stations': site_data,
             'STATION_FIELDS_D': STATION_FIELDS_D
         }
-        station_record = site_data_list[0]
 
-        if len(site_data_list) == 1:
-            parameter_data = NWIS.get_site_parameters(site_no, agency_cd)
-            iv_period_of_record = get_period_of_record_by_parm_cd(parameter_data)
-            gw_period_of_record = get_period_of_record_by_parm_cd(parameter_data, 'gw') if app.config[
+        if len(site_data) == 1:
+            unique_site = site_data[0]
+
+            _, _, period_of_record = site_service.get_period_of_record(site_no, agency_cd)
+            iv_period_of_record = get_period_of_record_by_parm_cd(period_of_record, 'uv')
+            gw_period_of_record = get_period_of_record_by_parm_cd(period_of_record, 'gw') if app.config[
                 'GROUNDWATER_LEVELS_ENABLED'] else {}
-            if parameter_data:
-                site_dataseries = [
-                    get_disambiguated_values(
-                        param_datum,
-                        app.config['NWIS_CODE_LOOKUP'],
-                        {},
-                        app.config['HUC_LOOKUP']
-                    )
-                    for param_datum in parameter_data
-                ]
-                grouped_dataseries = rollup_dataseries(site_dataseries)
-                available_parameter_codes = set(param_datum['parm_cd'] for param_datum in parameter_data)
-                available_data_types = set(param_datum['data_type_cd'] for param_datum in parameter_data)
-            else:
-                grouped_dataseries = []
-                available_parameter_codes = set()
-                available_data_types = set()
+            site_dataseries = [
+                get_disambiguated_values(
+                    param_datum,
+                    app.config['NWIS_CODE_LOOKUP'],
+                    {},
+                    app.config['HUC_LOOKUP']
+                )
+                for param_datum in period_of_record
+            ]
+            grouped_dataseries = rollup_dataseries(site_dataseries)
+            available_parameter_codes = set(param_datum['parm_cd'] for param_datum in period_of_record)
+            available_data_types = set(param_datum['data_type_cd'] for param_datum in period_of_record)
 
             json_ld = build_linked_data(
                 site_no,
-                station_record.get('station_nm'),
-                station_record.get('agency_cd'),
-                station_record.get('dec_lat_va', ''),
-                station_record.get('dec_long_va', ''),
+                unique_site.get('station_nm'),
+                unique_site.get('agency_cd'),
+                unique_site.get('dec_lat_va', ''),
+                unique_site.get('dec_long_va', ''),
                 available_parameter_codes
             )
             location_with_values = get_disambiguated_values(
-                station_record,
+                unique_site,
                 app.config['NWIS_CODE_LOOKUP'],
                 app.config['COUNTRY_STATE_COUNTY_LOOKUP'],
                 app.config['HUC_LOOKUP']
@@ -172,8 +168,7 @@ def monitoring_location(site_no):
             except KeyError:
                 site_owner_state = None
 
-            # grab the cooperator information from json file so that the logos are added to page, if available
-            cooperators = sifta.get_cooperators(site_no, location_with_values.get('district_cd', {}).get('code'))
+            cooperators = sifta_service.get_cooperators(site_no)
 
             if site_owner_state is not None:
                 email_for_data_questions = \
@@ -182,11 +177,11 @@ def monitoring_location(site_no):
                 email_for_data_questions = app.config['EMAIL_TARGET']['report']
 
             # Get the time zone for the location
-            time_zone = get_iana_time_zone(station_record.get('dec_lat_va', ''), station_record.get('dec_long_va', ''))
+            time_zone = time_zone_service.get_iana_time_zone(unique_site.get('dec_lat_va', ''), unique_site.get('dec_long_va', ''))
 
             context = {
-                'status_code': status,
-                'stations': site_data_list,
+                'status_code': site_status,
+                'stations': site_data,
                 'location_with_values': location_with_values,
                 'STATION_FIELDS_D': STATION_FIELDS_D,
                 'json_ld': Markup(json.dumps(json_ld, indent=4)),
@@ -199,16 +194,16 @@ def monitoring_location(site_no):
                 'cooperators': cooperators,
                 'email_for_data_questions': email_for_data_questions,
                 'referring_page_type': 'monitoring',
-                'cameras': get_monitoring_location_camera_details((site_no)) if app.config[
+                'cameras': get_monitoring_location_camera_details(site_no) if app.config[
                     'MONITORING_LOCATION_CAMERA_ENABLED'] else []
             }
 
         http_code = 200
-    elif 400 <= status < 500:
+    elif 400 <= site_status < 500:
         template = 'monitoring_location.html'
-        context = {'status_code': status, 'reason': site_data_resp.reason}
+        context = {'status_code': site_status, 'reason': site_status_reason}
         http_code = 200
-    elif 500 <= status <= 511:
+    elif 500 <= site_status <= 511:
         template = 'errors/500.html'
         context = {}
         http_code = 503
@@ -228,7 +223,8 @@ def monitoring_location(site_no):
     return full_function_response_object
 
 
-def return_404(*args, **kwargs):
+def return_404():
+    """View for 404 pages"""
     return abort(404)
 
 
@@ -238,13 +234,17 @@ def return_404(*args, **kwargs):
 def hydrological_unit(huc_cd, show_locations=False):
     """
     Hydrological unit view
-
-    :param huc_cd: ID for this unit
+    :param str huc_cd: ID for this unit
+    :param bool show_locations:
     """
 
     # Get the data corresponding to this HUC
+    monitoring_locations = []
     if huc_cd:
         huc = app.config['HUC_LOOKUP']['hucs'].get(huc_cd, None)
+        # If this is a HUC8 site, get the monitoring locations within it.
+        if huc and show_locations:
+            _, _, monitoring_locations = site_service.get_huc_sites(huc_cd)
 
     # If we don't have a HUC, display all the root HUC2 units as children.
     else:
@@ -252,11 +252,6 @@ def hydrological_unit(huc_cd, show_locations=False):
             'huc_nm': 'HUC2',
             'children': app.config['HUC_LOOKUP']['classes']['HUC2']
         }
-
-    # If this is a HUC8 site, get the monitoring locations within it.
-    monitoring_locations = []
-    if show_locations and huc:
-        monitoring_locations = NWIS.get_huc_sites(huc_cd)
 
     http_code = 200 if huc else 404
 
@@ -282,24 +277,28 @@ def hydrological_unit_locations(huc_cd):
 @app.route('/networks/<network_cd>/', methods=['GET'])
 def networks(network_cd):
     """
-    Network unit view
-    :param network_cd: ID for this network
+    Networks view
+    :param network_cd: ID for this network or empty to show all networks
     """
-
     # Grab the Network info
-    network_data = ogc.get_networks(network_cd)
+    network_data = monitoring_location_network_service.get_networks(network_cd)
 
-    if network_cd:
-        collection = network_data
-        extent = network_data['extent']['spatial']['bbox'][0]
-        narrative = markdown(network_data['properties']['narrative'])\
-            if network_data['properties'].get('narrative') else None
+    if network_data:
+        if network_cd:
+            collection = network_data
+            extent = network_data['extent']['spatial']['bbox'][0]
+            narrative = markdown(network_data['properties']['narrative'])\
+                if network_data['properties'].get('narrative') else None
+        else:
+            collection = network_data.get('collections')
+            extent = None
+            narrative = None
     else:
-        collection = network_data.get('collections')
+        collection = None
         extent = None
         narrative = None
 
-    http_code = 200 if (collection) else 404
+    http_code = 200 if collection else 404
 
     return render_template(
         'networks.html',
@@ -323,13 +322,18 @@ def states_counties(state_cd, county_cd, show_locations=False):
 
     :param state_cd: ID for this political unit - 'state'
     :param county_cd: ID for this political unit - 'county'
+    :param bool show_locations:
     """
 
+    monitoring_locations = []
+    political_unit = {}
     # Get the data associated with this county
     if state_cd and county_cd:
         state_county_cd = state_cd + county_cd
         political_unit = app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd'].get(state_cd, None)['county_cd']\
             .get(county_cd, None)
+        if show_locations:
+            _, _, monitoring_locations = site_service.get_county_sites(state_county_cd)
 
     # Get the data corresponding to this state
     elif state_cd and not county_cd:
@@ -341,11 +345,6 @@ def states_counties(state_cd, county_cd, show_locations=False):
             'name': 'United States',
             'children': app.config['COUNTRY_STATE_COUNTY_LOOKUP']['US']['state_cd']
         }
-
-    # If the search is at the county level, get the monitoring locations within that county.
-    monitoring_locations = []
-    if show_locations and state_cd and county_cd:
-        monitoring_locations = NWIS.get_county_sites(state_county_cd)
 
     http_code = 200 if political_unit else 404
 
