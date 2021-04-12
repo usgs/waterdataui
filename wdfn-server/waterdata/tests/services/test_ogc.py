@@ -3,57 +3,54 @@ Tests for the cooperator service calls.
 """
 
 import json
-from unittest import mock
 
-from ...services import ogc
+from requests_mock import Mocker
 
-MOCK_RESPONSE = """
-{"id": "monitoring-locations","itemType": "feature","title": "NWIS Monitoring Locations","description": "USGS water monitoring locations managed in the National Water Information System"}
-"""
-MOCK_NETWORK_LIST = json.loads(MOCK_RESPONSE)
+from ...services.ogc import MonitoringLocationNetworkService
+from ..mock_test_data import MOCK_NETWORKS_RESPONSE, MOCK_NETWORK_RESPONSE
+
+ENDPOINT = 'https://www.fakemlogc.gov/api/'
 
 
 def test_ogc_response_with_network_cd():
-    with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
-        response = mock.Mock()
-        response.status_code = 200
-        response.text = MOCK_RESPONSE
-        response.json.return_value = json.loads(MOCK_RESPONSE)
-        r_mock.return_value = response
+    network_service = MonitoringLocationNetworkService(ENDPOINT)
+    with Mocker(session=network_service.session) as session_mock:
+        session_mock.get(f'{ENDPOINT}monitoring-locations', text=MOCK_NETWORK_RESPONSE)
+        result = network_service.get_networks('monitoring-locations')
 
-        networks = ogc.get_networks('monitoring-locations')
+        assert session_mock.call_count == 1
+        assert session_mock.request_history[0].query == 'f=json'
+        assert result == json.loads(MOCK_NETWORK_RESPONSE)
 
-        assert networks == MOCK_NETWORK_LIST, 'Expected response'
 
 def test_ogc_response_with_no_network_cd():
-    with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
-        response = mock.Mock()
-        response.status_code = 200
-        response.text = MOCK_RESPONSE
-        response.json.return_value = json.loads(MOCK_RESPONSE)
-        r_mock.return_value = response
+    network_service = MonitoringLocationNetworkService(ENDPOINT)
+    with Mocker(session=network_service.session) as session_mock:
+        session_mock.get(ENDPOINT, text=MOCK_NETWORKS_RESPONSE)
+        networks = network_service.get_networks()
 
-        networks = ogc.get_networks('monitoring-locations')
-
-        assert networks == MOCK_NETWORK_LIST, 'Expected response'
+        assert session_mock.call_count == 1
+        assert session_mock.request_history[0].query == 'f=json'
+        assert networks == json.loads(MOCK_NETWORKS_RESPONSE), 'Expected response'
 
 
 def test_ogc_handling_bad_status_code():
-    with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
-        response = mock.Mock()
-        response.status_code = 500
-        r_mock.return_value = response
+    network_service = MonitoringLocationNetworkService(ENDPOINT)
+    with Mocker(session=network_service.session) as session_mock:
+        session_mock.get(ENDPOINT, status_code=404)
+        networks = network_service.get_networks()
 
-        networks = ogc.get_networks('invalid-network')
+        assert session_mock.call_count == 1
+        assert session_mock.request_history[0].query == 'f=json'
         assert networks == {}, 'Expected response'
 
 
-def test_unparsable_json():
-    with mock.patch('waterdata.services.ogc.execute_get_request') as r_mock:
-        mock_resp = mock.Mock()
-        mock_resp.status_code = 200
-        mock_resp.json.side_effect = json.JSONDecodeError('mock message', '{"x", "A",}', 2)
-        r_mock.return_value = mock_resp
+def test_invalid_json():
+    network_service = MonitoringLocationNetworkService(ENDPOINT)
+    with Mocker(session=network_service.session) as session_mock:
+        session_mock.get(ENDPOINT, status_code=200, text='{"x", "A",}')
+        networks = network_service.get_networks()
 
-        networks = ogc.get_networks()
+        assert session_mock.call_count == 1
+        assert session_mock.request_history[0].query == 'f=json'
         assert networks == {}, 'Expected empty response'

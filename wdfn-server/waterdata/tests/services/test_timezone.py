@@ -1,10 +1,9 @@
 """
 Tests for timezone module
 """
-import json
-from unittest import mock
+from requests_mock import Mocker
 
-from ...services.timezone import get_iana_time_zone
+from ...services.timezone import TimeZoneService
 
 MOCK_RESPONSE = """
 {"id": "https://api.weather.gov/points/38.9498,-77.1276",
@@ -59,28 +58,24 @@ MOCK_RESPONSE = """
 }
 """
 
+ENDPOINT = 'https://www.fakeapi.gov'
+
 
 def test_good_weather_service_response():
-    with mock.patch('waterdata.services.timezone.execute_get_request') as r_mock:
-        response = mock.Mock()
-        response.status_code = 200
-        response.text = MOCK_RESPONSE
-        response.json.return_value = json.loads(MOCK_RESPONSE)
-        r_mock.return_value = response
+    time_zone_service = TimeZoneService(ENDPOINT)
+    with Mocker(session=time_zone_service.session) as session_mock:
+        session_mock.get(f'{ENDPOINT}/points/45.0,-100.0', text=MOCK_RESPONSE)
+        result = time_zone_service.get_iana_time_zone('45.0', '-100.0')
 
-        timezone = get_iana_time_zone('45.0', '-100.0')
-        r_mock.assert_called_once()
-        assert r_mock.call_args[0][1] == 'points/45.0,-100.0'
-        assert timezone == 'America/New_York'
+        assert session_mock.call_count == 1
+        assert result == 'America/New_York'
 
 
 def test_bad_weather_service_response():
-    with mock.patch('waterdata.services.timezone.execute_get_request') as r_mock:
-        response = mock.Mock()
-        response.status_code = 500
-        r_mock.return_value = response
+    time_zone_service = TimeZoneService(ENDPOINT)
+    with Mocker(session=time_zone_service.session) as session_mock:
+        session_mock.get(f'{ENDPOINT}/points/46.0,-110.0', status_code=500)
 
-        timezone = get_iana_time_zone('46.0', '-110.0')
-        r_mock.assert_called_once()
-        assert r_mock.call_args[0][1] == 'points/46.0,-110.0'
-        assert timezone is None
+        result = time_zone_service.get_iana_time_zone('46.0', '-110.0')
+        assert session_mock.call_count == 1
+        assert result is None

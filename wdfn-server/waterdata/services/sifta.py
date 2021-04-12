@@ -1,30 +1,38 @@
 """
 Helpers to retrieve SIFTA cooperator data.
 """
+from requests import exceptions as request_exceptions, Session
+
 from .. import app
-from ..utils import execute_get_request
 
 
-def get_cooperators(site_no, district_cd):
+class SiftaService:
     """
-    Gets the cooperator data from a json file, currently a feature toggle, and limited to district codes 20 and 51
-
-    :param site_no: USGS site number
-    :param district_cd: the district code of the monitoring location
+    Provide access to a service that returns cooperator data
     """
-    # Handle feature flag for cooperator data
-    if not app.config['COOPERATOR_LOOKUP_ENABLED'] or (
-            app.config['COOPERATOR_LOOKUP_ENABLED'] is not True and
-            district_cd not in app.config['COOPERATOR_LOOKUP_ENABLED']):
-        return []
+    def __init__(self, endpoint):
+        self.endpoint = endpoint
+        self.session = Session()
 
-    url = app.config['COOPERATOR_SERVICE_PATTERN'].format(site_no=site_no)
-    response = execute_get_request(url)
-    if response.status_code != 200:
-        return []
-    try:
-        resp_json = response.json()
-    except ValueError:
-        return []
-    else:
-        return resp_json.get('Customers', [])
+    def get_cooperators(self, site_no):
+        """
+        Gets the cooperator data from the SIFTA service
+
+        :param site_no: USGS site number
+        :return Array of dict
+        """
+        url = f'{self.endpoint}{site_no}'
+        try:
+            response = self.session.get(url)
+        except (request_exceptions.Timeout, request_exceptions.ConnectionError) as err:
+            app.logger.error(repr(err))
+            return []
+
+        if response.status_code != 200:
+            return []
+        try:
+            resp_json = response.json()
+        except ValueError:
+            return []
+        else:
+            return resp_json.get('Customers', [])
