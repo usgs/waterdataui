@@ -31,7 +31,7 @@
     "watch:js": "mkdir -p dist/scripts && npm run build:wdfnviz && npm run build:uswdsjs && npm run build:datetimeformatjs && rollup -c --watch"
   },
   "engines": {
-    "node": "14.16.0"
+    "node": "14.16.1"
   },
   "repository": {
     "type": "git",
@@ -54,8 +54,8 @@
     "buble": "^0.20.0",
     "buble-jest": "^1.0.1",
     "concat": "^1.0.3",
-    "eslint": "^7.23.0",
-    "eslint-plugin-jest": "^24.3.2",
+    "eslint": "^7.24.0",
+    "eslint-plugin-jest": "^24.3.5",
     "gulp": "^4.0.2",
     "gulp-rev-all": "^2.0.3",
     "isparta": "^4.1.1",
@@ -64,11 +64,11 @@
     "live-server": "^1.2.1",
     "nodemon": "^2.0.7",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.2.8",
+    "postcss": "^8.2.10",
     "postcss-cli": "^8.3.1",
-    "postcss-csso": "^5.0.0",
+    "postcss-csso": "^5.0.1",
     "postcss-flexbugs-fixes": "^5.0.2",
-    "rollup": "^2.44.0",
+    "rollup": "^2.45.1",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.32.8",
     "sinon": "^10.0.0",
@@ -79,12 +79,12 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
     "autotrack": "2.4.1",
-    "core-js": "3.9.1",
+    "core-js": "3.10.1",
     "d3-array": "2.12.1",
     "d3-axis": "2.1.0",
     "d3-brush": "2.1.0",
     "d3-format": "2.0.0",
-    "d3-scale": "3.2.3",
+    "d3-scale": "3.2.4",
     "d3-selection": "2.0.0",
     "d3-shape": "2.1.0",
     "d3-simple-slider": "1.10.4",
