@@ -16,7 +16,7 @@ class SiftaService:
 
     def get_cooperators(self, site_no):
         """
-        Gets the cooperator data the SIFTA service
+        Gets the cooperator data from the SIFTA service
 
         :param site_no: USGS site number
         :return Array of dict
