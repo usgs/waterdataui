@@ -22,7 +22,7 @@ const TEST_STATE = {
         selectedIVMethodID: '90649',
         showCompareIVData: false,
         showMedianData: false,
-        graphCursorOffset: 5000000
+        graphCursorOffset: 300000
     },
     ui: {
         width: 400

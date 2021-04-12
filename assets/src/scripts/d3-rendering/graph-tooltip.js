@@ -44,7 +44,6 @@ export const drawFocusOverlay = function(elem, {xScale, layout}, store, setCurso
 export const drawFocusCircles = function(elem, tooltipPoints, circleContainer) {
     circleContainer = circleContainer || elem.append('g');
     circleContainer.style('pointer-events', 'none');
-
     const circles = circleContainer
         .selectAll('circle.focus-circle')
         .data(tooltipPoints);
