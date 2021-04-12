@@ -1,5 +1,7 @@
 import {select} from 'd3-selection';
 
+import config from 'ui/config.js';
+
 import {configureStore} from 'ml/store';
 
 import {TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS, TEST_CURRENT_TIME_RANGE} from './mock-hydrograph-state';
@@ -23,6 +25,8 @@ describe('monitoring-location/components/hydrograph/select-actions', () => {
         }
     };
     beforeEach(() => {
+        config.ivPeriodOfRecord = 'notNull';
+        config.gwPeriodOfRecord = 'notNull';
         testDiv = select('body').append('div');
         store = configureStore(TEST_STATE);
         testDiv.call(drawSelectActions, store, '11112222');
@@ -38,8 +42,8 @@ describe('monitoring-location/components/hydrograph/select-actions', () => {
         expect(buttonContainer.size()).toBe(1);
         expect(buttonContainer.selectAll('button').size()).toBe(2);
 
-        const downloadButton = buttonContainer.selectAll(`button[aria-controls=${TIME_FORM_ID}]`);
-        const timeSpanButton = buttonContainer.selectAll(`button[aria-controls=${DOWNLOAD_FORM_ID}]`);
+        const downloadButton = buttonContainer.selectAll(`button[aria-controls=${DOWNLOAD_FORM_ID}]`);
+        const timeSpanButton = buttonContainer.selectAll(`button[aria-controls=${TIME_FORM_ID}]`);
         expect(downloadButton.size()).toBe(1);
         expect(timeSpanButton.size()).toBe(1);
         expect(downloadButton.attr('aria-expanded')).toBe('false');
@@ -105,5 +109,52 @@ describe('monitoring-location/components/hydrograph/select-actions', () => {
         expect(downloadButton.attr('aria-expanded')).toBe('false');
         expect(testDiv.select(`#${TIME_FORM_ID}`).attr('hidden')).toBeNull();
         expect(testDiv.select(`#${DOWNLOAD_FORM_ID}`).attr('hidden')).toBe('true');
+    });
+
+    describe('monitoring-location/components/hydrograph/select-actions with no iv or gw data', () => {
+        let testDiv;
+        let store;
+        const TIME_FORM_ID = 'change-time-span-container';
+        const DOWNLOAD_FORM_ID = 'download-graph-data-container';
+        const TEST_STATE = {
+            hydrographData: {
+                currentTimeRange: TEST_CURRENT_TIME_RANGE,
+                primaryIVData: TEST_PRIMARY_IV_DATA,
+                medianStatistics: TEST_MEDIAN_DATA,
+                groundwaterLevels: TEST_GW_LEVELS
+            },
+            hydrographState: {
+                selectedTimeSpan: 'P7D',
+                selectedIVMethodID: '90649'
+            }
+        };
+        beforeEach(() => {
+            config.ivPeriodOfRecord = null;
+            config.gwPeriodOfRecord = null;
+            testDiv = select('body').append('div');
+            store = configureStore(TEST_STATE);
+            testDiv.call(drawSelectActions, store, '11112222');
+        });
+
+        afterEach(() => {
+            testDiv.remove();
+        });
+
+        it('Only draws the download button (not the time span) when there is no iv or gw data', () => {
+            const buttonContainer = testDiv.selectAll('.select-actions-button-group');
+
+            expect(buttonContainer.size()).toBe(1);
+            expect(buttonContainer.selectAll('button').size()).toBe(1);
+
+            const downloadButton = buttonContainer.selectAll(`button[aria-controls=${DOWNLOAD_FORM_ID}]`);
+            const timeSpanButton = buttonContainer.selectAll(`button[aria-controls=${TIME_FORM_ID}]`);
+            expect(downloadButton.size()).toBe(1);
+            expect(timeSpanButton.size()).toBe(0);
+
+            const timeSpanContainer = testDiv.select(`#${TIME_FORM_ID}`);
+            const downloadContainer = testDiv.select(`#${DOWNLOAD_FORM_ID}`);
+            expect(timeSpanContainer.size()).toBe(0);
+            expect(downloadContainer.size()).toBe(1);
+        });
     });
 });
