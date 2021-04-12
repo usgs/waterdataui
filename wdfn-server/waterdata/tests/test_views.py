@@ -235,7 +235,6 @@ class TestNetworkView(TestCase):
     def test_invalid_network_json_call(self, network_mock):
         network_mock.return_value = {}
         network = 'monitoring-locations-invalid'
-        url = '{0}{1}?f={2}'.format(self.test_url, network, self.format)
         response = self.app_client.get('/networks/monitoring-locations-invalid/')
         # Assert an invalid ogc json network call 404s
         assert response.status_code == 404

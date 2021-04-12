@@ -29,7 +29,7 @@ class TestSiteService(TestCase):
     def test_successful_get_query_parameters(self):
         with Mocker(session=self.site_service.session) as session_mock:
             session_mock.get(self.endpoint, text=SITE_RDB)
-            status_code, _, result = self.site_service.get({
+            status_code, _, _ = self.site_service.get({
                 'param1': 'this',
                 'param2': 'that'
             })

@@ -1,8 +1,6 @@
 """
 Tests for timezone module
 """
-import json
-
 from requests_mock import Mocker
 
 from ...services.timezone import TimeZoneService

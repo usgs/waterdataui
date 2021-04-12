@@ -224,6 +224,7 @@ def monitoring_location(site_no):
 
 
 def return_404():
+    """View for 404 pages"""
     return abort(404)
 
 

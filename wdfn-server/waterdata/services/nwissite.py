@@ -46,8 +46,8 @@ class SiteService:
             return 500, repr(err), None
         if response.status_code == 200:
             return 200, response.reason, list(parse_rdb(response.iter_lines(decode_unicode=True)))
-        else:
-            return response.status_code, response.reason, []
+
+        return response.status_code, response.reason, []
 
     def get_site_data(self, site_no, agency_cd=''):
         """

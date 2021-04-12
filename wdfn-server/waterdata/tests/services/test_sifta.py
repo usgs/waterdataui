@@ -17,7 +17,7 @@ MOCK_CUSTOMER_LIST = json.loads(MOCK_RESPONSE)['Customers']
 ENDPOINT = 'https://www.fakesifta.gov/'
 
 
-def test_sifta_response(config):
+def test_sifta_response():
     sifta_service = SiftaService(ENDPOINT)
     with Mocker(session=sifta_service.session) as session_mock:
         session_mock.get(f'{ENDPOINT}12345', text=MOCK_RESPONSE)
@@ -27,7 +27,7 @@ def test_sifta_response(config):
         assert result == MOCK_CUSTOMER_LIST, 'Expected response'
 
 
-def test_sifta_handling_bad_status_code(config):
+def test_sifta_handling_bad_status_code():
     sifta_service = SiftaService(ENDPOINT)
     with Mocker(session=sifta_service.session) as session_mock:
         session_mock.get(f'{ENDPOINT}12345', status_code=500)
