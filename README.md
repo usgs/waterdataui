@@ -38,7 +38,7 @@ make watch-assets
 
 See the specific project READMEs for additional information.
 
-###Special Note - 'lookup files'
+### Special Note - 'lookup files'
 
 The Waterdataui application uses what we call 'lookup files' to provide the application with information related to things like
 state and county codes as well as information about agency names and hydrological units. The data for these files is gathered
@@ -54,7 +54,7 @@ deployment servers.
 
 So that is the backstory, what is important here is that for your local development, the lookup files are stored in the 
 repository in the folder wdfn-server/data and they are not automatically updated. Please note, that the files in the wdfn-server/data
-directory are there for local development; they are not the files used in the deployed versions of the application.
+directory are there for local development; they are not, necessarily, the files used in the deployed versions of the application.
 
 
 There are not many use cases in which the above deployment detail would make a difference or would
