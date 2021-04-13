@@ -128,7 +128,12 @@
                       <a href="https://www.usgs.gov/mission-areas/water-resources" rel="noopener">Water Resources</a>
                   </li>
                   <li class="usa-nav__secondary-item">
-                      <a href="https://dashboard.waterdata.usgs.gov/" rel="noopener">Water Dashboard</a>
+                      {% if stations|length == 1 %}
+                        <a href="https://dashboard.waterdata.usgs.gov/app/nwd/?aoi={{ stations[0].agency_cd|lower }}-{{ stations[0].site_no }}"
+                           rel="noopener">Water Dashboard</a>
+                      {% else %}
+                        <a href="https://dashboard.waterdata.usgs.gov/" rel="noopener">Water Dashboard</a>
+                      {% endif %}
                   </li>
                   {% if has_feedback_link %}
                       <li class="usa-nav__secondary-item">

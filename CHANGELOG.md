@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Cleaned up the endpoint configuration names. Each distinct endpoint has it's own configuration parameter and the endpoints are given more descriptive names.
 - Moved sampling method selection into the parameter selection list
 - Using requests sessions so that connections can be reused and give us a performance boost when loading the monitoring-location page
+- The water dashboard link on the monitoring-location pages now zooms into the page's site if it is a USGS site.
 
 ### Fixed
 - Flood levels are no longer rounded to an integer and show now show the decimal received from web service.
