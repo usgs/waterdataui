@@ -38,6 +38,31 @@ make watch-assets
 
 See the specific project READMEs for additional information.
 
+###Special Note - 'lookup files'
+
+The Waterdataui application uses what we call 'lookup files' to provide the application with information related to things like
+state and county codes as well as information about agency names and hydrological units. The data for these files is gathered
+from various web resources by an Amazon Web Services (AWS) Lambda function. You can find more details about this function in
+its GitLab repository: https://code.chs.usgs.gov/wma/iidd/iow/waterdataui-lookup-generation .
+
+The Lambda function runs nightly and creates a new set of three lookup files which are stored in an AWS Simple Storage Solution
+(S3) bucket. Although the files are new each night, the contents of the files only change a few times each year. 
+Updating the files each night takes less than 30 seconds of compute
+time and allows us to retrieve changes within 24 hours of the time that changes were made to the web resources which contribute 
+to the creation of the files. Once the files are in S3, they are then copied to each of our eight (dev, staging, and six production)
+deployment servers. 
+
+So that is the backstory, what is important here is that for your local development, the lookup files are stored in the 
+repository in the folder wdfn-server/data and they are not automatically updated. Please note, that the files in the wdfn-server/data
+directory are there for local development; they are not the files used in the deployed versions of the application.
+
+
+There are not many use cases in which the above deployment detail would make a difference or would
+require you to have the most up-to-date lookup files locally. However, if you find the need/desire to update the lookup files,
+the most straight forward way is to manually download a copy of the new files from the S3 bucket (labs-test-website/test-lookups) and replace the 
+files in your wdfn-server/data directory. These new files can be committed to Git and updated in the repository, so that
+others can benefit from your diligence. 
+
 ## Run tests
 
 To run all project tests:
