@@ -1,5 +1,7 @@
 import {select} from 'd3-selection';
 
+import config from 'ui/config.js';
+
 import {drawTimeSpanControls} from './time-span-controls';
 import {drawDownloadForm} from './download-data';
 
@@ -52,23 +54,25 @@ const appendButton = function(listContainer, {faIcon, buttonLabel, idOfDivToCont
  * @param {String} siteno
  */
 export const drawSelectActions = function(container, store, siteno) {
-    const state = store.getState();
     const listContainer = container.append('ul')
         .attr('class', 'select-actions-button-group usa-button-group');
-    appendButton(listContainer, {
-        buttonLabel: 'Change time span',
-        idOfDivToControl: 'change-time-span-container'
-    });
+    if (config.ivPeriodOfRecord || config.gwPeriodOfRecord) {
+        appendButton(listContainer, {
+            buttonLabel: 'Change time span',
+            idOfDivToControl: 'change-time-span-container'
+        });
+        container.append('div')
+            .attr('id', 'change-time-span-container')
+            .attr('hidden', true)
+            .call(drawTimeSpanControls, store, siteno);
+    }
+
     appendButton(listContainer, {
         faIcon: 'fa-file-download',
         buttonLabel: 'Retrieve data',
         idOfDivToControl: 'download-graph-data-container'
     });
 
-    container.append('div')
-        .attr('id', 'change-time-span-container')
-        .attr('hidden', true)
-        .call(drawTimeSpanControls, store, siteno);
     container.append('div')
         .attr('id', 'download-graph-data-container')
         .attr('hidden', true)

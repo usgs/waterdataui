@@ -320,7 +320,7 @@ describe('monitoring-location/components/hydrograph module', () => {
 
         it('should have download data form', () => {
             expect(selectAll('#download-graph-data-container').size()).toBe(1);
-        })
+        });
 
         it('should have method select element', () => {
             expect(selectAll('#ts-method-select-container').size()).toBe(1);

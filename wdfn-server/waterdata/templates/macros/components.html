@@ -1,9 +1,11 @@
-{% macro TimeSeriesComponent(site_data, default_parameter_code) -%}
+{% macro TimeSeriesComponent(site_data, default_parameter_code, iv_period_of_record, gw_period_of_record) -%}
     <div class="wdfn-component" data-component="hydrograph" data-siteno="{{ site_data.site_no }}"
          data-agency-cd="{{ site_data.agency_cd }}" data-sitename="{{ site_data.station_nm }}"
          data-parameter-code="{{ default_parameter_code }}">
         <div id="time-download-graph-controls">
-            <div class="short-cut-days-before-container"></div>
+            {% if iv_period_of_record or gw_period_of_record %}
+                <div class="short-cut-days-before-container"></div>
+            {% endif %}
             <div class="select-actions-container"></div>
         </div>
         <div id="hydrograph-wrapper">
@@ -11,28 +13,32 @@
             <div id="hydrograph-loading-indicator-container" class="loading-indicator-container"></div>
             <div id="hydrograph-no-data-overlay"></div>
         </div>
-        <div class="provisional-data-statement">
-            <p>
-                <span class="usa-tag">Important</span>
-                Data may be provisional -
-                <a class="usa-link"
-                   href="{{ url_for('provisional_data_statement') }}"
-                   ga-on="click" ga-event-category="navigation" ga-event-action="provisonalDataLinkInPage">
-                    learn more
-                </a>
-            </p>
-        </div>
+        {% if iv_period_of_record or gw_period_of_record %}
+            <div class="provisional-data-statement">
+                <p>
+                    <span class="usa-tag">Important</span>
+                    Data may be provisional -
+                    <a class="usa-link"
+                       href="{{ url_for('provisional_data_statement') }}"
+                       ga-on="click" ga-event-category="navigation" ga-event-action="provisonalDataLinkInPage">
+                        learn more
+                    </a>
+                </p>
+            </div>
+        {% endif %}
         <div class="select-time-series-container"></div>
-        <div class="wdfn-accordion graph-data usa-accordion">
-            <h2 class="usa-accordion__heading">
-                <button class="usa-accordion__button"
-                        aria-expanded="false" aria-controls="iv-data-table-container"
-                        ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithHydrographDataTableAccordion">
-                    Hydrograph data table(s)
-                </button>
-            </h2>
-            <div id="iv-data-table-container" class="usa-accordion__content usa-prose"></div>
-        </div>
+        {% if iv_period_of_record or gw_period_of_record %}
+            <div class="wdfn-accordion graph-data usa-accordion">
+                <h2 class="usa-accordion__heading">
+                    <button class="usa-accordion__button"
+                            aria-expanded="false" aria-controls="iv-data-table-container"
+                            ga-on="click" ga-event-category="accordion" ga-event-action="interactionWithHydrographDataTableAccordion">
+                        Hydrograph data table(s)
+                    </button>
+                </h2>
+                <div id="iv-data-table-container" class="usa-accordion__content usa-prose"></div>
+            </div>
+        {% endif %}
     </div>
 {%- endmacro %}
 
