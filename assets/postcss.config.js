@@ -1,15 +1,12 @@
-const autoprefixerOptions = [
-    '> 2%',
-    'Last 2 versions',
-    'IE 11',
-    'not dead'
-];
+const autoprefixerOptions = {
+    remove: false
+};
 
 module.exports = ctx => ({
     map: Object.assign({}, ctx.options.map, {inline: false}),
     parser: ctx.options.parser,
     plugins: {
-        autoprefixer: autoprefixerOptions,
+        'autoprefixer': autoprefixerOptions,
         'postcss-csso': {
             forceMediaMerge: false
         },
