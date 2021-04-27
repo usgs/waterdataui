@@ -55,7 +55,7 @@
     "buble-jest": "^1.0.1",
     "concat": "^1.0.3",
     "eslint": "^7.24.0",
-    "eslint-plugin-jest": "^24.3.5",
+    "eslint-plugin-jest": "^24.3.6",
     "gulp": "^4.0.2",
     "isparta": "^4.1.1",
     "jest": "^26.6.3",
