@@ -99,7 +99,7 @@
     "luxon": "1.26.0",
     "matchmedia-polyfill": "0.3.2",
     "raf-throttle": "2.0.5",
-    "redux": "4.0.5",
+    "redux": "4.1.0",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "wdfn-viz": "1.11.0"
