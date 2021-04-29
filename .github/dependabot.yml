@@ -1,0 +1,130 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/assets"
+  schedule:
+    interval: weekly
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: sass
+    versions:
+    - 1.32.10
+    - 1.32.7
+    - 1.32.8
+  - dependency-name: core-js
+    versions:
+    - 3.10.0
+    - 3.10.1
+  - dependency-name: postcss-csso
+    versions:
+    - 5.0.1
+  - dependency-name: postcss
+    versions:
+    - 8.2.10
+    - 8.2.5
+    - 8.2.6
+    - 8.2.7
+    - 8.2.8
+    - 8.2.9
+  - dependency-name: gulp-rev-all
+    versions:
+    - 3.0.0
+  - dependency-name: eslint-plugin-jest
+    versions:
+    - 24.1.9
+    - 24.3.1
+    - 24.3.2
+    - 24.3.4
+    - 24.3.5
+  - dependency-name: rollup
+    versions:
+    - 2.38.0
+    - 2.38.3
+    - 2.38.5
+    - 2.39.0
+    - 2.40.0
+    - 2.41.2
+    - 2.42.2
+    - 2.43.1
+    - 2.45.1
+  - dependency-name: eslint
+    versions:
+    - 7.19.0
+    - 7.20.0
+    - 7.21.0
+    - 7.22.0
+    - 7.23.0
+    - 7.24.0
+  - dependency-name: d3-scale
+    versions:
+    - 3.2.4
+  - dependency-name: autoprefixer
+    versions:
+    - 10.2.3
+    - 10.2.4
+    - 10.2.5
+  - dependency-name: d3-array
+    versions:
+    - 2.11.0
+    - 2.12.0
+    - 2.12.1
+  - dependency-name: stylelint
+    versions:
+    - 13.10.0
+    - 13.11.0
+    - 13.12.0
+  - dependency-name: d3-shape
+    versions:
+    - 2.1.0
+  - dependency-name: d3-axis
+    versions:
+    - 2.1.0
+  - dependency-name: esri-leaflet
+    versions:
+    - 3.0.0
+    - 3.0.1
+  - dependency-name: luxon
+    versions:
+    - 1.26.0
+  - dependency-name: terser
+    versions:
+    - 5.6.0
+  - dependency-name: stylelint-scss
+    versions:
+    - 3.19.0
+  - dependency-name: "@rollup/plugin-node-resolve"
+    versions:
+    - 11.1.1
+  - dependency-name: "@rollup/plugin-commonjs"
+    versions:
+    - 17.1.0
+  - dependency-name: "@rollup/plugin-alias"
+    versions:
+    - 3.1.2
+  - dependency-name: sinon
+    versions:
+    - 9.2.4
+- package-ecosystem: pip
+  directory: "/wdfn-server"
+  schedule:
+    interval: weekly
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: pytest
+    versions:
+    - 6.2.2
+    - 6.2.3
+  - dependency-name: gunicorn
+    versions:
+    - 20.1.0
+  - dependency-name: pyfakefs
+    versions:
+    - 4.4.0
+  - dependency-name: markdown
+    versions:
+    - 3.3.4
+  - dependency-name: pytest-flask
+    versions:
+    - 1.2.0
