@@ -66,9 +66,10 @@ export const drawMethodPicker = function(container, parameterCode, store) {
 
     pickerContainer.append('label')
         .attr('class', 'usa-label sampling-method-selection')
-        .attr('for', 'method-picker');
-    pickerContainer.text('Sampling Methods:')
+        .attr('for', 'method-picker')
+        .text('Sampling Methods:')
         .call(link(store, (container, methods) => {
+            container.select('#no-data-points-note').remove();
             if (methods !== null) {
                 const hasMethodsWithNoPointsInTimeRange = methods.filter(method => method.pointCount === 0).length !== 0;
                 if(hasMethodsWithNoPointsInTimeRange) {

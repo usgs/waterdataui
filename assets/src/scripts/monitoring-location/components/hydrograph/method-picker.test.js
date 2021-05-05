@@ -141,5 +141,34 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
 
             expect(div.select('#no-data-points-note').size()).toBe(0);
         });
+
+        it('Expects that if there is not method description, the method id will be used', () => {
+            const parameterCode = '72019';
+            let store = configureStore({
+                ...TEST_STATE,
+                hydrographData: {
+                    primaryIVData: {
+                        ...TEST_STATE,
+                        values: {
+                            '90649': {
+                                ...TEST_PRIMARY_IV_DATA.values['90649']
+                            },
+                            '252055': {
+                                points: [
+                                    {value: 25.6, qualifiers: ['E'], dateTime: 1600618500000},
+                                ],
+                                method: {
+                                    methodDescription: '',
+                                    methodID: '252055'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            div.call(drawMethodPicker, parameterCode, store);
+
+            expect(div.selectAll('[value="252055"]')['_groups'][0][0].innerHTML).toContain('252055');
+        });
     });
 });

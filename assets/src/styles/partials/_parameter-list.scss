@@ -50,6 +50,9 @@ $row-border-color: 'black';
       @include u-padding-left(0);
 
       .method-selection-row {
+        .usa-label {
+          margin-top: 0;
+        }
         #ts-method-select-container {
           @include u-padding-top(1);
           @include grid-col(7);
