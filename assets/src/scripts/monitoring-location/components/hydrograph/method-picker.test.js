@@ -142,7 +142,7 @@ describe('monitoring-location/components/hydrograph/method-picker', () => {
             expect(div.select('#no-data-points-note').size()).toBe(0);
         });
 
-        it('Expects that if there is not method description, the method id will be used', () => {
+        it('Expects that if there is not a method description, the method id will be used', () => {
             const parameterCode = '72019';
             let store = configureStore({
                 ...TEST_STATE,

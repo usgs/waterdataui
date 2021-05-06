@@ -3,7 +3,7 @@ import config from 'ui/config';
 import {TEST_PRIMARY_IV_DATA, TEST_MEDIAN_DATA, TEST_GW_LEVELS} from '../mock-hydrograph-state';
 import {
     isVisible, hasVisibleIVData, hasVisibleGroundwaterLevels, hasVisibleMedianStatisticsData, hasAnyVisibleData,
-    getTitle, getDescription, getPrimaryParameterUnitCode, getPreferredIVMethodID
+    getTitle, getDescription, getPrimaryParameterUnitCode, getPreferredIVMethodID, getSortedIVMethods
 }
     from './time-series-data';
 
@@ -425,6 +425,59 @@ describe('monitoring-location/components/hydrograph/selectors/time-series-data m
                     }
                 }
             })).toEqual('69937');
+        });
+    });
+
+    describe('getSortedIVMethods', () => {
+        it('The first object in the array will have the most data points', () => {
+            expect(getSortedIVMethods({
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    primaryIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData,
+                        values: {
+                            ...TEST_STATE.hydrographData.primaryIVData.values,
+
+                            '152088': {
+                                points: [
+                                    {value: 25.1},
+                                    {value: 26.1},
+                                    {value: 27.1}
+                                ],
+                                method: {
+                                    methodDescription: '',
+                                    methodID: '152088'
+                                }
+                            }
+                        }
+                    }
+                }
+            })[0]['pointCount']).toBe(3);
+        });
+        it('If there is not a sampling method description, the method id will be used', () => {
+            expect(getSortedIVMethods({
+                hydrographData: {
+                    ...TEST_STATE.hydrographData,
+                    primaryIVData: {
+                        ...TEST_STATE.hydrographData.primaryIVData,
+                        values: {
+                            ...TEST_STATE.hydrographData.primaryIVData.values,
+
+                            '152088': {
+                                points: [
+                                    {value: 25.1},
+                                    {value: 26.1},
+                                    {value: 27.1}
+                                ],
+                                method: {
+                                    methodDescription: '',
+                                    methodID: '152088'
+                                }
+                            }
+                        }
+                    }
+                }
+            })[0]['methodDescription']).toBe('152088');
         });
     });
 });
