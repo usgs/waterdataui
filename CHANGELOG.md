@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.46.0...master)
 ### Changed
 - Improved wording on feedback form to better steer feedback to correct destination.
+- Empty sampling method descriptions now show the Method ID instead of a blank space.
 
 ## [0.46.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...waterdataui-0.46.0)
 ### Changed

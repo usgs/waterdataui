@@ -162,13 +162,13 @@ export const getSortedIVMethods = createSelector(
         if (!ivData || !Object.keys(ivData.values).length) {
             return null;
         }
-        const methodsForPrimarySelection = Object.values(ivData.values)
+        return Object.values(ivData.values)
             .map(methodValues => {
                 return {
                     pointCount: methodValues.points.length,
                     lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
                     methodID: methodValues.method.methodID,
-                    methodDescription: methodValues.method.methodDescription === null ? 'No description available for this method' : methodValues.method.methodDescription
+                    methodDescription: methodValues.method.methodDescription ? methodValues.method.methodDescription : methodValues.method.methodID
                 };
             })
             .sort((a, b) => {
@@ -178,6 +178,5 @@ export const getSortedIVMethods = createSelector(
                     return b.pointCount - a.pointCount;
                 }
             });
-        return methodsForPrimarySelection;
     }
 );
