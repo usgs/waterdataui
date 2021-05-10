@@ -24,5 +24,8 @@ module.exports = {
         '^dvhydrograph/(.*)$': '<rootDir>src/scripts/monitoring-location/components/daily-value-hydrograph',
         '^ivhydrograph/(.*)$': '<rootDir>src/scripts/monitoring-location/components/hydrograph/$1',
         '^network/(.*)$': '<rootDir>src/scripts/network/$1'
-    }
+    },
+    transformIgnorePatterns: [
+        'node_modules/(?!(d3-format)/)'
+    ]
 };
