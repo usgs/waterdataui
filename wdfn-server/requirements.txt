@@ -12,5 +12,5 @@ pytest-mock==3.5.1
 pytest-flask==1.2.0
 requests==2.25.1
 requests-mock==1.9.2
-six==1.15.0
+six==1.16.0
 SaltPyLint==2020.9.28
