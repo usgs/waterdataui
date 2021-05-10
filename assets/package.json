@@ -78,12 +78,12 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
     "autotrack": "2.4.1",
-    "core-js": "3.10.1",
+    "core-js": "3.12.1",
     "d3-array": "2.12.1",
     "d3-axis": "2.1.0",
     "d3-brush": "2.1.0",
     "d3-format": "2.0.0",
-    "d3-scale": "3.2.4",
+    "d3-scale": "3.3.0",
     "d3-selection": "2.0.0",
     "d3-shape": "2.1.0",
     "d3-simple-slider": "1.10.4",
@@ -99,7 +99,7 @@
     "luxon": "1.26.0",
     "matchmedia-polyfill": "0.3.2",
     "raf-throttle": "2.0.5",
-    "redux": "4.0.5",
+    "redux": "4.1.0",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "wdfn-viz": "1.11.0"
