@@ -4,14 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.46.0...master)
+## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.47.0...master)
+
+## [0.47.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.46.0...waterdataui-0.47.0) - 2021-05-11
 ### Changed
 - Improved wording on feedback form to better steer feedback to correct destination.
 - Empty sampling method descriptions now show the Method ID instead of a blank space.
 
-## [0.46.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...waterdataui-0.46.0)
+## [0.46.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.45.0...waterdataui-0.46.0) - 2021-04-14
 ### Changed
-- Cleaned up the endpoint configuration names. Each distinct endpoint has it's own configuration parameter and the endpoints are given more descriptive names.
+- Cleaned up the endpoint configuration names. Each distinct endpoint has its own configuration parameter and the endpoints are given more descriptive names.
 - Moved sampling method selection into the parameter selection list
 - Using requests sessions so that connections can be reused and give us a performance boost when loading the monitoring-location page
 - The water dashboard link on the monitoring-location pages now zooms into the page's site if it is a USGS site.
