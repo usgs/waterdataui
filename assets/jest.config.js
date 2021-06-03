@@ -27,5 +27,6 @@ module.exports = {
     },
     transformIgnorePatterns: [
         'node_modules/(?!(d3-format)/)'
-    ]
+    ],
+    testEnvironment: 'jsdom'
 };
