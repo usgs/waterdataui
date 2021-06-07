@@ -430,14 +430,13 @@ describe('monitoring-location/components/hydrograph/selectors/time-series-data m
 
     describe('getSortedIVMethods', () => {
         it('The first object in the array will have the most data points', () => {
-            expect(getSortedIVMethods({
+            const result = getSortedIVMethods({
                 hydrographData: {
                     ...TEST_STATE.hydrographData,
                     primaryIVData: {
                         ...TEST_STATE.hydrographData.primaryIVData,
                         values: {
                             ...TEST_STATE.hydrographData.primaryIVData.values,
-
                             '152088': {
                                 points: [
                                     {value: 25.1},
@@ -452,17 +451,21 @@ describe('monitoring-location/components/hydrograph/selectors/time-series-data m
                         }
                     }
                 }
-            })[0]['pointCount']).toBe(3);
+            });
+            expect(result.parameterCode).toBe('00030');
+            expect(result.methods.length).toBe(3);
+            expect(result.methods[0].methodID).toBe('152088');
+            expect(result.methods[1].methodID).toBe('252055');
+            expect(result.methods[2].methodID).toBe('69937');
         });
         it('If there is not a sampling method description, the method id will be used', () => {
-            expect(getSortedIVMethods({
+            const result = getSortedIVMethods({
                 hydrographData: {
                     ...TEST_STATE.hydrographData,
                     primaryIVData: {
                         ...TEST_STATE.hydrographData.primaryIVData,
                         values: {
                             ...TEST_STATE.hydrographData.primaryIVData.values,
-
                             '152088': {
                                 points: [
                                     {value: 25.1},
@@ -477,7 +480,10 @@ describe('monitoring-location/components/hydrograph/selectors/time-series-data m
                         }
                     }
                 }
-            })[0]['methodDescription']).toBe('152088');
+            });
+            expect(result.methods[0]['methodDescription']).toBe('152088');
+            expect(result.methods[1]['methodDescription']).toBe('From multiparameter sonde');
+            expect(result.methods[2]['methodDescription']).toBe('From multiparameter sonde, [Discontinued]');
         });
     });
 });

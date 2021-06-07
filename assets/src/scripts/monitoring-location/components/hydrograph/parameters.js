@@ -8,12 +8,12 @@ import {link} from 'ui/lib/d3-redux';
 
 import {getInputsForRetrieval, getSelectedParameterCode} from 'ml/selectors/hydrograph-state-selector';
 
-import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
+import {setSelectedParameterCode, setSelectedIVMethodID} from 'ml/store/hydrograph-state';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
+import {getSortedIVMethods} from './selectors/time-series-data';
 
-import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
 import {showDataIndicators} from './data-indicator';
 import {drawMethodPicker} from './method-picker';
 
@@ -76,29 +76,17 @@ const drawRowExpansionControl = function(container, parameter, type) {
     }
 };
 
-/*
- * Helper function that checks the classes of the element on which the user clicked.
- * This allow any element related to the selection of the sampling methods to be excluded from other user initiated events.
- * @param eventTarget - The classes of the element the user clicked.
- * @returns {boolean} - True, if the click target has specific classes
- */
-const isMethodSelectionClick = function(eventTarget) {
-    if (eventTarget.getAttribute('class')) {
-        return !! eventTarget.getAttribute('class').includes('sampling-method-selection');
-    }
-};
-
-/*
-* Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid.
-* The grid has one 'container row' for each parameter (this function creates the 'container rows' for each parameter).
-* As a side note - each container row will eventually contain three internal rows.
-* 1) The 'Top Period Of Record Row' (shows only on mobile)
-* 2) The 'Radio Button Row' (radio button and description show on mobile and desktop, toggle and period of record don't show mobile)
-* 3) The 'Expansion Container Row' only shows when row clicked or toggled on. May act as a container for additional rows.
-* @param {Object} container - The target element on which to append the row
-* @param {Object} store - The application Redux state
-* @param {String} siteno - A unique identifier for the monitoring location
-* @param {String} parameter - USGS five digit parameter code
+/**
+ * Helper function that draws the main containing rows. Note the 'parameter selection' is a nested USWD grid.
+ * The grid has one 'container row' for each parameter (this function creates the 'container rows' for each parameter).
+ * As a side note - each container row will eventually contain three internal rows.
+ * 1) The 'Top Period Of Record Row' (shows only on mobile)
+ * 2) The 'Radio Button Row' (radio button and description show on mobile and desktop, toggle and period of record don't show mobile)
+ * 3) The 'Expansion Container Row' only shows when row clicked or toggled on. May act as a container for additional rows.
+ * @param {Object} container - The target element on which to append the row
+ * @param {Object} store - The application Redux state
+ * @param {String} siteno - A unique identifier for the monitoring location
+ * @param {String} parameterCode - USGS five digit parameter code
 */
 const drawContainingRow = function(container, store, siteno, parameterCode) {
     return container.append('div')
@@ -113,11 +101,7 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
         }, getSelectedParameterCode))
         .on('click', function(event) {
             // Don't let clicks on the sampling method selections trigger a parameter reload.
-            if (isMethodSelectionClick(event.target)) {
-                return;
-            }
-
-            select('#primary-sampling-method-row').remove();
+            event.stopPropagation();
 
             // Get all of the open/close icons into the correct orientation.
             select('#select-time-series').selectAll('.fa-chevron-up')
@@ -138,33 +122,26 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
             // Change to the newly selected parameter both in the selection list ond on the graph.
             const thisClass = select(this)
                 .attr('class');
-            // Show the sampling method selection if user clicks the currently selected row, but don't reload the graph data.
-            if (thisClass) {
-                select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
-            }
-
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(parameterCode));
                 showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataIndicators(false, store);
-
-                        const primarySamplingMethods = getPrimaryMethods(store.getState());
-                        if (primarySamplingMethods.length > 1) {
-                            select('#primary-sampling-method-row').remove();
-                            select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
+                        const sortedMethods = getSortedIVMethods(store.getState());
+                        if (sortedMethods && sortedMethods.methods.length) {
+                            store.dispatch(setSelectedIVMethodID(sortedMethods.methods[0].methodID));
                         }
+                        showDataIndicators(false, store);
                     });
             }
         });
 };
 
-/*
-* Helper function that creates the top row of each parameter selection. This row is hidden except on narrow screens
-* and contains the period of record that appears above the parameter description.
-* @param {Object} container - The target element to append the row
-* @param {D3 selection} parameter - Contains details about the current parameter code
+/**
+ * Helper function that creates the top row of each parameter selection. This row is hidden except on narrow screens
+ * and contains the period of record that appears above the parameter description.
+ * @param {Object} container - The target element to append the row
+ * @param {D3 selection} parameter - Contains details about the current parameter code
 */
 const drawTopPeriodOfRecordRow = function(container, parameter) {
     const gridRowInnerTopPeriodOfRecord = container.append('div')
@@ -178,12 +155,12 @@ const drawTopPeriodOfRecordRow = function(container, parameter) {
     drawRowExpansionControl(topPeriodOfRecordRowExpansionControlDiv, parameter, 'mobile');
 };
 
-/*
-* Helper function that draws the row containing the radio button and parameter description.
-* @param {Object} elem - The target element to append the row
-* @param {D3 selection} parameter - Contains details about the current parameter code
-* @param {Object} store - The application Redux state
-*/
+/**
+ * Helper function that draws the row containing the radio button and parameter description.
+ * @param {D3 selection} container - The target element to append the row
+ * @param {Object} parameter - Contains details about the current parameter code
+ * @param {Object} store - The application Redux state
+ */
 const drawRadioButtonRow = function(container, parameter, store) {
     const gridRowInnerWithRadioButton = container.append('div')
         .attr('class', 'grid-row grid-row-inner');
@@ -219,12 +196,12 @@ const drawRadioButtonRow = function(container, parameter, store) {
     drawRowExpansionControl(radioRowExpansionControlDiv, parameter, 'desktop');
 };
 
-/*
-* Helper function that draws a row containing the controls for the WaterAlert subscription.
-* @param {Object} container- The target element to append the row
-* @param {String} siteno - A unique identifier for the monitoring location
-* @param {D3 selection} parameter - Contains details about the current parameter code
-*/
+/**
+ * Helper function that draws a row containing the controls for the WaterAlert subscription.
+ * @param {Object} container- The target element to append the row
+ * @param {String} siteno - A unique identifier for the monitoring location
+ * @param {D3 selection} parameter - Contains details about the current parameter code
+ */
 const drawWaterAlertRow = function(container, siteno, parameter) {
     // WaterAlert doesn't accept the calculated parameter for Fahrenheit (such as 00010F), so we need to adjust the
     // parameter code back to the Celsius version (such as 00010).
@@ -287,14 +264,12 @@ export const drawSelectionList = function(container, store, siteno) {
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
-
-        // Add the sampling method selection list to the parameter loaded when the page is first opened if it has methods.
-        // This allows the user to use the row expansion toggle to see the methods when the row has never been physically clicked.
-        const primaryMethods = getPrimaryMethods(store.getState());
-        if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
-            select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);
-        }
     });
+
+    // Draw method picker. This can only appear in the selected parameter row because
+    // we only know the methods for the currently selected data. Let the code figure out
+    // whether to draw it and where to put it whenever the sorted IV Methods change.
+    selectionList.call(link(store, drawMethodPicker, getSortedIVMethods, store));
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
     tooltip.on(container.node());
