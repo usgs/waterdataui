@@ -121,40 +121,12 @@ export const getPrimaryParameterUnitCode = createSelector(
     parameter => parameter ? parameter.unit : null
 );
 
-/*
- * Returns a Redux select which returns the IV data method id with the most points. If more than
- * one method has the same point count, then the time series with the most recent point is chosen.
- * @returns {Function} which returns {String} the preferred method ID.
- */
-export const getPreferredIVMethodID = createSelector(
-    getIVData('primary'),
-    (ivData) => {
-        if (!ivData || !Object.keys(ivData.values).length) {
-            return null;
-        }
-        const methodMetaData = Object.values(ivData.values)
-            .map(methodValues => {
-                return {
-                    pointCount: methodValues.points.length,
-                    lastPoint: methodValues.points.length ? methodValues.points[methodValues.points.length - 1] : null,
-                    methodID: methodValues.method.methodID
-                };
-            })
-            .sort((a, b) => {
-                if (a.pointCount === b.pointCount) {
-                    return a.pointCount ? a.lastPoint.dateTime - b.lastPoint.dateTime : 0;
-                } else {
-                    return a.pointCount - b.pointCount;
-                }
-            });
-        return methodMetaData[methodMetaData.length - 1].methodID;
-    }
-);
-
-
 /**
- * Returns a array of methods sorted from most to least points in the selected time span.
- * @return {Array} Array of objects with details about the sampling methods available for the primary parameter.
+ * Returns an object with the primary parameter code and an array of methods sorted from most to least points in the selected time span.
+ * @return {Object}
+ *      @prop {String} parameterCode
+ *      @prop {Array} methods - sorted
+ * Array of objects with details about the sampling methods available for the primary parameter.
  */
 export const getSortedIVMethods = createSelector(
     getIVData('primary'),
@@ -162,7 +134,7 @@ export const getSortedIVMethods = createSelector(
         if (!ivData || !Object.keys(ivData.values).length) {
             return null;
         }
-        return Object.values(ivData.values)
+        const methods = Object.values(ivData.values)
             .map(methodValues => {
                 return {
                     pointCount: methodValues.points.length,
@@ -178,5 +150,21 @@ export const getSortedIVMethods = createSelector(
                     return b.pointCount - a.pointCount;
                 }
             });
+        return {
+            parameterCode: ivData.parameter.parameterCode,
+            methods: methods
+        };
+    }
+);
+
+/*
+ * Returns a Redux select which returns the IV data method id with the most points. If more than
+ * one method has the same point count, then the time series with the most recent point is chosen.
+ * @returns {Function} which returns {String} the preferred method ID.
+ */
+export const getPreferredIVMethodID = createSelector(
+    getSortedIVMethods,
+    (sortedMethods) => {
+        return sortedMethods && sortedMethods.methods.length ? sortedMethods.methods[0].methodID : null;
     }
 );

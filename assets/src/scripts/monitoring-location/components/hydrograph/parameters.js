@@ -12,10 +12,11 @@ import {setSelectedParameterCode} from 'ml/store/hydrograph-state';
 import {retrieveHydrographData} from 'ml/store/hydrograph-data';
 
 import {getAvailableParameters} from './selectors/parameter-data';
+import {getSortedIVMethods} from './selectors/time-series-data';
 
-import {getPrimaryMethods} from 'ml/selectors/hydrograph-data-selector';
 import {showDataIndicators} from './data-indicator';
 import {drawMethodPicker} from './method-picker';
+import {setSelectedIVMethodID} from "../../store/hydrograph-state";
 
 const ROW_TOGGLE_CLOSED_CLASS = 'fas fa-chevron-down expansion-toggle';
 const ROW_TOGGLE_OPENED_CLASS = 'fas fa-chevron-up expansion-toggle';
@@ -113,11 +114,7 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
         }, getSelectedParameterCode))
         .on('click', function(event) {
             // Don't let clicks on the sampling method selections trigger a parameter reload.
-            if (isMethodSelectionClick(event.target)) {
-                return;
-            }
-
-            select('#primary-sampling-method-row').remove();
+            event.stopPropagation();
 
             // Get all of the open/close icons into the correct orientation.
             select('#select-time-series').selectAll('.fa-chevron-up')
@@ -138,23 +135,16 @@ const drawContainingRow = function(container, store, siteno, parameterCode) {
             // Change to the newly selected parameter both in the selection list ond on the graph.
             const thisClass = select(this)
                 .attr('class');
-            // Show the sampling method selection if user clicks the currently selected row, but don't reload the graph data.
-            if (thisClass) {
-                select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
-            }
-
             if (!thisClass || !thisClass.includes('selected')) {
                 store.dispatch(setSelectedParameterCode(parameterCode));
                 showDataIndicators(true, store);
                 store.dispatch(retrieveHydrographData(siteno, getInputsForRetrieval(store.getState())))
                     .then(() => {
-                        showDataIndicators(false, store);
-
-                        const primarySamplingMethods = getPrimaryMethods(store.getState());
-                        if (primarySamplingMethods.length > 1) {
-                            select('#primary-sampling-method-row').remove();
-                            select(`#expansion-container-row-${parameterCode}`).call(drawMethodPicker, parameterCode, store);
+                        const sortedMethods = getSortedIVMethods(store.getState());
+                        if (sortedMethods && sortedMethods.methods.length) {
+                            store.dispatch(setSelectedIVMethodID(sortedMethods.methods[0].methodID));
                         }
+                        showDataIndicators(false, store);
                     });
             }
         });
@@ -180,8 +170,8 @@ const drawTopPeriodOfRecordRow = function(container, parameter) {
 
 /*
 * Helper function that draws the row containing the radio button and parameter description.
-* @param {Object} elem - The target element to append the row
-* @param {D3 selection} parameter - Contains details about the current parameter code
+* @param {D3 selection} elem - The target element to append the row
+* @param {Object} parameter - Contains details about the current parameter code
 * @param {Object} store - The application Redux state
 */
 const drawRadioButtonRow = function(container, parameter, store) {
@@ -287,14 +277,12 @@ export const drawSelectionList = function(container, store, siteno) {
         if (parameter.waterAlert.hasWaterAlert) {
             drawWaterAlertRow(expansionContainerRow, siteno, parameter);
         }
-
-        // Add the sampling method selection list to the parameter loaded when the page is first opened if it has methods.
-        // This allows the user to use the row expansion toggle to see the methods when the row has never been physically clicked.
-        const primaryMethods = getPrimaryMethods(store.getState());
-        if (getSelectedParameterCode(store.getState()) === parameter.parameterCode && primaryMethods.length > 1) {
-            select(`#expansion-container-row-${parameter.parameterCode}`).call(drawMethodPicker, parameter.parameterCode, store);
-        }
     });
+
+    // draw method picker. This can only appear in the selected parameter row because
+    // we only know the methods for the currently selected data. Let the code figure out
+    // whether to draw it and where to put it whenever the sorted IV Methods change.
+    selectionList.call(link(store, drawMethodPicker, getSortedIVMethods, store));
 
     // Activate the USWDS toolTips for WaterAlert subscriptions
     tooltip.on(container.node());
