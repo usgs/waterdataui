@@ -4,7 +4,7 @@ Flask==1.1.2
 Markdown==3.3.4
 MarkupSafe==2.0.1
 pendulum==2.1.2
-pyfakefs==4.4.0
+pyfakefs==4.5.0
 pytest==6.2.4
 pytest-mock==3.6.1
 pytest-flask==1.2.0

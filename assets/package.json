@@ -54,7 +54,7 @@
     "buble": "^0.20.0",
     "buble-jest": "^1.0.1",
     "concat": "^1.0.3",
-    "eslint": "^7.27.0",
+    "eslint": "^7.28.0",
     "eslint-plugin-jest": "^24.3.6",
     "gulp": "^4.0.2",
     "gulp-rev-all": "^3.0.0",
@@ -68,7 +68,7 @@
     "postcss-cli": "^8.3.1",
     "postcss-csso": "^5.0.1",
     "postcss-flexbugs-fixes": "^5.0.2",
-    "rollup": "2.50.6",
+    "rollup": "2.51.1",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.34.1",
     "sinon": "^11.1.1",
@@ -79,14 +79,14 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.3",
     "autotrack": "2.4.1",
-    "core-js": "3.13.1",
-    "d3-array": "2.12.1",
+    "core-js": "3.14.0",
+    "d3-array": "^3.0.1",
     "d3-axis": "2.1.0",
     "d3-brush": "2.1.0",
-    "d3-format": "3.0.0",
-    "d3-scale": "3.3.0",
+    "d3-format": "3.0.1",
+    "d3-scale": "^4.0.0",
     "d3-selection": "2.0.0",
-    "d3-shape": "2.1.0",
+    "d3-shape": "^3.0.1",
     "d3-simple-slider": "1.10.4",
     "date-time-format-timezone": "1.0.22",
     "element-closest": "3.0.2",
@@ -102,6 +102,6 @@
     "redux": "4.1.0",
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
-    "wdfn-viz": "1.11.0"
+    "wdfn-viz": "1.11.1"
   }
 }
