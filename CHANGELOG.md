@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased](https://github.com/usgs/waterdataui/compare/waterdataui-0.48.0...master)
 ### Changed
 - Reorganized header navigation including changing labels and adding links to twitter, instagram, and data visualizations.
+
 ## [0.48.0](https://github.com/usgs/waterdataui/compare/waterdataui-0.47.0...waterdataui-0.48.0) - 2021-06-08
 ### Fixed
 - The method picker no longer appears briefly when selecting a parameter code with a single method.
