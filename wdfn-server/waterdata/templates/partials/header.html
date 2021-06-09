@@ -70,6 +70,35 @@
                 <li class="usa-nav__primary-item">
                     <button class="usa-accordion__button usa-nav__link"
                             aria-expanded="false"
+                            aria-controls="about-section"
+                            ga-on="click" ga-event-category="navigation" ga-event-action="AboutWDFNAccordionNav">
+                        <span>About Water Data for the Nation</span>
+                    </button>
+                    <ul id="about-section" class="usa-nav__submenu">
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://waterdata.usgs.gov/blog/">Water Data for the Nation Blog</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://www.usgs.gov/special-topic/water-science-school"
+                               rel="noopener" target="_blank"
+                               ga-on="click" ga-event-category="navigation" ga-event-action="WaterScienceSchoolNav">
+                                Water Science School
+                            </a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://www.instagram.com/usgs_streamgages/" rel="noopener" target="_blank">Streamgages of Instagram</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://twitter.com/USGS_Water" rel="noopener" target="_blank">USGS Water Resources Twitter</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://twitter.com/USGS_DataSci" rel="noopener" target="_blank">USGS Data Science Twitter</a>
+                        </li>
+                   </ul>
+                </li>
+                <li class="usa-nav__primary-item">
+                    <button class="usa-accordion__button usa-nav__link"
+                            aria-expanded="false"
                             aria-controls="data-info-section"
                             ga-on="click" ga-event-category="navigation" ga-event-action="DataInfoAccordionNav">
                         <span>Data Information</span>
@@ -88,35 +117,20 @@
                             </a>
                         </li>
                         <li class="usa-nav__submenu-item">
-                            <a href="https://www.usgs.gov/special-topic/water-science-school"
-                               rel="noopener" target="_blank"
-                               ga-on="click" ga-event-category="navigation" ga-event-action="WaterScienceSchoolNav">
-                                How Data are Collected
+                            <a href="https://waterservices.usgs.gov/">USGS Water Data APIs</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://labs.waterdata.usgs.gov/index.html">Experimental Water Data tools</a>
+                        </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://www.usgs.gov/mission-areas/water-resources/science/water-data-visualizations?qt-science_center_objects=0#qt-science_center_objects" rel="noopener">
+                                Water Data Visualizations
                             </a>
                         </li>
+                        <li class="usa-nav__submenu-item">
+                            <a href="https://dashboard.waterdata.usgs.gov/app/nwd/">National Water Dashboard</a>
+                        </li>
                     </ul>
-                </li>
-                <li class="usa-nav__primary-item">
-                    <button class="usa-accordion__button usa-nav__link"
-                            aria-expanded="false"
-                            aria-controls="about-section"
-                            ga-on="click" ga-event-category="navigation" ga-event-action="AboutWDFNAccordionNav">
-                        <span>About Water Data for the Nation</span>
-                    </button>
-                    <ul id="about-section" class="usa-nav__submenu">
-                        <li class="usa-nav__submenu-item">
-                            <a href="https://waterdata.usgs.gov/blog/" rel="noopener">What's New in Water Data for the Nation</a>
-                        </li>
-                        <li class="usa-nav__submenu-item">
-                            <a href="https://waterservices.usgs.gov/" rel="noopener">How to get water data information</a>
-                        </li>
-                        <li class="usa-nav__submenu-item">
-                            <a href="https://labs.waterdata.usgs.gov/index.html" rel="noopener">Experimental Water Data tools</a>
-                        </li>
-                        <li class="usa-nav__submenu-item">
-                            <a href="https://www.instagram.com/usgs_streamgages/" rel="noopener">Streamgages of Instagram</a>
-                        </li>
-                   </ul>
                 </li>
 
                 {% block page_specific_menus %}{% endblock %}
