@@ -8,7 +8,7 @@ pyfakefs==4.5.0
 pytest==6.2.4
 pytest-mock==3.6.1
 pytest-flask==1.2.0
-requests==2.25.1
+requests==2.26.0
 requests-mock==1.9.3
 six==1.16.0
 SaltPyLint==2020.9.28
